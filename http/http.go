@@ -12,11 +12,16 @@ import (
 var ContextType string = "application/json;charset=utf-8"
 
 // Post : Post提交和获取Json数据
-func Post(url, data string, request *interface{}) {
+func Post(url, data string, header map[string]string, request *interface{}) {
 	resp, err := http.Post(url, ContextType, strings.NewReader(data))
 	if err != nil {
 		error.TryError(err)
 	}
+
+	for k, v := range header {
+		resp.Header.Add(k, v)
+	}
+
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -27,7 +32,7 @@ func Post(url, data string, request *interface{}) {
 }
 
 // PostToMap : Post提交数据，参数是map，返回interface{}
-func PostToMap(url string, data map[string]interface{}, request *interface{}) {
+func PostToMap(url string, data map[string]interface{}, header map[string]string, request *interface{}) {
 	d, err := json.Marshal(data)
 	if err != nil {
 		error.TryError(err)
@@ -36,6 +41,11 @@ func PostToMap(url string, data map[string]interface{}, request *interface{}) {
 	if err != nil {
 		error.TryError(err)
 	}
+
+	for k, v := range header {
+		resp.Header.Add(k, v)
+	}
+
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -45,7 +55,8 @@ func PostToMap(url string, data map[string]interface{}, request *interface{}) {
 	json.Unmarshal(body, request)
 }
 
-func TLSGet(url string, request *interface{}) {
+// TLSGet : https得Get请求
+func TLSGet(url string, header map[string]string, request *interface{}) {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -55,6 +66,10 @@ func TLSGet(url string, request *interface{}) {
 		error.TryError(err)
 	}
 
+	for k, v := range header {
+		resp.Header.Add(k, v)
+	}
+
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -64,7 +79,8 @@ func TLSGet(url string, request *interface{}) {
 	json.Unmarshal(body, request)
 }
 
-func TLSPost(url, data string, request *interface{}) {
+// TLSPost : https得Post请求
+func TLSPost(url, data string, header map[string]string, request *interface{}) {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -72,6 +88,10 @@ func TLSPost(url, data string, request *interface{}) {
 	resp, err := client.Post(url, ContextType, strings.NewReader(data))
 	if err != nil {
 		error.TryError(err)
+	}
+
+	for k, v := range header {
+		resp.Header.Add(k, v)
 	}
 
 	defer resp.Body.Close()
@@ -84,10 +104,14 @@ func TLSPost(url, data string, request *interface{}) {
 }
 
 // Get : Get方式提交数据
-func Get(url string, request *interface{}) {
+func Get(url string, header map[string]string, request *interface{}) {
 	resp, err := http.Get(url)
 	if err != nil {
 		error.TryError(err)
+	}
+
+	for k, v := range header {
+		resp.Header.Add(k, v)
 	}
 
 	defer resp.Body.Close()
@@ -100,7 +124,7 @@ func Get(url string, request *interface{}) {
 }
 
 // Put : Put方式的数据获取
-func Put(url string, data interface{}, request *interface{}) {
+func Put(url string, data interface{}, header map[string]string, request *interface{}) {
 	d, err := json.Marshal(data)
 	if err != nil {
 		error.TryError(err)
@@ -112,6 +136,10 @@ func Put(url string, data interface{}, request *interface{}) {
 
 	res, _ := http.DefaultClient.Do(req)
 
+	for k, v := range header {
+		res.Header.Add(k, v)
+	}
+
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
@@ -122,7 +150,7 @@ func Put(url string, data interface{}, request *interface{}) {
 }
 
 // Delete : Delete的方式获取数据
-func Delete(url string, request *interface{}) {
+func Delete(url string, header map[string]string, request *interface{}) {
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
 		error.TryError(err)
@@ -131,6 +159,10 @@ func Delete(url string, request *interface{}) {
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		error.TryError(err)
+	}
+
+	for k, v := range header {
+		req.Header.Add(k, v)
 	}
 
 	defer res.Body.Close()
