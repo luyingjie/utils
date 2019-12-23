@@ -1,9 +1,9 @@
 package http
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"io/ioutil"
-
 	"net/http"
 	"strings"
 	"utils/error"
@@ -36,6 +36,44 @@ func PostToMap(url string, data map[string]interface{}, request *interface{}) {
 	if err != nil {
 		error.TryError(err)
 	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		error.TryError(err)
+	}
+
+	json.Unmarshal(body, request)
+}
+
+func TLSGet(url string, request *interface{}) {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
+	resp, err := client.Get(url)
+	if err != nil {
+		error.TryError(err)
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		error.TryError(err)
+	}
+
+	json.Unmarshal(body, request)
+}
+
+func TLSPost(url, data string, request *interface{}) {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
+	resp, err := client.Post(url, ContextType, strings.NewReader(data))
+	if err != nil {
+		error.TryError(err)
+	}
+
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
