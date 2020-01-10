@@ -277,3 +277,19 @@ func TLSDelete(url, data string, request *interface{}, header map[string]string)
 
 	json.Unmarshal(body, request)
 }
+
+// GetFile : 获取文件
+func GetFile(url string) []byte {
+	resp, err := http.Get(url)
+	if err != nil {
+		error.TryError(err)
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		error.TryError(err)
+	}
+
+	return body
+}
