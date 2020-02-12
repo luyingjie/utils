@@ -1,0 +1,8 @@
+
+appname: webapi
+httpport: 8080
+runmode: dev
+
+istoken: true
+tokenkey: luke@yunify.com
+tokentime: 3600
