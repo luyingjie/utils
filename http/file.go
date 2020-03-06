@@ -7,7 +7,75 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	// "fmt"
+	// "strings"
+	// "github.com/dustin/go-humanize"
 )
+
+// DownloadFile : download file会将url下载到本地文件，它会在下载时写入，而不是将整个文件加载到内存中。
+// 将数据流式传输到文件中，而不必将其全部加载到内存中, 因此大量小文件比较适合。
+func DownloadFile(filepath string, url string) error {
+
+	// Get the data
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Create the file
+	out, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	// Write the body to file
+	_, err = io.Copy(out, resp.Body)
+	return err
+}
+
+// WriteCounter : 计数器
+// type WriteCounter struct {
+// 	Total uint64
+// }
+
+// func (wc *WriteCounter) Write(p []byte) (int, error) {
+// 	n := len(p)
+// 	wc.Total += uint64(n)
+// 	wc.PrintProgress()
+// 	return n, nil
+// }
+
+// func (wc WriteCounter) PrintProgress() {
+// 	fmt.Printf("\r%s", strings.Repeat(" ", 35))
+// 	fmt.Printf("\rDownloading... %s complete", humanize.Bytes(wc.Total))
+// }
+
+// // DownloadFileCount : 可以传递计数器来跟踪进度。在下载时，我们还将文件另存为临时文件，因此在完全下载文件之前，我们不会覆盖有效文件。
+// func DownloadFileCount(filepath string, url string) error {
+// 	out, err := os.Create(filepath + ".tmp")
+// 	if err != nil {
+// 		return err
+// 	}
+// 	resp, err := http.Get(url)
+// 	if err != nil {
+// 		out.Close()
+// 		return err
+// 	}
+// 	defer resp.Body.Close()
+// 	counter := &WriteCounter{}
+// 	if _, err = io.Copy(out, io.TeeReader(resp.Body, counter)); err != nil {
+// 		out.Close()
+// 		return err
+// 	}
+// 	fmt.Print("\n")
+// 	out.Close()
+// 	if err = os.Rename(filepath+".tmp", filepath); err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
 
 func UploadHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
