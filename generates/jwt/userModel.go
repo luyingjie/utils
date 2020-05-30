@@ -1,4 +1,4 @@
-package sso
+package jwt
 
 type UserModel struct {
 	UserId   int64

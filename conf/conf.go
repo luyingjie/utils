@@ -27,12 +27,21 @@ func GetConfYaml(fileName string) map[interface{}]interface{} {
 
 func GetConf(fileName string) map[string]interface{} {
 	c := make(map[string]interface{})
-	Reload("conf/" + fileName + ".json", &c)
+	Reload("conf/"+fileName+".json", &c)
 	return c
 }
 
 func GetByKey(key string) interface{} {
 	return GetConf("conf")[key]
+}
+
+func GetByKeyString(key string) map[string]string {
+	o := GetByKey(key).(map[string]interface{})
+	w := map[string]string{}
+	for k, v := range o {
+		w[k] = v.(string)
+	}
+	return w
 }
 
 func Get(fileName, key string) interface{} {
