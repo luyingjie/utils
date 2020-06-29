@@ -60,3 +60,9 @@ func TryParameterError(err error) {
 func TryParameterErrorString(err string) {
 	TryParameterError(errors.New(err))
 }
+
+func TryLog(err string) {
+	if err != "" {
+		_log.Error(err)
+	}
+}
