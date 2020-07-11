@@ -2,37 +2,193 @@ package http
 
 import (
 	"bytes"
+	"crypto/md5"
+	"encoding/base64"
+	"encoding/hex"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
-	// "fmt"
-	// "strings"
+	"path/filepath"
+	"utils/error"
 	// "github.com/dustin/go-humanize"
 )
 
+type MultipartUploadModel struct {
+	Name     string
+	FileHead *multipart.FileHeader
+	File     multipart.File
+}
+
+// func Mpupload(url string, param map[string]string, heads map[string]string, files []FileModel) string {
+
+// }
+
+// MultipartUpload : 分块上传文件
+func MultipartUpload(FileHead *multipart.FileHeader, File multipart.File) {
+	// 1. 获取文件
+	// 2. 按文件唯一ID查看是否已经上传
+	// 3. If 查询Redis是否有分块信息，
+	//    No 就是进行分块， 并写入分块信息到Redis。
+	//    Yes 就上传没有传完的部分。
+}
+
+// GetFile : 获取文件
+func GetFile(url string) []byte {
+	resp, err := http.Get(url)
+	if err != nil {
+		error.TryError(err)
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		error.TryError(err)
+	}
+
+	return body
+}
+
+// 获取目录下的文件列表
+func GetFileNameList(url string) []string {
+	// http://127.0.0.1:8081/file/get_file_list?url=201801/1
+	files, _ := ioutil.ReadDir(url)
+	fileList := make([]string, len(files))
+	for i, file := range files {
+		// if file.IsDir() {
+		//     // listFile(myfolder + "/" + file.Name())
+		//     fileList[i] = file.Name()
+		// } else {
+		//     // fmt.Println(myfolder + "/" + file.Name())
+		// }
+		fileList[i] = file.Name()
+	}
+
+	return fileList
+}
+
+// GetBase64 : 将客户端的url转成base64
+func GetBase64(url, _type string) string {
+	str := GetFile(url)
+	base64 := "data:" + _type + ";base64," + base64.StdEncoding.EncodeToString(str)
+	return base64
+}
+
+// 保存文件
+func SaveFile(url, name string, file multipart.File) {
+	newFile, err := os.Create(url + name)
+	if err != nil {
+		error.TryError(err)
+	}
+	defer newFile.Close()
+
+	_, err1 := io.Copy(newFile, file)
+	if err1 != nil {
+		error.TryError(err1)
+	}
+}
+
+// 将文件和表单发送出去, 返回服务器的返回body。 表单参数部分未测试。
+func SendFile(url string, from map[string]string, name string, file multipart.File) string {
+	bodyBuf := &bytes.Buffer{}
+	bodyWriter := multipart.NewWriter(bodyBuf)
+	// bodyWriter.CreateFormField()
+	fileWriter, err := bodyWriter.CreateFormFile("file", name)
+	if err != nil {
+		error.TryError(err)
+	}
+
+	_, err = io.Copy(fileWriter, file)
+	if err != nil {
+		error.TryError(err)
+	}
+
+	// 处理表单中的参数
+	for k, v := range from {
+		if err := bodyWriter.WriteField(k, v); err != nil {
+			error.TryError(err)
+		}
+	}
+
+	contentType := bodyWriter.FormDataContentType()
+	bodyWriter.Close()
+
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", url, bodyBuf)
+	if err != nil {
+		error.TryError(err)
+	}
+	// Add 和 Set都可以设置成功头信息
+	req.Header.Add("content-type", contentType)
+	// req.ContentLength = h.Size
+
+	resp, err := client.Do(req)
+	defer resp.Body.Close()
+
+	resp_body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		error.TryError(err)
+	}
+
+	return string(resp_body)
+}
+
 // DownloadFile : download file会将url下载到本地文件，它会在下载时写入，而不是将整个文件加载到内存中。
 // 将数据流式传输到文件中，而不必将其全部加载到内存中, 因此大文件比较适合。
-func DownloadFile(filepath string, url string) error {
-
+func DownloadFileToMem(filepath string, url string) {
 	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
-		return err
+		error.TryError(err)
 	}
 	defer resp.Body.Close()
 
 	// Create the file
 	out, err := os.Create(filepath)
 	if err != nil {
-		return err
+		error.TryError(err)
 	}
 	defer out.Close()
 
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
-	return err
+	if err != nil {
+		error.TryError(err)
+	}
+}
+
+// 添加一个文件到FromData的表单中。 未在使用中测试。
+func attachFile(bodyWriter *multipart.Writer, formname, filename string) {
+	fullname := filepath.Join(".", filename)
+	file, err := os.Open(fullname)
+	if err != nil {
+		error.TryError(err)
+	}
+	defer file.Close()
+
+	// MD5
+	md5hash := md5.New()
+	if _, err = io.Copy(md5hash, file); err != nil {
+		error.TryError(err)
+	}
+
+	keyname := filename + ".md5cksum"
+	keyvalue := hex.EncodeToString(md5hash.Sum(nil)[:16])
+	if err = attachField(bodyWriter, keyname, keyvalue); err != nil {
+		error.TryError(err)
+	}
+
+	// file
+	part, err := bodyWriter.CreateFormFile(formname, filename)
+	if err != nil {
+		error.TryError(err)
+	}
+
+	_, err = io.Copy(part, file)
+	if err != nil {
+		error.TryError(err)
+	}
 }
 
 // WriteCounter : 计数器
@@ -77,177 +233,7 @@ func DownloadFile(filepath string, url string) error {
 // 	return nil
 // }
 
-func UploadHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
-		file, head, err := r.FormFile("file")
-		if err != nil {
-			io.WriteString(w, err.Error())
-			return
-		}
-		defer file.Close()
-		newFile, err := os.Create("./file/" + head.Filename)
-		if err != nil {
-			io.WriteString(w, err.Error())
-			return
-		}
-		defer newFile.Close()
-
-		_, err1 := io.Copy(newFile, file)
-		if err1 != nil {
-			io.WriteString(w, err1.Error())
-			return
-		}
-
-		io.WriteString(w, "成功")
-
-		http.Redirect(w, r, "/file/upload", http.StatusFound)
-	}
-}
-
-func UploadPassHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
-		url := "http://192.168.181.4:8999/file/upload"
-		file, head, err := r.FormFile("file")
-		if err != nil {
-			io.WriteString(w, "1-"+err.Error())
-			return
-		}
-		defer file.Close()
-		// 将接收到的 File 类型文件转成字节流
-		// byte, err := ioutil.ReadAll(file)
-		// 将磁盘文件转成字节流
-		// byte, err := ioutil.ReadFile("./file/" + head.Filename)
-		// if err != nil {
-		// 	io.WriteString(w, err.Error())
-		// }
-		// -----------------------------------------方案 1---------------------------------------
-		//创建一个缓冲区对象,后面的要上传的body都存在这个缓冲区里
-		// bodyBuf := &bytes.Buffer{}
-		// bodyWriter := multipart.NewWriter(bodyBuf)
-
-		// //创建第一个需要上传的文件,filepath.Base获取文件的名称
-		// fileWriter, _ := bodyWriter.CreateFormFile("file", head.Filename)
-		// //打开文件
-		// // fd1, _ := os.Open(file1)
-		// // defer fd1.Close()
-		// //把第一个文件流写入到缓冲区里去
-		// _, _ = io.Copy(fileWriter, file)
-
-		// //这一句写入附加字段必须在_,_=io.Copy(fileWriter,fd)后面
-		// // if len(param) != 0 {
-		// // 	//param是一个一维的map结构
-		// // 	for k, v := range param {
-		// // 		bodyWriter.WriteField(k, v)
-		// // 	}
-		// // }
-		// //获取请求Content-Type类型,后面有用
-		// contentType := bodyWriter.FormDataContentType()
-		// bodyWriter.Close()
-		// //创建一个http客户端请求对象
-		// client := &http.Client{}
-		// //创建一个post请求
-		// req, _ := http.NewRequest("POST", url, nil)
-		// //设置请求头
-		// // req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:47.0) Gecko/20100101 Firefox/47.0")
-		// //这里的Content-Type值就是上面contentType的值
-		// req.Header.Set("Content-Type", contentType)
-		// //转换类型
-		// req.Body = ioutil.NopCloser(bodyBuf)
-		// //发送数据
-		// data, _ := client.Do(req)
-		// //读取请求返回的数据
-		// bytes, _ := ioutil.ReadAll(data.Body)
-		// defer data.Body.Close()
-		// ----------------------------------------方案 2---------------------------------------------
-
-		bodyBuf := &bytes.Buffer{}
-		bodyWriter := multipart.NewWriter(bodyBuf)
-
-		fileWriter, err := bodyWriter.CreateFormFile("file", head.Filename)
-		if err != nil {
-			io.WriteString(w, "2-"+err.Error())
-		}
-
-		_, err = io.Copy(fileWriter, file)
-		if err != nil {
-			io.WriteString(w, "3-"+err.Error())
-		}
-
-		contentType := bodyWriter.FormDataContentType()
-		bodyWriter.Close()
-
-		client := &http.Client{}
-		req, err := http.NewRequest("POST", url, bodyBuf)
-		if err != nil {
-			io.WriteString(w, "4-"+err.Error())
-		}
-		// Add 和 Set都可以设置成功头信息
-		req.Header.Add("content-type", contentType)
-		// req.ContentLength = h.Size
-
-		resp, err := client.Do(req)
-		defer resp.Body.Close()
-
-		resp_body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			io.WriteString(w, "5-"+err.Error())
-		}
-
-		// --------------------------------------------------------------------------------
-		io.WriteString(w, "ok-"+string(resp_body))
-		// http.Redirect(w, r, "/file/uploadpass", http.StatusFound)
-	}
-}
-
-// func (c *UpFileController) Upload() {
-// 	f, h, _ := c.GetFile("file")
-// 	// path := "./" + h.Filename
-// 	defer f.Close()
-// 	// f.Close()
-
-// 	c.SaveToFile("file", h.Filename)
-// 	// h.content
-// 	User := c.GetString("User")
-// 	Key := c.GetString("Key")
-// 	TaskId := c.GetString("TaskId")
-// 	// fmt.Println(User)
-// 	// fmt.Println(Key)
-// 	url := operation.GetConf("FileServerUrl") + "upload/"
-// 	b := httplib.Post(url)
-// 	if TaskId != "" {
-// 		b.Param("task_id", TaskId)
-// 	}
-
-// 	b.Header("Access-Key", Key)
-// 	b.Header("User-Id", User)
-// 	// b.Header("Content-Type", "multipart/form-data; boundary=asadadaddada")
-
-// 	b.PostFile("file", h.Filename)
-// 	// bt,err:=ioutil.ReadFile(h.Filename)
-// 	// if err!=nil{
-// 	//     fmt.Println("error 1")
-// 	// }
-// 	// bt,err:=ioutil.ReadAll(f)
-// 	// if err!=nil{
-// 	// }
-// 	// defer func() {
-// 	// 	os.Remove(h.Filename)
-// 	// }()
-
-// 	// b.Body(bt)
-// 	var returnObj interface{}
-// 	b.ToJSON(&returnObj)
-// 	// str, err := b.String()
-// 	// if err != nil {
-// 	//     fmt.Println(err)
-// 	// }
-
-// 	c.Data["json"] = &returnObj
-
-// 	c.ServeJSON()
-// }
-
-// // 文件得几个api这边服务没有做过多得控制，主要是前端保证正确性。
+// 获取文件，直接显示在浏览器中打开
 // func (c *GetFileController) Get() {
 // 	// http://127.0.0.1:8081/file/get_file?Year=2018&Month=01&BU=1&Name=test华创云平台资源服务明细账单-虚拟机维度.pdf
 // 	year := c.GetString("year")
@@ -270,6 +256,7 @@ func UploadPassHandler(w http.ResponseWriter, r *http.Request) {
 // 	c.Ctx.WriteString(string(file))
 // }
 
+// 获取文件，直接获取下载的流，用于下载文件。
 // func (c *DownFileController) Get() {
 // 	// http://127.0.0.1:8081/file/get_file?Year=2018&Month=01&BU=1&Name=test华创云平台资源服务明细账单-虚拟机维度.pdf
 // 	year := c.GetString("year")
@@ -289,145 +276,3 @@ func UploadPassHandler(w http.ResponseWriter, r *http.Request) {
 // 	c.Ctx.Output.Download(url, name)
 // 	// c.Redirect("/static/img/logo.png",302)
 // }
-
-// func (c *GetFileListController) Get() {
-// 	// http://127.0.0.1:8081/file/get_file_list?url=201801/1
-// 	url := c.GetString("url")
-// 	url = operation.GetConf("HistoryReport") + url
-// 	files, _ := ioutil.ReadDir(url)
-// 	fileList := make([]string, len(files))
-// 	for i, file := range files {
-// 		// if file.IsDir() {
-// 		//     // listFile(myfolder + "/" + file.Name())
-// 		//     fileList[i] = file.Name()
-// 		// } else {
-// 		//     // fmt.Println(myfolder + "/" + file.Name())
-// 		// }
-// 		fileList[i] = file.Name()
-// 	}
-
-// 	c.Data["json"] = fileList
-// 	c.ServeJSON()
-// }
-
-// 服务器转发和处理客户端请求的移植
-// func UploadHandler(w http.ResponseWriter, r *http.Request) {
-// 	if r.Method == "POST" {
-// 		file, head, err := r.FormFile("file")
-// 		if err != nil {
-// 			io.WriteString(w, err.Error())
-// 			return
-// 		}
-// 		defer file.Close()
-// 		newFile, err := os.Create("./file/" + head.Filename)
-// 		if err != nil {
-// 			io.WriteString(w, err.Error())
-// 			return
-// 		}
-// 		defer newFile.Close()
-
-// 		_, err1 := io.Copy(newFile, file)
-// 		if err1 != nil {
-// 			io.WriteString(w, err1.Error())
-// 			return
-// 		}
-
-// 		io.WriteString(w, "成功")
-
-// 		http.Redirect(w, r, "/file/upload", http.StatusFound)
-// 	}
-// }
-
-// func UploadPassHandler(w http.ResponseWriter, r *http.Request) {
-// 	if r.Method == "POST" {
-// 		url := "http://192.168.181.4:8999/file/upload"
-// 		file, head, err := r.FormFile("file")
-// 		if err != nil {
-// 			io.WriteString(w, "1-"+err.Error())
-// 			return
-// 		}
-// 		defer file.Close()
-// 		// 将接收到的 File 类型文件转成字节流
-// 		// byte, err := ioutil.ReadAll(file)
-// 		// 将磁盘文件转成字节流
-// 		// byte, err := ioutil.ReadFile("./file/" + head.Filename)
-// 		// if err != nil {
-// 		// 	io.WriteString(w, err.Error())
-// 		// }
-// 		// -----------------------------------------方案 1---------------------------------------
-// 		//创建一个缓冲区对象,后面的要上传的body都存在这个缓冲区里
-// 		// bodyBuf := &bytes.Buffer{}
-// 		// bodyWriter := multipart.NewWriter(bodyBuf)
-
-// 		// //创建第一个需要上传的文件,filepath.Base获取文件的名称
-// 		// fileWriter, _ := bodyWriter.CreateFormFile("file", head.Filename)
-// 		// //打开文件
-// 		// // fd1, _ := os.Open(file1)
-// 		// // defer fd1.Close()
-// 		// //把第一个文件流写入到缓冲区里去
-// 		// _, _ = io.Copy(fileWriter, file)
-
-// 		// //这一句写入附加字段必须在_,_=io.Copy(fileWriter,fd)后面
-// 		// // if len(param) != 0 {
-// 		// // 	//param是一个一维的map结构
-// 		// // 	for k, v := range param {
-// 		// // 		bodyWriter.WriteField(k, v)
-// 		// // 	}
-// 		// // }
-// 		// //获取请求Content-Type类型,后面有用
-// 		// contentType := bodyWriter.FormDataContentType()
-// 		// bodyWriter.Close()
-// 		// //创建一个http客户端请求对象
-// 		// client := &http.Client{}
-// 		// //创建一个post请求
-// 		// req, _ := http.NewRequest("POST", url, nil)
-// 		// //设置请求头
-// 		// // req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:47.0) Gecko/20100101 Firefox/47.0")
-// 		// //这里的Content-Type值就是上面contentType的值
-// 		// req.Header.Set("Content-Type", contentType)
-// 		// //转换类型
-// 		// req.Body = ioutil.NopCloser(bodyBuf)
-// 		// //发送数据
-// 		// data, _ := client.Do(req)
-// 		// //读取请求返回的数据
-// 		// bytes, _ := ioutil.ReadAll(data.Body)
-// 		// defer data.Body.Close()
-// 		// ----------------------------------------方案 2---------------------------------------------
-
-// 		bodyBuf := &bytes.Buffer{}
-// 		bodyWriter := multipart.NewWriter(bodyBuf)
-
-// 		fileWriter, err := bodyWriter.CreateFormFile("file", head.Filename)
-// 		if err != nil {
-// 			io.WriteString(w, "2-"+err.Error())
-// 		}
-
-// 		_, err = io.Copy(fileWriter, file)
-// 		if err != nil {
-// 			io.WriteString(w, "3-"+err.Error())
-// 		}
-
-// 		contentType := bodyWriter.FormDataContentType()
-// 		bodyWriter.Close()
-
-// 		client := &http.Client{}
-// 		req, err := http.NewRequest("POST", url, bodyBuf)
-// 		if err != nil {
-// 			io.WriteString(w, "4-"+err.Error())
-// 		}
-// 		// Add 和 Set都可以设置成功头信息
-// 		req.Header.Add("content-type", contentType)
-// 		// req.ContentLength = h.Size
-
-// 		resp, err := client.Do(req)
-// 		defer resp.Body.Close()
-
-// 		resp_body, err := ioutil.ReadAll(resp.Body)
-// 		if err != nil {
-// 			io.WriteString(w, "5-"+err.Error())
-// 		}
-
-// 		// --------------------------------------------------------------------------------
-// 		io.WriteString(w, "ok-"+string(resp_body))
-// 		// http.Redirect(w, r, "/file/uploadpass", http.StatusFound)
-// 	}
