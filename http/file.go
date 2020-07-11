@@ -2,15 +2,12 @@ package http
 
 import (
 	"bytes"
-	"crypto/md5"
 	"encoding/base64"
-	"encoding/hex"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
-	"path/filepath"
 	"utils/error"
 	// "github.com/dustin/go-humanize"
 )
@@ -153,39 +150,6 @@ func DownloadFileToMem(filepath string, url string) {
 
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		error.TryError(err)
-	}
-}
-
-// 添加一个文件到FromData的表单中。 未在使用中测试。
-func attachFile(bodyWriter *multipart.Writer, formname, filename string) {
-	fullname := filepath.Join(".", filename)
-	file, err := os.Open(fullname)
-	if err != nil {
-		error.TryError(err)
-	}
-	defer file.Close()
-
-	// MD5
-	md5hash := md5.New()
-	if _, err = io.Copy(md5hash, file); err != nil {
-		error.TryError(err)
-	}
-
-	keyname := filename + ".md5cksum"
-	keyvalue := hex.EncodeToString(md5hash.Sum(nil)[:16])
-	if err = attachField(bodyWriter, keyname, keyvalue); err != nil {
-		error.TryError(err)
-	}
-
-	// file
-	part, err := bodyWriter.CreateFormFile(formname, filename)
-	if err != nil {
-		error.TryError(err)
-	}
-
-	_, err = io.Copy(part, file)
 	if err != nil {
 		error.TryError(err)
 	}
