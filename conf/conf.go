@@ -3,8 +3,8 @@ package conf
 import (
 	"encoding/json"
 	"io/ioutil"
-	"utils/base"
-	"utils/error"
+	myerr "utils/error"
+	"utils/http"
 
 	"gopkg.in/yaml.v2"
 )
@@ -16,11 +16,11 @@ func GetConfYaml(fileName string) map[interface{}]interface{} {
 	c := make(map[interface{}]interface{})
 	yamlFile, err := ioutil.ReadFile("conf/" + fileName + ".yaml")
 	if err != nil {
-		error.TryError(err)
+		myerr.TryError(err)
 	}
 	err = yaml.Unmarshal(yamlFile, &c)
 	if err != nil {
-		error.TryError(err)
+		myerr.TryError(err)
 	}
 	return c
 }
@@ -58,7 +58,7 @@ func GetYaml(fileName, key string) interface{} {
 
 //读取用户的配置文件
 func Reload(ConfFilePath string, mod interface{}) {
-	if confFileExists, _ := base.PathExists(ConfFilePath); confFileExists != true {
+	if confFileExists := http.PathExists(ConfFilePath); confFileExists != true {
 		return
 	}
 

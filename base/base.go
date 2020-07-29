@@ -2,7 +2,6 @@ package base
 
 import (
 	"encoding/base64"
-	"os"
 	"strings"
 )
 
@@ -84,16 +83,4 @@ func ToMD5(s string) string {
 	decoded, _ := base64.URLEncoding.DecodeString(s)
 
 	return string(decoded)
-}
-
-//判断一个文件是否存在
-func PathExists(path string) (bool, error) {
-	_, err := os.Stat(path)
-	if err == nil {
-		return true, nil
-	}
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-	return false, err
 }
