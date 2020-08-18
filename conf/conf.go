@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	myerr "utils/error"
-	"utils/http"
+	"utils/net/http"
 
 	"gopkg.in/yaml.v2"
 )
