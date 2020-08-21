@@ -12,6 +12,8 @@ import (
 
 // Job : 定义一个任务
 type Job func([]interface{})
+
+// taskWork : 任务结构体
 type taskWork struct {
 	Run       Job
 	startBool bool
@@ -22,7 +24,7 @@ var WorkMaxTask int
 var WorkTaskPool chan taskWork
 var WorkTaskReturn chan []interface{}
 
-//启动任务
+// start : 启动任务
 func (t *taskWork) start() {
 	go func() {
 		for {
