@@ -20,8 +20,13 @@ type taskWork struct {
 	params    []interface{}
 }
 
+// WorkMaxTask : 最大任务
 var WorkMaxTask int
+
+// WorkTaskPool : 任务池
 var WorkTaskPool chan taskWork
+
+// WorkTaskReturn : 返回值
 var WorkTaskReturn chan []interface{}
 
 // start : 启动任务
@@ -47,13 +52,14 @@ func (t *taskWork) stop() {
 	fmt.Println("t stop ")
 	t.startBool = false
 }
+
 func createTask() taskWork {
 	var funcJob Job
 	var paramSlice []interface{}
 	return taskWork{funcJob, true, paramSlice}
 }
 
-//循环启动协程池
+// StartPool : 循环启动协程池
 func StartPool(maxTask int) {
 	WorkMaxTask = maxTask
 	WorkTaskPool = make(chan taskWork, maxTask)
