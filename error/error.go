@@ -48,7 +48,7 @@ func Try(code, leve int, model string, err error) {
 		Error: err,
 	}
 
-	go Log(errModel)
+	go writing(errModel)
 	panic(errModel)
 }
 
@@ -61,14 +61,24 @@ func Trys(code, leve int, model, str string) {
 		Error: errors.New(str),
 	}
 
-	go Log(errModel)
+	go writing(errModel)
 	panic(errModel)
 }
 
 // Log : 写入日志
+func Log(code, leve int, model string, err error) {
+	errModel := ErrorModel{
+		Code:  code,
+		Leve:  leve,
+		Model: model,
+		Error: err,
+	}
+
+	go writing(errModel)
+}
+
 // Leve : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
-func Log(err ErrorModel) {
-	// CloseDebug()
+func writing(err ErrorModel) {
 	_log.SetPrefix(string(err.Code) + ":" + err.Model)
 
 	switch err.Leve {
