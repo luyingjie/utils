@@ -17,7 +17,7 @@ import (
 // 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
 type ErrorModel struct {
 	Code  int
-	Leve  int
+	Level int
 	Model string
 	Error error
 }
@@ -46,11 +46,11 @@ func CloseDebug() {
 	_log.CloseDebug()
 }
 
-// Try : 处理异常
-func Try(code, leve int, model string, err error) {
+// Try : 处理异常。Leve : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
+func Try(code, level int, model string, err error) {
 	errModel := ErrorModel{
 		Code:  code,
-		Leve:  leve,
+		Level: level,
 		Model: model,
 		Error: err,
 	}
@@ -59,11 +59,11 @@ func Try(code, leve int, model string, err error) {
 	panic(errModel)
 }
 
-// Trys : 处理string的异常
-func Trys(code, leve int, model, str string) {
+// Trys : 处理string的异常。Level : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
+func Trys(code, level int, model, str string) {
 	errModel := ErrorModel{
 		Code:  code,
-		Leve:  leve,
+		Level: level,
 		Model: model,
 		Error: errors.New(str),
 	}
@@ -73,10 +73,10 @@ func Trys(code, leve int, model, str string) {
 }
 
 // Log : 写入日志
-func Log(code, leve int, model string, err error) {
+func Log(code, level int, model string, err error) {
 	errModel := ErrorModel{
 		Code:  code,
-		Leve:  leve,
+		Level: level,
 		Model: model,
 		Error: err,
 	}
@@ -84,11 +84,10 @@ func Log(code, leve int, model string, err error) {
 	go writing(errModel)
 }
 
-// Leve : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
 func writing(err ErrorModel) {
 	_log.SetPrefix(string(err.Code) + ":" + err.Model)
 
-	switch err.Leve {
+	switch err.Level {
 	case 0:
 		_log.Debug(err.Error)
 	case 1:

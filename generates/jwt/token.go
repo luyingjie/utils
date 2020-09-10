@@ -18,7 +18,7 @@ func GenToken(userModel *UserModel) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 	tokens, err := token.SignedString([]byte(conf.GetByKey("tokenkey").(string)))
 	if err != nil {
-		myerror.TryError(err)
+		myerror.Try(4000, 3, "utils/generate/jwt/token/GenToken/SignedString", err)
 	}
 	return tokens
 }
@@ -37,15 +37,15 @@ func CheckToken(tokenss string) UserModel {
 	_user := new(UserModel)
 	token, err := jwt.Parse(tokenss, secret())
 	if err != nil {
-		myerror.TryError(err)
+		myerror.Try(4000, 3, "utils/generate/jwt/token/CheckToken/Parse", err)
 	}
 	claim, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		myerror.TryErrorString("无法转换令牌")
+		myerror.Trys(4000, 3, "utils/generate/jwt/token/CheckToken/Claims", "无法转换令牌")
 	}
 	//验证token，如果token被修改过则为false
 	if !token.Valid {
-		myerror.TryErrorString("令牌无效")
+		myerror.Trys(4000, 3, "utils/generate/jwt/token/CheckToken/Valid", "令牌无效")
 	}
 
 	_user.UserKey = claim["key"].(string)
@@ -59,13 +59,13 @@ func Token(userModel *UserModel) map[string]interface{} {
 	// 现在用户数据不在DB中，先用配置文件临时存放
 	var userStore map[interface{}]interface{}
 	if v := conf.Get("user", userModel.UserKey); v == nil {
-		myerror.TryParameterErrorString("找不到用户对应信息！")
+		myerror.Trys(4000, 3, "utils/generate/jwt/token/Token/Get", "找不到用户对应信息")
 	} else {
 		userStore = v.(map[interface{}]interface{})
 	}
 
 	if userStore["PassWord"].(string) != userModel.PassWord {
-		myerror.TryParameterErrorString("用户或者密码错误！")
+		myerror.Trys(4000, 3, "utils/generate/jwt/token/Token", "用户或者密码错误")
 	}
 
 	// 填充用户模型，后面可能要放到缓存中。

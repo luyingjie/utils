@@ -26,7 +26,7 @@ func clientHandle(conn *net.UDPConn, size int, f func(data string)) {
 	// _, udpaddr, err := conn.ReadFromUDP(buf);
 	_, _, err := conn.ReadFromUDP(buf)
 	if err != nil {
-		error.TryError(err)
+		error.Try(2000, 3, "utils/net/udp/server/clientHandle/ReadFromUDP", err)
 		return
 	}
 	//输出接收到的值
@@ -46,10 +46,10 @@ func clientHandle(conn *net.UDPConn, size int, f func(data string)) {
 //需要错误判断和停止监听的容错处理。
 func RunServer(udpType, udpURL string, size int, f func(data string)) {
 	udpaddr, err := net.ResolveUDPAddr(udpType, udpURL)
-	error.TryError(err)
+	error.Try(2000, 3, "utils/net/udp/server/RunServer/ResolveUDPAddr", err)
 	//监听端口
 	udpconn, err2 := net.ListenUDP("udp", udpaddr)
-	error.TryError(err2)
+	error.Try(2000, 3, "utils/net/udp/server/RunServer/ListenUDP", err2)
 	// defer udpconn.Close()
 	//udp没有对客户端连接的Accept函数
 	for {
