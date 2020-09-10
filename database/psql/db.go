@@ -24,7 +24,7 @@ func OpenDB(driver, host, port, username, dbname, password, ssl, modeType string
 
 	DB, err = gorm.Open(driver, "host="+host+" port="+port+" user="+username+" dbname="+dbname+" password="+password+" sslmode="+ssl)
 	if err != nil {
-		myerr.TryError(err)
+		myerr.Try(2000, 3, "utils/database/psql/db/OpenDB/Open", err)
 	}
 	DB.DB().SetMaxIdleConns(10)
 	DB.DB().SetMaxOpenConns(100)

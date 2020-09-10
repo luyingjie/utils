@@ -34,7 +34,7 @@ import (
 func MapToString(data map[string]string) string {
 	str, err := json.Marshal(data)
 	if err != nil {
-		error.TryError(err)
+		error.Try(5000, 3, "utils/convert/jsonConvert/MapToString/Marshal", err)
 	}
 	return string(str)
 }
