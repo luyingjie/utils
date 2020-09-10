@@ -7,6 +7,13 @@ import (
 	"utils/log"
 )
 
+// 错误码大类
+// 5000		系统错误
+// 4000		权限等错误
+// 3000		资源错误
+// 2000		连接错误
+// 1000		参数错误
+
 // 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
 type ErrorModel struct {
 	Code  int

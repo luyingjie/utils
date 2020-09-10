@@ -10,7 +10,7 @@ import (
 func connect(url string) redis.Conn {
 	c, err := redis.Dial("tcp", url)
 	if err != nil {
-		error.TryError(err)
+		error.Try(2000, 3, "utils/database/redis/redis/connect/Dial", err)
 	}
 	return c
 	// defer c.Close()
