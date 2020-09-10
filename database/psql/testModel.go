@@ -1,6 +1,9 @@
 package psql
 
-import "time"
+import (
+	"sync"
+	"time"
+)
 
 type Account struct {
 	ID             string         `gorm:"column:id;type:varchar;PRIMARY_KEY "form:"id" json:"id"`
@@ -195,13 +198,17 @@ func (o *Account) SelectListByStatus(useStatus string) (account []Account) {
 }
 
 /*
-SelectList 查询列表
+SelectList 查询列表  修改问以部查询 时间 560ms
 */
-func (o *Account) SelectList(limit, offset int) (os []Account, count int) {
+func (o *Account) SelectList(GroupNil string, limit, offset int) (os []Account, count int) {
 	db := DB
 	os = make([]Account, 0)
-	sql := "from t_account "
-	// 这里处理查询项比较粗暴，要是有其他的添加的查询项就修改掉。
+	countStr := ""
+	selectStr := ""
+	sql := ` from t_account
+		left join t_account_to_group on t_account.id = t_account_to_group.account_id
+	`
+
 	if o.Name != "" || o.Mail != "" || o.Phone != "" {
 		sql = sql + " where "
 	}
@@ -223,9 +230,96 @@ func (o *Account) SelectList(limit, offset int) (os []Account, count int) {
 		}
 	}
 
-	db.Raw("select count(*) " + sql).Count(&count)
-	db.Raw("select * " + sql).Limit(limit).Offset(offset).Scan(&os)
+	sql += " group by t_account.id "
+
+	if GroupNil != "" {
+		sql += " having string_agg(t_account_to_group.group_id, ',') "
+		if GroupNil == "0" {
+			sql += " is null "
+		}
+		if GroupNil == "1" {
+			sql += " is not null "
+		}
+	}
+
+	sql += " order by t_account.create_time desc "
+
+	countStr = "select count(1) from (select count(1) " + sql + ") as tv"
+	selectStr = "select t_account.* " + sql
+
+	db.Raw(countStr).Count(&count)
+	db.Raw(selectStr).Limit(limit).Offset(offset).Scan(&os)
 	// db.Where(o).Limit(limit).Offset(offset).Scan(&os)
+	// 设置一个等待组
+	var wg sync.WaitGroup
+	if GroupNil != "0" {
+		wg.Add(2 * len(os))
+		go func(sql string) {
+			// 处理关联
+			var group []AccountGroup
+			// select * from 表名 where id in (1,2,5)
+			sql = `
+				select t_account_group.*, t_account.id as account_id from t_account
+				inner join t_account_to_group on t_account.id = t_account_to_group.account_id
+				inner join t_account_group on t_account_group.id = t_account_to_group.group_id
+				where t_account.id in (
+			`
+			for i, v := range os {
+				if i == 0 {
+					sql += " '" + v.ID + "' "
+				} else {
+					sql += ", '" + v.ID + "' "
+				}
+			}
+
+			sql += " )"
+			db.Raw(sql).Scan(&group)
+
+			for i := range os {
+				go func(_i int) {
+					for _, v1 := range group {
+						if v1.AccountID == os[_i].ID {
+							os[_i].Groups = append(os[_i].Groups, v1)
+						}
+					}
+					defer wg.Done()
+				}(i)
+			}
+		}(sql)
+	} else {
+		wg.Add(len(os))
+	}
+
+	var org []Org
+	sql = `
+		select t_organization.*, t_account.id as account_id from t_account
+		inner join t_account_to_org on t_account.id = t_account_to_org.account_id
+		inner join t_organization on t_organization.id = t_account_to_org.org_id
+		where t_account.id in (
+	`
+	for i, v := range os {
+		if i == 0 {
+			sql += " '" + v.ID + "' "
+		} else {
+			sql += ", '" + v.ID + "' "
+		}
+	}
+
+	sql += " )"
+	db.Raw(sql).Scan(&org)
+
+	for i := range os {
+		go func(_i int) {
+			for _, v1 := range org {
+				if v1.AccountID == os[_i].ID {
+					os[_i].Orgs = append(os[_i].Orgs, v1)
+				}
+			}
+			defer wg.Done()
+		}(i)
+	}
+
+	wg.Wait()
 	return
 }
 

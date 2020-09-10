@@ -98,7 +98,7 @@ func (o *App) SelectList(limit, offset int) (os []App, count int) {
 	}
 
 	db.Raw("select count(*) " + sql).Count(&count)
-	db.Raw("select * " + sql).Limit(limit).Offset(offset).Scan(&os)
+	db.Raw("select * " + sql + " order by t_app.create_time desc").Limit(limit).Offset(offset).Scan(&os)
 	return
 }
 
@@ -158,7 +158,7 @@ func (o *App) SelectByID() (p App) {
 func (o *App) SelectAccountCollection(accountID string, limit, offset int) (os []App, count int) {
 	db := DB
 	os = make([]App, 0)
-	sql := `from t_account 
+	sql := `from t_account
 			inner join t_collection on t_collection.account_id = t_account.id
 			right join t_app on t_app.id = t_collection.app_id
 			where t_account.id=? `
@@ -171,7 +171,7 @@ func (o *App) SelectAccountCollection(accountID string, limit, offset int) (os [
 	}
 
 	db.Raw("select count(t_app.*) "+sql, accountID).Count(&count)
-	db.Raw("select t_app.* "+sql+"order by t_app.name", accountID).Limit(limit).Offset(offset).Scan(&os)
+	db.Raw("select t_app.* "+sql+" order by t_app.name", accountID).Limit(limit).Offset(offset).Scan(&os)
 	return
 }
 
@@ -179,7 +179,7 @@ func (o *App) SelectAccountCollection(accountID string, limit, offset int) (os [
 func (o *App) SelectAccountApp(accountID string, limit, offset int) (os []App, count int) {
 	db := DB
 	os = make([]App, 0)
-	sql := `from t_account 
+	sql := `from t_account
 			inner join t_account_to_group on t_account_to_group.account_id = t_account.id
 			inner join t_app_to_group on t_app_to_group.group_id = t_account_to_group.group_id
 			inner join t_app on t_app.id = t_app_to_group.app_id
@@ -189,13 +189,15 @@ func (o *App) SelectAccountApp(accountID string, limit, offset int) (os []App, c
 		sql = sql + "and t_app.name LIKE '%" + o.Name + "%' "
 	}
 	if o.Type != "" {
-		sql = sql + " and t_app.type LIKE '%" + o.Type + "%' "
+		// 按类型得模糊查询会让按type分类得时候出现重复
+		// sql = sql + " and t_app.type LIKE '%" + o.Type + "%' "
+		sql += " and t_app.type = '" + o.Type + "'"
 	}
 
 	// db.Raw("select count(t_app.*) "+sql, accountID).Count(&count)
 	// db.Raw("select t_app.* "+sql, accountID).Limit(limit).Offset(offset).Scan(&os)
 	db.Raw("select count(distinct t_app.*) "+sql, accountID).Count(&count)
-	db.Raw("select distinct t_app.* "+sql+"order by t_app.name", accountID).Limit(limit).Offset(offset).Scan(&os)
+	db.Raw("select distinct t_app.* "+sql+" order by t_app.name", accountID).Limit(limit).Offset(offset).Scan(&os)
 	return
 }
 
@@ -241,13 +243,13 @@ func (o *App) SelectByGroupID(groupID string, limit, offset int) (os []App, coun
 			where t_app_to_group.group_id = ? `
 
 	if o.Name != "" {
-		sql = sql + "and t_app.name LIKE '%" + o.Name + "%' "
+		sql = sql + " and t_app.name LIKE '%" + o.Name + "%' "
 	}
 	if o.Type != "" {
 		sql = sql + " and t_app.type LIKE '%" + o.Type + "%' "
 	}
 
 	db.Raw("select count(t_app.*) "+sql, groupID).Count(&count)
-	db.Raw("select t_app.* "+sql+"order by t_app.name", groupID).Limit(limit).Offset(offset).Scan(&os)
+	db.Raw("select t_app.* "+sql+" order by t_app.name", groupID).Limit(limit).Offset(offset).Scan(&os)
 	return
 }

@@ -10,10 +10,11 @@ func TestLog(t *testing.T) {
 	_log.ResetFlags(log.BitDate | log.BitLongFile | log.BitLevel)
 
 	//设置日志前缀，主要标记当前日志模块
-	// _log.SetPrefix("MODULE")
+	_log.SetPrefix("1200:MODULE")
 
 	//添加标记位
 	_log.AddFlag(log.BitShortFile | log.BitTime)
+
 	// _log.Stack(" vic Stack! ")
 
 	//设置日志写入文件

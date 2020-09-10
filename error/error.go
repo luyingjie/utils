@@ -7,6 +7,14 @@ import (
 	"utils/log"
 )
 
+// 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
+type ErrorModel struct {
+	Code  int
+	Leve  int
+	Model string
+	Error error
+}
+
 var _log *log.Logger
 
 func init() {
@@ -15,54 +23,62 @@ func init() {
 
 	//添加标记位
 	_log.AddFlag(log.BitShortFile | log.BitTime)
-	// _log.Stack(" vic Stack! ")
 
 	//设置日志写入文件
 	fileTime := time.Now().Format("2006-01-02")
 	_log.SetLogFile("./logs/system", fileTime+".log")
 }
 
-func TryWarning(err error) {
-	if err != nil {
-		_log.Warn(err)
-		panic(err)
+// OpenDebug : 打开Debug调试
+func OpenDebug() {
+	_log.OpenDebug()
+}
+
+// CloseDebug : 关闭Debug调试
+func CloseDebug() {
+	_log.CloseDebug()
+}
+
+// Try : 处理异常
+func Try(code, leve int, model string, err error) {
+	errModel := ErrorModel{
+		Code:  code,
+		Leve:  leve,
+		Model: model,
+		Error: err,
 	}
+
+	go Log(errModel)
+	panic(errModel)
 }
 
-func TryWarningString(err string) {
-	if err != "" {
-		TryWarning(errors.New(err))
+// Trys : 处理string的异常
+func Trys(code, leve int, model, str string) {
+	errModel := ErrorModel{
+		Code:  code,
+		Leve:  leve,
+		Model: model,
+		Error: errors.New(str),
 	}
+
+	go Log(errModel)
+	panic(errModel)
 }
 
-//统一处理报错
-func TryError(err error) {
-	if err != nil {
-		_log.Error(err)
-		panic(err)
-	}
-}
+// Log : 写入日志
+// Leve : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
+func Log(err ErrorModel) {
+	// CloseDebug()
+	_log.SetPrefix(string(err.Code) + ":" + err.Model)
 
-func TryErrorString(err string) {
-	if err != "" {
-		TryError(errors.New(err))
-	}
-}
-
-// 参数错误可以直接传入模型和key，自动分类和返回相对字段文本。
-func TryParameterError(err error) {
-	if err != nil {
-		_log.Warn(err)
-		panic(err)
-	}
-}
-
-func TryParameterErrorString(err string) {
-	TryParameterError(errors.New(err))
-}
-
-func TryLog(err string) {
-	if err != "" {
-		_log.Error(err)
+	switch err.Leve {
+	case 0:
+		_log.Debug(err.Error)
+	case 1:
+		_log.Info(err.Error)
+	case 2:
+		_log.Warn(err.Error)
+	case 3:
+		_log.Error(err.Error)
 	}
 }
