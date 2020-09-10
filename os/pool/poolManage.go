@@ -10,6 +10,7 @@ const (
 	workerNumDefault = 20
 )
 
+// WorkPool : 线程池结构体
 type WorkPool struct {
 	taskPool   chan taskWork
 	workNum    int
@@ -20,7 +21,7 @@ type WorkPool struct {
 	taskQue chan taskWork
 }
 
-//得到一个线程池并返回 句柄
+// InitPool : 得到一个线程池并返回 句柄
 func (p *WorkPool) InitPool() {
 	*p = WorkPool{defaultNum: workerNumDefault,
 		maxNum: workerNumMax, stopTopic: false,

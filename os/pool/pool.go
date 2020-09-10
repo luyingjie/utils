@@ -48,11 +48,13 @@ func (t *taskWork) start() {
 	}()
 }
 
+// stop : 停止任务
 func (t *taskWork) stop() {
 	fmt.Println("t stop ")
 	t.startBool = false
 }
 
+// createTask : 创建任务
 func createTask() taskWork {
 	var funcJob Job
 	var paramSlice []interface{}
@@ -72,12 +74,12 @@ func StartPool(maxTask int) {
 	}
 }
 
-//消费任务
+// Dispatch : 消费任务
 func Dispatch(funcJob Job, params ...interface{}) {
 	WorkTaskPool <- taskWork{funcJob, true, params}
 }
 
-//停止协程池
+// StopPool : 停止协程池
 func StopPool() {
 	var funcJob Job
 	var paramSlice []interface{}
