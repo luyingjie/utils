@@ -86,7 +86,7 @@ func Try(code, level int, err error) {
 }
 
 // Trys : 处理string的异常。Level : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
-func Trys(code, level int, str string) {
+func TryText(code, level int, str string) {
 	errModel := ErrorModel{
 		Code:  code,
 		Level: level,
@@ -96,6 +96,32 @@ func Trys(code, level int, str string) {
 
 	writing(errModel)
 	panic(errModel)
+}
+
+// Error : 处理异常。Leve : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
+func Error(code, level int, err error) ErrorModel {
+	errModel := ErrorModel{
+		Code:  code,
+		Level: level,
+		// Model: model,
+		Error: base.Wrap(err, ""),
+	}
+
+	writing(errModel)
+	return errModel
+}
+
+// ErrorText : 处理string的异常。Level : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
+func ErrorText(code, level int, str string) ErrorModel {
+	errModel := ErrorModel{
+		Code:  code,
+		Level: level,
+		// Model: model,
+		Error: base.New(str),
+	}
+
+	writing(errModel)
+	return errModel
 }
 
 // Log : 写入日志
