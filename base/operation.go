@@ -1,3 +1,6 @@
+//
+// 废弃方法，逐步移除掉。
+
 package base
 
 import (

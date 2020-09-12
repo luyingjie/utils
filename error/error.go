@@ -10,6 +10,8 @@ import (
 	"github.com/gogf/gf/errors/gerror"
 )
 
+// 错误部分直接采用了gf的错误处理，因为gf的错误处理有详细的堆栈信息。参考：https://goframe.org/errors/gerror/index
+
 // 错误码大类
 // 5000		系统错误
 // 4000		权限等错误
