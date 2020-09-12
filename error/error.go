@@ -7,7 +7,7 @@ import (
 
 	"utils/log"
 
-	"github.com/gogf/gf/errors/gerror"
+	"utils/error/base"
 )
 
 // 错误部分直接采用了gf的错误处理，因为gf的错误处理有详细的堆栈信息。参考：https://goframe.org/errors/gerror/index
@@ -78,7 +78,7 @@ func Try(code, level int, err error) {
 		Code:  code,
 		Level: level,
 		// Model: model,
-		Error: gerror.Wrap(err, ""),
+		Error: base.Wrap(err, ""),
 	}
 
 	writing(errModel)
@@ -91,7 +91,7 @@ func Trys(code, level int, str string) {
 		Code:  code,
 		Level: level,
 		// Model: model,
-		Error: gerror.New(str),
+		Error: base.New(str),
 	}
 
 	writing(errModel)
@@ -104,7 +104,7 @@ func Log(code, level int, err error) {
 		Code:  code,
 		Level: level,
 		// Model: model,
-		Error: gerror.Wrap(err, ""),
+		Error: base.Wrap(err, ""),
 	}
 
 	writing(errModel)
