@@ -16,11 +16,11 @@ func GetConfYaml(fileName string) map[interface{}]interface{} {
 	c := make(map[interface{}]interface{})
 	yamlFile, err := ioutil.ReadFile("conf/" + fileName + ".yaml")
 	if err != nil {
-		myerr.Try(3000, 3, "utils/conf/conf/GetConfYaml/ReadFile", err)
+		myerr.Try(3000, 3, err)
 	}
 	err = yaml.Unmarshal(yamlFile, &c)
 	if err != nil {
-		myerr.Try(3000, 3, "utils/conf/conf/GetConfYaml/Unmarshal", err)
+		myerr.Try(3000, 3, err)
 	}
 	return c
 }

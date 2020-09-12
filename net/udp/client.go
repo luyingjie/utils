@@ -12,13 +12,13 @@ import (
 func RunClient(udpType, udpURL, data string) {
 	//获取udpaddr
 	udpaddr, err := net.ResolveUDPAddr(udpType, udpURL)
-	error.Try(2000, 3, "utils/net/udp/client/RunClient/ResolveUDPAddr", err)
+	error.Try(2000, 3, err)
 	//连接，返回udpconn
 	udpconn, err2 := net.DialUDP("udp", nil, udpaddr)
-	error.Try(2000, 3, "utils/net/udp/client/RunClient/DialUDP", err2)
+	error.Try(2000, 3, err2)
 	//写入数据
 	_, err3 := udpconn.Write([]byte(data))
-	error.Try(5000, 3, "utils/net/udp/client/RunClient/Write", err3)
+	error.Try(5000, 3, err3)
 	//udp 貌似不等待返回结果会直接关闭连接，如果等不到返回结果会阻塞。
 	// defer udpconn.Close()
 	// buf := make([]byte, 256);

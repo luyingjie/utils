@@ -15,7 +15,7 @@ const ContextType string = "application/json;charset=utf-8"
 func Post(url, data string, request *interface{}, header map[string]string) {
 	resp, err := http.Post(url, ContextType, strings.NewReader(data))
 	if err != nil {
-		error.Try(2000, 3, "utils/net/http/http/Post/Post", err)
+		error.Try(2000, 3, err)
 	}
 
 	// resp.Header.Add()
@@ -26,7 +26,7 @@ func Post(url, data string, request *interface{}, header map[string]string) {
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		error.Try(5000, 3, "utils/net/http/http/Post/ReadAll", err)
+		error.Try(5000, 3, err)
 	}
 
 	json.Unmarshal(body, request)
@@ -36,11 +36,11 @@ func Post(url, data string, request *interface{}, header map[string]string) {
 func PostToMap(url string, data map[string]interface{}, request *interface{}, header map[string]string) {
 	d, err := json.Marshal(data)
 	if err != nil {
-		error.Try(5000, 3, "utils/net/http/http/PostToMap/Marshal", err)
+		error.Try(5000, 3, err)
 	}
 	resp, err := http.Post(url, ContextType, strings.NewReader(string(d)))
 	if err != nil {
-		error.Try(2000, 3, "utils/net/http/http/PostToMap/Post", err)
+		error.Try(2000, 3, err)
 	}
 
 	// resp.Header.Add()
@@ -51,7 +51,7 @@ func PostToMap(url string, data map[string]interface{}, request *interface{}, he
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		error.Try(5000, 3, "utils/net/http/http/PostToMap/ReadAll", err)
+		error.Try(5000, 3, err)
 	}
 
 	json.Unmarshal(body, request)
@@ -61,7 +61,7 @@ func PostToMap(url string, data map[string]interface{}, request *interface{}, he
 func Get(url string, request *interface{}, header map[string]string) {
 	resp, err := http.Get(url)
 	if err != nil {
-		error.Try(2000, 3, "utils/net/http/http/Get", err)
+		error.Try(2000, 3, err)
 	}
 
 	// resp.Header.Add()
@@ -72,7 +72,7 @@ func Get(url string, request *interface{}, header map[string]string) {
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		error.Try(5000, 3, "utils/net/http/http/Get/ReadAll", err)
+		error.Try(5000, 3, err)
 	}
 
 	json.Unmarshal(body, request)
@@ -82,11 +82,11 @@ func Get(url string, request *interface{}, header map[string]string) {
 func Put(url string, data interface{}, request *interface{}, header map[string]string) {
 	d, err := json.Marshal(data)
 	if err != nil {
-		error.Try(5000, 3, "utils/net/http/http/Put/Marshal", err)
+		error.Try(5000, 3, err)
 	}
 	req, err := http.NewRequest("PUT", url, strings.NewReader(string(d)))
 	if err != nil {
-		error.Try(2000, 3, "utils/net/http/http/Put/NewRequest", err)
+		error.Try(2000, 3, err)
 	}
 
 	// resp.Header.Add()
@@ -96,13 +96,13 @@ func Put(url string, data interface{}, request *interface{}, header map[string]s
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		error.Try(2000, 3, "utils/net/http/http/Put/Do", err)
+		error.Try(2000, 3, err)
 	}
 
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		error.Try(5000, 3, "utils/net/http/http/Put/ReadAll", err)
+		error.Try(5000, 3, err)
 	}
 
 	json.Unmarshal(body, request)
@@ -113,7 +113,7 @@ func Delete(url, data string, request *interface{}, header map[string]string) {
 	// req, err := http.NewRequest("DELETE", url, nil)
 	req, err := http.NewRequest("DELETE", url, strings.NewReader(string(data)))
 	if err != nil {
-		error.Try(2000, 3, "utils/net/http/http/Delete/NewRequest", err)
+		error.Try(2000, 3, err)
 	}
 
 	// resp.Header.Add()
@@ -123,13 +123,13 @@ func Delete(url, data string, request *interface{}, header map[string]string) {
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		error.Try(2000, 3, "utils/net/http/http/Delete/Do", err)
+		error.Try(2000, 3, err)
 	}
 
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		error.Try(5000, 3, "utils/net/http/http/Delete/ReadAll", err)
+		error.Try(5000, 3, err)
 	}
 
 	json.Unmarshal(body, request)
@@ -143,7 +143,7 @@ func TLSGet(url string, request *interface{}, header map[string]string) {
 	client := &http.Client{Transport: tr}
 	resp, err := client.Get(url)
 	if err != nil {
-		error.Try(2000, 3, "utils/net/http/http/TLSGet/Get", err)
+		error.Try(2000, 3, err)
 	}
 
 	// resp.Header.Add()
@@ -154,7 +154,7 @@ func TLSGet(url string, request *interface{}, header map[string]string) {
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		error.Try(5000, 3, "utils/net/http/http/TLSGet/ReadAll", err)
+		error.Try(5000, 3, err)
 	}
 
 	json.Unmarshal(body, request)
@@ -169,7 +169,7 @@ func TLSPost(url, data string, request *interface{}, header map[string]string) {
 
 	req, err := http.NewRequest("POST", url, strings.NewReader(data))
 	if err != nil {
-		error.Try(2000, 3, "utils/net/http/http/TLSPost/NewRequest", err)
+		error.Try(2000, 3, err)
 	}
 
 	// resp.Header.Add()
@@ -179,13 +179,13 @@ func TLSPost(url, data string, request *interface{}, header map[string]string) {
 
 	res, err := client.Do(req)
 	if err != nil {
-		error.Try(2000, 3, "utils/net/http/http/TLSPost/Do", err)
+		error.Try(2000, 3, err)
 	}
 
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		error.Try(5000, 3, "utils/net/http/http/TLSPost/ReadAll", err)
+		error.Try(5000, 3, err)
 	}
 
 	json.Unmarshal(body, request)
@@ -199,7 +199,7 @@ func TLSPost2(url, data string, request *interface{}, header map[string]string) 
 	client := &http.Client{Transport: tr}
 	resp, err := client.Post(url, ContextType, strings.NewReader(data))
 	if err != nil {
-		error.Try(2000, 3, "utils/net/http/http/TLSPost2/Post", err)
+		error.Try(2000, 3, err)
 	}
 
 	// resp.Header.Add()
@@ -210,7 +210,7 @@ func TLSPost2(url, data string, request *interface{}, header map[string]string) 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		error.Try(5000, 3, "utils/net/http/http/TLSPost2/ReadAll", err)
+		error.Try(5000, 3, err)
 	}
 
 	json.Unmarshal(body, request)
@@ -225,7 +225,7 @@ func TLSPut(url, data string, request *interface{}, header map[string]string) {
 
 	req, err := http.NewRequest("PUT", url, strings.NewReader(data))
 	if err != nil {
-		error.Try(2000, 3, "utils/net/http/http/TLSPut/NewRequest", err)
+		error.Try(2000, 3, err)
 	}
 
 	// resp.Header.Add()
@@ -235,13 +235,13 @@ func TLSPut(url, data string, request *interface{}, header map[string]string) {
 
 	res, err := client.Do(req)
 	if err != nil {
-		error.Try(2000, 3, "utils/net/http/http/TLSPut/Do", err)
+		error.Try(2000, 3, err)
 	}
 
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		error.Try(5000, 3, "utils/net/http/http/TLSPut/ReadAll", err)
+		error.Try(5000, 3, err)
 	}
 
 	json.Unmarshal(body, request)
@@ -256,7 +256,7 @@ func TLSDelete(url, data string, request *interface{}, header map[string]string)
 
 	req, err := http.NewRequest("DELETE", url, strings.NewReader(data))
 	if err != nil {
-		error.Try(2000, 3, "utils/net/http/http/TLSDelete/NewRequest", err)
+		error.Try(2000, 3, err)
 	}
 
 	// resp.Header.Add()
@@ -266,13 +266,13 @@ func TLSDelete(url, data string, request *interface{}, header map[string]string)
 
 	res, err := client.Do(req)
 	if err != nil {
-		error.Try(2000, 3, "utils/net/http/http/TLSDelete/Do", err)
+		error.Try(2000, 3, err)
 	}
 
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		error.Try(5000, 3, "utils/net/http/http/TLSDelete/ReadAll", err)
+		error.Try(5000, 3, err)
 	}
 
 	json.Unmarshal(body, request)

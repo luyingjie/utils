@@ -1,10 +1,13 @@
 package error
 
 import (
-	"errors"
+	"fmt"
+	"strconv"
 	"time"
 
 	"utils/log"
+
+	"github.com/gogf/gf/errors/gerror"
 )
 
 // 错误码大类
@@ -24,7 +27,8 @@ type ErrorModel struct {
 
 var _log *log.Logger
 
-func init() {
+// 加载框架本身的日志
+func loadLog() {
 	_log = log.NewLog(nil, "LOGS_MODULE", 16)
 	_log.ResetFlags(log.BitDate | log.BitLongFile | log.BitLevel)
 
@@ -34,6 +38,26 @@ func init() {
 	//设置日志写入文件
 	fileTime := time.Now().Format("2006-01-02")
 	_log.SetLogFile("./logs/system", fileTime+".log")
+}
+
+// 写入日志
+func writing(err ErrorModel) {
+	_log.SetPrefix(strconv.Itoa(err.Code))
+
+	switch err.Level {
+	case 0:
+		_log.Debug(fmt.Sprintf("%+v", err.Error))
+	case 1:
+		_log.Info(fmt.Sprintf("%+v", err.Error))
+	case 2:
+		_log.Warn(fmt.Sprintf("%+v", err.Error))
+	case 3:
+		_log.Error(fmt.Sprintf("%+v", err.Error))
+	}
+}
+
+func init() {
+	loadLog()
 }
 
 // OpenDebug : 打开Debug调试
@@ -47,54 +71,39 @@ func CloseDebug() {
 }
 
 // Try : 处理异常。Leve : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
-func Try(code, level int, model string, err error) {
+func Try(code, level int, err error) {
 	errModel := ErrorModel{
 		Code:  code,
 		Level: level,
-		Model: model,
-		Error: err,
+		// Model: model,
+		Error: gerror.Wrap(err, ""),
 	}
 
-	go writing(errModel)
+	writing(errModel)
 	panic(errModel)
 }
 
 // Trys : 处理string的异常。Level : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
-func Trys(code, level int, model, str string) {
+func Trys(code, level int, str string) {
 	errModel := ErrorModel{
 		Code:  code,
 		Level: level,
-		Model: model,
-		Error: errors.New(str),
+		// Model: model,
+		Error: gerror.New(str),
 	}
 
-	go writing(errModel)
+	writing(errModel)
 	panic(errModel)
 }
 
 // Log : 写入日志
-func Log(code, level int, model string, err error) {
+func Log(code, level int, err error) {
 	errModel := ErrorModel{
 		Code:  code,
 		Level: level,
-		Model: model,
-		Error: err,
+		// Model: model,
+		Error: gerror.Wrap(err, ""),
 	}
 
-	go writing(errModel)
-}
-
-func writing(err ErrorModel) {
-	_log.SetPrefix(string(err.Code) + ":" + err.Model)
-
-	switch err.Level {
-	case 0:
-		_log.Debug(err.Error)
-	case 1:
-		_log.Info(err.Error)
-	case 2:
-		_log.Warn(err.Error)
-	case 3:
-		_log.Error(err.Error)
-	}
+	writing(errModel)
 }

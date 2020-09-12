@@ -33,7 +33,7 @@ func Send(user, userTitle, password, host string, port int, to, toTitle, subject
 
 	d := gomail.NewPlainDialer(host, port, user, password)
 	if err := d.DialAndSend(m); err != nil {
-		error.Try(2000, 3, "utils/base/mail/Send/DialAndSend", err)
+		error.Try(2000, 3, err)
 		return
 	}
 }

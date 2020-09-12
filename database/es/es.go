@@ -22,19 +22,19 @@ func connect(esUrl, esIndex string) *elastic.Client {
 		elastic.SetSniff(false),
 		elastic.SetHealthcheckInterval(10*time.Second))
 	if err != nil {
-		error.Try(2000, 3, "utils/database/es/es/connect/NewClient", err)
+		error.Try(2000, 3, err)
 		return nil
 	}
 
 	exists, exErr := client.IndexExists(esIndex).Do()
 	if exErr != nil {
-		error.Try(2000, 3, "utils/database/es/es/connect/IndexExists", exErr)
+		error.Try(2000, 3, exErr)
 		return nil
 	}
 	if !exists {
 		createIndex, creErr := client.CreateIndex(esIndex).Do()
 		if creErr != nil {
-			error.Try(2000, 3, "utils/database/es/es/connect/CreateIndex", creErr)
+			error.Try(2000, 3, creErr)
 			return nil
 		}
 		if !createIndex.Acknowledged {
@@ -57,7 +57,7 @@ func Save(esUrl, esIndex, esType string, data map[string]interface{}) {
 		Do()
 
 	if err != nil {
-		error.Try(2000, 3, "utils/database/es/es/Save/Index", err)
+		error.Try(2000, 3, err)
 	}
 }
 
@@ -88,7 +88,7 @@ func SaveById(esUrl, esIndex, esType, id string, data map[string]interface{}) st
 		Do()
 
 	if err != nil {
-		error.Try(2000, 3, "utils/database/es/es/SaveById/Index", err)
+		error.Try(2000, 3, err)
 	}
 	return id
 }
@@ -104,7 +104,7 @@ func SearchById(esUrl, esIndex, esType, id string) *elastic.GetResult {
 		Do()
 
 	if err != nil {
-		error.Try(2000, 3, "utils/database/es/es/SearchById/Get", err)
+		error.Try(2000, 3, err)
 		return nil
 	}
 
@@ -272,7 +272,7 @@ func Search(esUrl, esIndex, esType string, searchModel *models.RequestESModel) *
 
 	searchResult, err := searchCommand.Pretty(true).Do()
 	if err != nil {
-		error.Try(2000, 3, "utils/database/es/es/Search/Do", err)
+		error.Try(2000, 3, err)
 		return nil
 	}
 
@@ -292,7 +292,7 @@ func DeleteById(esUrl, esIndex, esType, id string) {
 		Do()
 
 	if err != nil {
-		error.Try(2000, 3, "utils/database/es/es/DeleteById/Delete", err)
+		error.Try(2000, 3, err)
 	}
 }
 
@@ -396,7 +396,7 @@ func Delete(esUrl, esIndex, esType string, searchModel *models.RequestESModel) {
 	_, err := searchCommand.Query(boolQuery).Do()
 
 	if err != nil {
-		error.Try(2000, 3, "utils/database/es/es/Delete/Do", err)
+		error.Try(2000, 3, err)
 	}
 
 }
@@ -415,6 +415,6 @@ func UpdateById(esUrl, esIndex, esType, id string, data map[string]interface{}) 
 		Do()
 
 	if err != nil {
-		error.Try(2000, 3, "utils/database/es/es/UpdateById/Index", err)
+		error.Try(2000, 3, err)
 	}
 }

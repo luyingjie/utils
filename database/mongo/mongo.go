@@ -13,7 +13,7 @@ type M bson.M
 func Connect(Url string) *mgo.Session {
 	session, err := mgo.Dial(Url)
 	if err != nil {
-		myError.Try(2000, 3, "utils/database/mongo/mongo/Connect/Dial", err)
+		myError.Try(2000, 3, err)
 	}
 	return session
 }
@@ -21,7 +21,7 @@ func Connect(Url string) *mgo.Session {
 // Insert : 添加数据
 func Insert(Url, DB, C string, Data interface{}) {
 	if Url == "" || DB == "" || C == "" || Data == nil {
-		myError.Trys(1000, 2, "utils/database/mongo/mongo/Insert", "确少必要的参数")
+		myError.Trys(1000, 2, "确少必要的参数")
 		return
 	}
 	session := Connect(Url)
@@ -31,14 +31,14 @@ func Insert(Url, DB, C string, Data interface{}) {
 
 	err := c.Insert(Data)
 	if err != nil {
-		myError.Try(2000, 3, "utils/database/mongo/mongo/Insert/Insert", err)
+		myError.Try(2000, 3, err)
 	}
 }
 
 // Remove : 删除数据
 func Remove(Url, DB, C string, Query *M) {
 	if Url == "" || DB == "" || C == "" || Query == nil {
-		myError.Trys(1000, 2, "utils/database/mongo/mongo/Remove", "确少必要的参数")
+		myError.Trys(1000, 2, "确少必要的参数")
 		return
 	}
 	session := Connect(Url)
@@ -48,14 +48,14 @@ func Remove(Url, DB, C string, Query *M) {
 
 	_, err := c.RemoveAll(Query)
 	if err != nil {
-		myError.Try(2000, 3, "utils/database/mongo/mongo/Remove/RemoveAll", err)
+		myError.Try(2000, 3, err)
 	}
 }
 
 // Update : 修改数据
 func Update(Url, DB, C string, Query *M, Data interface{}) {
 	if Url == "" || DB == "" || C == "" || Query == nil || Data == nil {
-		myError.Trys(1000, 2, "utils/database/mongo/mongo/Update", "确少必要的参数")
+		myError.Trys(1000, 2, "确少必要的参数")
 		return
 	}
 	session := Connect(Url)
@@ -65,14 +65,14 @@ func Update(Url, DB, C string, Query *M, Data interface{}) {
 
 	err := c.Update(Query, bson.M{"$set": Data})
 	if err != nil {
-		myError.Try(2000, 3, "utils/database/mongo/mongo/Update/Update", err)
+		myError.Try(2000, 3, err)
 	}
 }
 
 // Select : 查询数据
 func Select(Url, DB, C string, Query *M, ResultModel interface{}, Limit, Skip int, Sort string) {
 	if Url == "" || DB == "" || C == "" || Query == nil || ResultModel == nil {
-		myError.Trys(1000, 2, "utils/database/mongo/mongo/Select", "确少必要的参数")
+		myError.Trys(1000, 2, "确少必要的参数")
 		return
 	}
 	session := Connect(Url)
@@ -90,6 +90,6 @@ func Select(Url, DB, C string, Query *M, ResultModel interface{}, Limit, Skip in
 
 	err := query.All(ResultModel)
 	if err != nil {
-		myError.Try(2000, 3, "utils/database/mongo/mongo/Select/All", err)
+		myError.Try(2000, 3, err)
 	}
 }

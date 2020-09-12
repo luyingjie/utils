@@ -49,7 +49,7 @@ func DelFile(url string) {
 	err := os.Remove(url)
 
 	if err != nil {
-		myerr.Try(5000, 3, "utils/net/http/file/DelFile/Remove", err)
+		myerr.Try(5000, 3, err)
 	}
 }
 
@@ -72,13 +72,13 @@ func GetFileSize(filename string) int64 {
 func GetFile(url string) []byte {
 	resp, err := http.Get(url)
 	if err != nil {
-		myerr.Try(5000, 3, "utils/net/http/file/GetFile", err)
+		myerr.Try(5000, 3, err)
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		myerr.Try(5000, 3, "utils/net/http/file/GetFile/ReadAll", err)
+		myerr.Try(5000, 3, err)
 	}
 
 	return body
@@ -113,13 +113,13 @@ func GetBase64(url, _type string) string {
 func SaveFile(url, name string, file multipart.File) {
 	newFile, err := os.Create(url + name)
 	if err != nil {
-		myerr.Try(5000, 3, "utils/net/http/file/SaveFile/Create", err)
+		myerr.Try(5000, 3, err)
 	}
 	defer newFile.Close()
 
 	_, err1 := io.Copy(newFile, file)
 	if err1 != nil {
-		myerr.Try(5000, 3, "utils/net/http/file/SaveFile/Copy", err1)
+		myerr.Try(5000, 3, err1)
 	}
 }
 
@@ -130,18 +130,18 @@ func SendFile(url string, from map[string]string, name string, file multipart.Fi
 	// bodyWriter.CreateFormField()
 	fileWriter, err := bodyWriter.CreateFormFile("file", name)
 	if err != nil {
-		myerr.Try(5000, 3, "utils/net/http/file/SendFile/CreateFormFile", err)
+		myerr.Try(5000, 3, err)
 	}
 
 	_, err = io.Copy(fileWriter, file)
 	if err != nil {
-		myerr.Try(5000, 3, "utils/net/http/file/SendFile/Copy", err)
+		myerr.Try(5000, 3, err)
 	}
 
 	// 处理表单中的参数
 	for k, v := range from {
 		if err := bodyWriter.WriteField(k, v); err != nil {
-			myerr.Try(5000, 3, "utils/net/http/file/SendFile/WriteField", err)
+			myerr.Try(5000, 3, err)
 		}
 	}
 
@@ -151,7 +151,7 @@ func SendFile(url string, from map[string]string, name string, file multipart.Fi
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, bodyBuf)
 	if err != nil {
-		myerr.Try(5000, 3, "utils/net/http/file/SendFile/NewRequest", err)
+		myerr.Try(5000, 3, err)
 	}
 	// Add 和 Set都可以设置成功头信息
 	req.Header.Add("content-type", contentType)
@@ -162,7 +162,7 @@ func SendFile(url string, from map[string]string, name string, file multipart.Fi
 
 	resp_body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		myerr.Try(5000, 3, "utils/net/http/file/SendFile/ReadAll", err)
+		myerr.Try(5000, 3, err)
 	}
 
 	return string(resp_body)
@@ -174,21 +174,21 @@ func DownloadFileToMem(filepath string, url string) {
 	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
-		myerr.Try(5000, 3, "utils/net/http/file/DownloadFileToMem", err)
+		myerr.Try(5000, 3, err)
 	}
 	defer resp.Body.Close()
 
 	// Create the file
 	out, err := os.Create(filepath)
 	if err != nil {
-		myerr.Try(5000, 3, "utils/net/http/file/DownloadFileToMem/Create", err)
+		myerr.Try(5000, 3, err)
 	}
 	defer out.Close()
 
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
 	if err != nil {
-		myerr.Try(5000, 3, "utils/net/http/file/DownloadFileToMem/Copy", err)
+		myerr.Try(5000, 3, err)
 	}
 }
 
