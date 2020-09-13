@@ -9,6 +9,7 @@ require (
 	github.com/gogf/gf v1.13.4
 	github.com/golibs/uuid v0.0.0-20130306162636-1dd34a9ad6c0
 	github.com/gomodule/redigo v2.0.0+incompatible
+	github.com/gqcn/structs v1.1.1
 	github.com/jinzhu/gorm v1.9.16
 	github.com/json-iterator/go v1.1.10
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df

@@ -1,51 +1,36 @@
-// Copyright 2020 gf Author(https://github.com/gogf/gf). All Rights Reserved.
-//
-// This Source Code Form is subject to the terms of the MIT License.
-// If a copy of the MIT was not distributed with this file,
-// You can obtain one at https://github.com/gogf/gf.
-
-package gconv
+package conv
 
 import (
-	"github.com/gogf/gf/errors/gerror"
 	"reflect"
+	myerror "utils/error"
 )
 
-// Structs converts any slice to given struct slice.
 func Structs(params interface{}, pointer interface{}, mapping ...map[string]string) (err error) {
 	return doStructs(params, pointer, false, mapping...)
 }
 
-// StructsDeep converts any slice to given struct slice recursively.
 func StructsDeep(params interface{}, pointer interface{}, mapping ...map[string]string) (err error) {
 	return doStructs(params, pointer, true, mapping...)
 }
 
-// doStructs converts any slice to given struct slice.
-//
-// The parameter <params> should be type of slice.
-//
-// The parameter <pointer> should be type of pointer to slice of struct.
-// Note that if <pointer> is a pointer to another pointer of type of slice of struct,
-// it will create the struct/pointer internally.
 func doStructs(params interface{}, pointer interface{}, deep bool, mapping ...map[string]string) (err error) {
 	if params == nil {
-		return gerror.New("params cannot be nil")
+		return myerror.New("params cannot be nil")
 	}
 	if pointer == nil {
-		return gerror.New("object pointer cannot be nil")
+		return myerror.New("object pointer cannot be nil")
 	}
 	defer func() {
 		// Catch the panic, especially the reflect operation panics.
 		if e := recover(); e != nil {
-			err = gerror.NewfSkip(1, "%v", e)
+			err = myerror.NewfSkip(1, "%v", e)
 		}
 	}()
 	pointerRv, ok := pointer.(reflect.Value)
 	if !ok {
 		pointerRv = reflect.ValueOf(pointer)
 		if kind := pointerRv.Kind(); kind != reflect.Ptr {
-			return gerror.Newf("pointer should be type of pointer, but got: %v", kind)
+			return myerror.Newf("pointer should be type of pointer, but got: %v", kind)
 		}
 	}
 	params = Maps(params)
@@ -99,6 +84,6 @@ func doStructs(params interface{}, pointer interface{}, deep bool, mapping ...ma
 		pointerRv.Elem().Set(array)
 		return nil
 	default:
-		return gerror.Newf("params should be type of slice, but got: %v", reflectKind)
+		return myerror.Newf("params should be type of slice, but got: %v", reflectKind)
 	}
 }

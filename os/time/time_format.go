@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gogf/gf/text/gregex"
+	"utils/text/regex"
 )
 
 var (
@@ -235,9 +235,9 @@ func formatToStdLayout(format string) string {
 }
 
 func formatToRegexPattern(format string) string {
-	s := gregex.Quote(formatToStdLayout(format))
-	s, _ = gregex.ReplaceString(`[0-9]`, `[0-9]`, s)
-	s, _ = gregex.ReplaceString(`[A-Za-z]`, `[A-Za-z]`, s)
+	s := regex.Quote(formatToStdLayout(format))
+	s, _ = regex.ReplaceString(`[0-9]`, `[0-9]`, s)
+	s, _ = regex.ReplaceString(`[A-Za-z]`, `[A-Za-z]`, s)
 	return s
 }
 

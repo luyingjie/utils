@@ -1,6 +1,7 @@
 package error
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -9,8 +10,6 @@ import (
 
 	"utils/error/base"
 )
-
-// 错误部分直接采用了gf的错误处理，因为gf的错误处理有详细的堆栈信息。参考：https://goframe.org/errors/gerror/index
 
 // 错误码大类
 // 5000		系统错误
@@ -29,7 +28,7 @@ type ErrorModel struct {
 
 var _log *log.Logger
 
-// 加载框架本身的日志
+// 加载框架的日志
 func loadLog() {
 	_log = log.NewLog(nil, "LOGS_MODULE", 16)
 	_log.ResetFlags(log.BitDate | log.BitLongFile | log.BitLevel)
@@ -70,6 +69,11 @@ func OpenDebug() {
 // CloseDebug : 关闭Debug调试
 func CloseDebug() {
 	_log.CloseDebug()
+}
+
+// New 创建一个错误对象
+func New(text string) error {
+	return errors.New(text)
 }
 
 // Try : 处理异常。Leve : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)

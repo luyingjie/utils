@@ -15,7 +15,7 @@ type Error struct {
 }
 
 const (
-	gFILTER_KEY = "/errors/gerror/gerror"
+	gFILTER_KEY = "/error/base"
 )
 
 var (

@@ -1,7 +1,8 @@
 # utils
 基础包
 版本： v2.0.1
-
+https://goframe.org/util/gconv/index
+https://goframe.org/encoding/gbinary/index
 
 ## v2.0.1
     重写error部分，报错会返回更多信息。
@@ -18,6 +19,7 @@
     转换
     基础类型
     万能变量
+    出去基础包直接报错的代码
     
     json处理
     http请求封装改善

@@ -8,11 +8,12 @@ package gconv
 
 import (
 	"fmt"
-	"github.com/gogf/gf/errors/gerror"
-	"github.com/gogf/gf/internal/empty"
 	"reflect"
 	"regexp"
 	"strings"
+
+	"github.com/gogf/gf/errors/gerror"
+	"github.com/gogf/gf/internal/empty"
 
 	"github.com/gogf/gf/internal/structs"
 	"github.com/gogf/gf/internal/utils"

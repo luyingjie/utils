@@ -1,5 +1,4 @@
-// 类型转换的包
-package gconv
+package conv
 
 import (
 	"fmt"
@@ -8,10 +7,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gogf/gf/internal/json"
-	"github.com/gogf/gf/os/gtime"
+	"utils/utils/json"
 
-	"github.com/gogf/gf/encoding/gbinary"
+	mytime "utils/os/time"
+
+	"utils/encoding/binary"
 )
 
 var (
@@ -199,31 +199,31 @@ func Convert(i interface{}, t string, params ...interface{}) interface{} {
 		}
 		return &v
 
-	case "GTime", "gtime.Time":
+	case "MyTime", "mytime.Time":
 		if len(params) > 0 {
-			if v := GTime(i, String(params[0])); v != nil {
+			if v := MyTime(i, String(params[0])); v != nil {
 				return *v
 			} else {
-				return *gtime.New()
+				return *mytime.New()
 			}
 		}
-		if v := GTime(i); v != nil {
+		if v := MyTime(i); v != nil {
 			return *v
 		} else {
-			return *gtime.New()
+			return *mytime.New()
 		}
-	case "*gtime.Time":
+	case "*mytime.Time":
 		if len(params) > 0 {
-			if v := GTime(i, String(params[0])); v != nil {
+			if v := MyTime(i, String(params[0])); v != nil {
 				return v
 			} else {
-				return gtime.New()
+				return mytime.New()
 			}
 		}
-		if v := GTime(i); v != nil {
+		if v := MyTime(i); v != nil {
 			return v
 		} else {
-			return gtime.New()
+			return mytime.New()
 		}
 
 	case "Duration", "time.Duration":
@@ -281,7 +281,7 @@ func Bytes(i interface{}) []byte {
 	case []byte:
 		return value
 	default:
-		return gbinary.Encode(i)
+		return binary.Encode(i)
 	}
 }
 
@@ -348,12 +348,12 @@ func String(i interface{}) string {
 			return ""
 		}
 		return value.String()
-	case gtime.Time:
+	case mytime.Time:
 		if value.IsZero() {
 			return ""
 		}
 		return value.String()
-	case *gtime.Time:
+	case *mytime.Time:
 		if value == nil {
 			return ""
 		}
@@ -522,7 +522,7 @@ func Int64(i interface{}) int64 {
 		}
 		return 0
 	case []byte:
-		return gbinary.DecodeToInt64(value)
+		return binary.DecodeToInt64(value)
 	default:
 		s := String(value)
 		isMinus := false
@@ -644,7 +644,7 @@ func Uint64(i interface{}) uint64 {
 		}
 		return 0
 	case []byte:
-		return gbinary.DecodeToUint64(value)
+		return binary.DecodeToUint64(value)
 	default:
 		s := String(value)
 		// Hexadecimal
@@ -679,7 +679,7 @@ func Float32(i interface{}) float32 {
 	case float64:
 		return float32(value)
 	case []byte:
-		return gbinary.DecodeToFloat32(value)
+		return binary.DecodeToFloat32(value)
 	default:
 		v, _ := strconv.ParseFloat(String(i), 64)
 		return float32(v)
@@ -697,7 +697,7 @@ func Float64(i interface{}) float64 {
 	case float64:
 		return value
 	case []byte:
-		return gbinary.DecodeToFloat64(value)
+		return binary.DecodeToFloat64(value)
 	default:
 		v, _ := strconv.ParseFloat(String(i), 64)
 		return v
