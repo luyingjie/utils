@@ -7,7 +7,11 @@ https://goframe.org/encoding/gbinary/index
 ## v2.0.1
     重写error部分，报错会返回更多信息。
     错误会返回堆栈信息。
-
+    编码解码
+    转换
+    万能变量
+    json处理
+    时间类型管理
 
 ## v2.0.0
     调整并简化文件结构。
@@ -15,18 +19,15 @@ https://goframe.org/encoding/gbinary/index
 
 
 ## 计划完成
-    编码解码
-    转换
-    基础类型
-    万能变量
+     
     出去基础包直接报错的代码
     
-    json处理
+    基础类型
     http请求封装改善
     锁
     线程池
     命令行
     定时
-    时间类型管理
+    任务调度
     数据校验
     
