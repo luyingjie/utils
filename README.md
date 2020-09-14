@@ -20,6 +20,7 @@ https://goframe.org/encoding/gbinary/index
 
 ## 计划完成
      
+    文件处理
     出去基础包直接报错的代码
     
     基础类型
