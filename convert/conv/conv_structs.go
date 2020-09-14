@@ -21,9 +21,8 @@ func doStructs(params interface{}, pointer interface{}, deep bool, mapping ...ma
 		return myerror.New("object pointer cannot be nil")
 	}
 	defer func() {
-		// Catch the panic, especially the reflect operation panics.
 		if e := recover(); e != nil {
-			err = myerror.NewfSkip(1, "%v", e)
+			err = myerror.Newf("%v", e)
 		}
 	}()
 	pointerRv, ok := pointer.(reflect.Value)

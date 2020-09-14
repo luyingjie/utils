@@ -1,32 +1,21 @@
-// Copyright 2019 gf Author(https://github.com/gogf/gf). All Rights Reserved.
-//
-// This Source Code Form is subject to the terms of the MIT License.
-// If a copy of the MIT was not distributed with this file,
-// You can obtain one at https://github.com/gogf/gf.
+package conv
 
-package gconv
-
-// SliceFloat is alias of Floats.
 func SliceFloat(i interface{}) []float64 {
 	return Floats(i)
 }
 
-// SliceFloat32 is alias of Float32s.
 func SliceFloat32(i interface{}) []float32 {
 	return Float32s(i)
 }
 
-// SliceFloat64 is alias of Float64s.
 func SliceFloat64(i interface{}) []float64 {
 	return Floats(i)
 }
 
-// Floats converts <i> to []float64.
 func Floats(i interface{}) []float64 {
 	return Float64s(i)
 }
 
-// Float32s converts <i> to []float32.
 func Float32s(i interface{}) []float32 {
 	if i == nil {
 		return nil
@@ -116,7 +105,6 @@ func Float32s(i interface{}) []float32 {
 	return array
 }
 
-// Float64s converts <i> to []float64.
 func Float64s(i interface{}) []float64 {
 	if i == nil {
 		return nil

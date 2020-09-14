@@ -1,9 +1,3 @@
-// Copyright 2019 gf Author(https://github.com/gogf/gf). All Rights Reserved.
-//
-// This Source Code Form is subject to the terms of the MIT License.
-// If a copy of the MIT was not distributed with this file,
-// You can obtain one at https://github.com/gogf/gf.
-
 package structs
 
 import (
@@ -12,15 +6,6 @@ import (
 	"github.com/gqcn/structs"
 )
 
-// MapField retrieves struct field as map[name/tag]*Field from <pointer>, and returns the map.
-//
-// The parameter <pointer> should be type of struct/*struct.
-//
-// The parameter <priority> specifies the priority tag array for retrieving from high to low.
-//
-// The parameter <recursive> specifies whether retrieving the struct field recursively.
-//
-// Note that it only retrieves the exported attributes with first letter up-case from struct.
 func MapField(pointer interface{}, priority []string, recursive bool) map[string]*Field {
 	var (
 		fields   []*structs.Field

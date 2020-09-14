@@ -1,10 +1,4 @@
-// Copyright 2017 gf Author(https://github.com/gogf/gf). All Rights Reserved.
-//
-// This Source Code Form is subject to the terms of the MIT License.
-// If a copy of the MIT was not distributed with this file,
-// You can obtain one at https://github.com/gogf/gf.
-
-package gconv
+package conv
 
 import (
 	"fmt"
@@ -12,32 +6,17 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/gogf/gf/errors/gerror"
-	"github.com/gogf/gf/internal/empty"
+	myerror "utils/error"
 
-	"github.com/gogf/gf/internal/structs"
-	"github.com/gogf/gf/internal/utils"
+	"utils/utils"
+	"utils/utils/empty"
+	"utils/utils/structs"
 )
 
 var (
-	// replaceCharReg is the regular expression object for replacing chars
-	// in map keys and attribute names.
 	replaceCharReg, _ = regexp.Compile(`[\-\.\_\s]+`)
 )
 
-// Struct maps the params key-value pairs to the corresponding struct object's attributes.
-// The third parameter <mapping> is unnecessary, indicating the mapping rules between the
-// custom key name and the attribute name(case sensitive).
-//
-// Note:
-// 1. The <params> can be any type of map/struct, usually a map.
-// 2. The <pointer> should be type of *struct/**struct, which is a pointer to struct object
-//    or struct pointer.
-// 3. Only the public attributes of struct object can be mapped.
-// 4. If <params> is a map, the key of the map <params> can be lowercase.
-//    It will automatically convert the first letter of the key to uppercase
-//    in mapping procedure to do the matching.
-//    It ignores the map key, if it does not match.
 func Struct(params interface{}, pointer interface{}, mapping ...map[string]string) (err error) {
 	return doStruct(params, pointer, false, mapping...)
 }
@@ -51,15 +30,15 @@ func StructDeep(params interface{}, pointer interface{}, mapping ...map[string]s
 // doStruct is the core internal converting function for any data to struct recursively or not.
 func doStruct(params interface{}, pointer interface{}, recursive bool, mapping ...map[string]string) (err error) {
 	if params == nil {
-		return gerror.New("params cannot be nil")
+		return myerror.New("params cannot be nil")
 	}
 	if pointer == nil {
-		return gerror.New("object pointer cannot be nil")
+		return myerror.New("object pointer cannot be nil")
 	}
 	defer func() {
 		// Catch the panic, especially the reflect operation panics.
 		if e := recover(); e != nil {
-			err = gerror.NewfSkip(1, "%v", e)
+			err = e.(error)
 		}
 	}()
 
@@ -74,7 +53,7 @@ func doStruct(params interface{}, pointer interface{}, recursive bool, mapping .
 	// DO NOT use MapDeep here.
 	paramsMap := Map(params)
 	if paramsMap == nil {
-		return gerror.Newf("invalid params: %v", params)
+		return myerror.Newf("invalid params: %v", params)
 	}
 
 	// Using reflect to do the converting,
@@ -83,11 +62,11 @@ func doStruct(params interface{}, pointer interface{}, recursive bool, mapping .
 	if !ok {
 		rv := reflect.ValueOf(pointer)
 		if kind := rv.Kind(); kind != reflect.Ptr {
-			return gerror.Newf("object pointer should be type of '*struct', but got '%v'", kind)
+			return myerror.Newf("object pointer should be type of '*struct', but got '%v'", kind)
 		}
 		// Using IsNil on reflect.Ptr variable is OK.
 		if !rv.IsValid() || rv.IsNil() {
-			return gerror.New("object pointer cannot be nil")
+			return myerror.New("object pointer cannot be nil")
 		}
 		elem = rv.Elem()
 	}
@@ -96,7 +75,7 @@ func doStruct(params interface{}, pointer interface{}, recursive bool, mapping .
 	if elem.Kind() == reflect.Interface {
 		elem = elem.Elem()
 		if !elem.IsValid() {
-			return gerror.New("interface type converting is not supported")
+			return myerror.New("interface type converting is not supported")
 		}
 	}
 
@@ -380,7 +359,7 @@ func bindVarToReflectValue(structFieldValue reflect.Value, value interface{}, re
 	default:
 		defer func() {
 			if e := recover(); e != nil {
-				err = gerror.New(
+				err = myerror.New(
 					fmt.Sprintf(`cannot convert value "%+v" to type "%s"`,
 						value,
 						structFieldValue.Type().String(),

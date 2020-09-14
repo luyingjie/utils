@@ -1,36 +1,25 @@
-// Copyright 2017 gf Author(https://github.com/gogf/gf). All Rights Reserved.
-//
-// This Source Code Form is subject to the terms of the MIT License.
-// If a copy of the MIT was not distributed with this file,
-// You can obtain one at https://github.com/gogf/gf.
-
-package gconv
+package conv
 
 import (
-	"github.com/gogf/gf/internal/json"
+	"utils/utils/json"
 )
 
-// SliceMap is alias of Maps.
 func SliceMap(i interface{}) []map[string]interface{} {
 	return Maps(i)
 }
 
-// SliceMapDeep is alias of MapsDeep.
 func SliceMapDeep(i interface{}) []map[string]interface{} {
 	return MapsDeep(i)
 }
 
-// SliceStruct is alias of Structs.
 func SliceStruct(params interface{}, pointer interface{}, mapping ...map[string]string) (err error) {
 	return Structs(params, pointer, mapping...)
 }
 
-// SliceStructDeep is alias of StructsDeep.
 func SliceStructDeep(params interface{}, pointer interface{}, mapping ...map[string]string) (err error) {
 	return StructsDeep(params, pointer, mapping...)
 }
 
-// Maps converts <i> to []map[string]interface{}.
 func Maps(value interface{}, tags ...string) []map[string]interface{} {
 	if value == nil {
 		return nil
@@ -74,9 +63,6 @@ func Maps(value interface{}, tags ...string) []map[string]interface{} {
 	}
 }
 
-// MapsDeep converts <i> to []map[string]interface{} recursively.
-//
-// TODO completely implement the recursive converting for all types.
 func MapsDeep(value interface{}, tags ...string) []map[string]interface{} {
 	if value == nil {
 		return nil

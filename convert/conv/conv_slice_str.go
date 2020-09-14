@@ -1,17 +1,9 @@
-// Copyright 2019 gf Author(https://github.com/gogf/gf). All Rights Reserved.
-//
-// This Source Code Form is subject to the terms of the MIT License.
-// If a copy of the MIT was not distributed with this file,
-// You can obtain one at https://github.com/gogf/gf.
+package conv
 
-package gconv
-
-// SliceStr is alias of Strings.
 func SliceStr(i interface{}) []string {
 	return Strings(i)
 }
 
-// Strings converts <i> to []string.
 func Strings(i interface{}) []string {
 	if i == nil {
 		return nil

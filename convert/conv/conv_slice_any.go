@@ -1,22 +1,14 @@
-// Copyright 2019 gf Author(https://github.com/gogf/gf). All Rights Reserved.
-//
-// This Source Code Form is subject to the terms of the MIT License.
-// If a copy of the MIT was not distributed with this file,
-// You can obtain one at https://github.com/gogf/gf.
-
-package gconv
+package conv
 
 import (
-	"github.com/gogf/gf/internal/utils"
 	"reflect"
+	"utils/utils"
 )
 
-// SliceAny is alias of Interfaces.
 func SliceAny(i interface{}) []interface{} {
 	return Interfaces(i)
 }
 
-// Interfaces converts <i> to []interface{}.
 func Interfaces(i interface{}) []interface{} {
 	if i == nil {
 		return nil

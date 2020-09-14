@@ -76,6 +76,13 @@ func New(text string) error {
 	return errors.New(text)
 }
 
+func Newf(format string, args ...interface{}) error {
+	if format == "" {
+		return nil
+	}
+	return errors.New(fmt.Sprintf(format, args...))
+}
+
 // Try : 处理异常。Leve : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
 func Try(code, level int, err error) {
 	errModel := ErrorModel{

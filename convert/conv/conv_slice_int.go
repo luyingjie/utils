@@ -1,27 +1,17 @@
-// Copyright 2019 gf Author(https://github.com/gogf/gf). All Rights Reserved.
-//
-// This Source Code Form is subject to the terms of the MIT License.
-// If a copy of the MIT was not distributed with this file,
-// You can obtain one at https://github.com/gogf/gf.
+package conv
 
-package gconv
-
-// SliceInt is alias of Ints.
 func SliceInt(i interface{}) []int {
 	return Ints(i)
 }
 
-// SliceInt32 is alias of Int32s.
 func SliceInt32(i interface{}) []int32 {
 	return Int32s(i)
 }
 
-// SliceInt is alias of Int64s.
 func SliceInt64(i interface{}) []int64 {
 	return Int64s(i)
 }
 
-// Ints converts <i> to []int.
 func Ints(i interface{}) []int {
 	if i == nil {
 		return nil
@@ -121,7 +111,6 @@ func Ints(i interface{}) []int {
 	return array
 }
 
-// Int32s converts <i> to []int32.
 func Int32s(i interface{}) []int32 {
 	if i == nil {
 		return nil
@@ -221,7 +210,6 @@ func Int32s(i interface{}) []int32 {
 	return array
 }
 
-// Int64s converts <i> to []int64.
 func Int64s(i interface{}) []int64 {
 	if i == nil {
 		return nil
