@@ -14,11 +14,12 @@ import (
 
 	"utils/convert/conv"
 
-	"github.com/gogf/gf/encoding/gini"
-	"github.com/gogf/gf/encoding/gtoml"
-	"github.com/gogf/gf/encoding/gxml"
-	"github.com/gogf/gf/encoding/gyaml"
-	"github.com/gogf/gf/os/gfile"
+	"utils/os/file"
+
+	"utils/encoding/ini"
+	"utils/encoding/toml"
+	"utils/encoding/xml"
+	"utils/encoding/yaml"
 )
 
 func New(data interface{}, safe ...bool) *Json {
@@ -75,12 +76,12 @@ func NewWithTag(data interface{}, tags string, safe ...bool) *Json {
 }
 
 func Load(path string, safe ...bool) (*Json, error) {
-	if p, err := gfile.Search(path); err != nil {
+	if p, err := file.Search(path); err != nil {
 		return nil, err
 	} else {
 		path = p
 	}
-	return doLoadContent(gfile.Ext(path), gfile.GetBytesWithCache(path), safe...)
+	return doLoadContent(file.Ext(path), file.GetBytesWithCache(path), safe...)
 }
 
 func LoadJson(data interface{}, safe ...bool) (*Json, error) {
@@ -116,21 +117,21 @@ func doLoadContent(dataType string, data []byte, safe ...bool) (*Json, error) {
 	case "json", ".json", ".js":
 
 	case "xml", ".xml":
-		if data, err = gxml.ToJson(data); err != nil {
+		if data, err = xml.ToJson(data); err != nil {
 			return nil, err
 		}
 
 	case "yml", "yaml", ".yml", ".yaml":
-		if data, err = gyaml.ToJson(data); err != nil {
+		if data, err = yaml.ToJson(data); err != nil {
 			return nil, err
 		}
 
 	case "toml", ".toml":
-		if data, err = gtoml.ToJson(data); err != nil {
+		if data, err = toml.ToJson(data); err != nil {
 			return nil, err
 		}
 	case "ini", ".ini":
-		if data, err = gini.ToJson(data); err != nil {
+		if data, err = ini.ToJson(data); err != nil {
 			return nil, err
 		}
 	default:

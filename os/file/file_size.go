@@ -1,10 +1,4 @@
-// Copyright 2017-2018 gf Author(https://github.com/gogf/gf). All Rights Reserved.
-//
-// This Source Code Form is subject to the terms of the MIT License.
-// If a copy of the MIT was not distributed with this file,
-// You can obtain one at https://github.com/gogf/gf.
-
-package gfile
+package file
 
 import (
 	"fmt"
@@ -13,7 +7,6 @@ import (
 	"strings"
 )
 
-// Size returns the size of file specified by <path> in byte.
 func Size(path string) int64 {
 	s, e := os.Stat(path)
 	if e != nil {
@@ -22,12 +15,10 @@ func Size(path string) int64 {
 	return s.Size()
 }
 
-// ReadableSize formats size of file given by <path>, for more human readable.
 func ReadableSize(path string) string {
 	return FormatSize(Size(path))
 }
 
-// StrToSize converts formatted size string to its size in bytes.
 func StrToSize(sizeStr string) int64 {
 	i := 0
 	for ; i < len(sizeStr); i++ {
@@ -69,7 +60,6 @@ func StrToSize(sizeStr string) int64 {
 	return -1
 }
 
-// FormatSize formats size <raw> for more human readable.
 func FormatSize(raw int64) string {
 	var r float64 = float64(raw)
 	var t float64 = 1024

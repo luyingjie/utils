@@ -1,21 +1,14 @@
-// Copyright 2017 gf Author(https://github.com/gogf/gf). All Rights Reserved.
-//
-// This Source Code Form is subject to the terms of the MIT License.
-// If a copy of the MIT was not distributed with this file,
-// You can obtain one at https://github.com/gogf/gf.
-
-package gfile
+package file
 
 import (
 	"os"
 	"runtime"
 	"strings"
 
-	"github.com/gogf/gf/text/gregex"
+	"utils/text/regex"
 )
 
 var (
-	// goRootForFilter is used for stack filtering purpose.
 	goRootForFilter = runtime.GOROOT()
 )
 
@@ -25,18 +18,7 @@ func init() {
 	}
 }
 
-// MainPkgPath returns absolute file path of package main,
-// which contains the entrance function main.
-//
-// It's only available in develop environment.
-//
-// Note1: Only valid for source development environments,
-// IE only valid for systems that generate this executable.
-//
-// Note2: When the method is called for the first time, if it is in an asynchronous goroutine,
-// the method may not get the main package path.
 func MainPkgPath() string {
-	// Only for source development environments.
 	if goRootForFilter == "" {
 		return ""
 	}
@@ -50,15 +32,15 @@ func MainPkgPath() string {
 			if goRootForFilter != "" && len(file) >= len(goRootForFilter) && file[0:len(goRootForFilter)] == goRootForFilter {
 				continue
 			}
-			if gregex.IsMatchString(`/github.com/[^/]+/gf/`, file) &&
-				!gregex.IsMatchString(`/github.com/[^/]+/gf/\.example/`, file) {
+			if regex.IsMatchString(`/github.com/[^/]+/gf/`, file) &&
+				!regex.IsMatchString(`/github.com/[^/]+/gf/\.example/`, file) {
 				continue
 			}
 			if Ext(file) != ".go" {
 				continue
 			}
 			lastFile = file
-			if gregex.IsMatchString(`package\s+main`, GetContents(file)) {
+			if regex.IsMatchString(`package\s+main`, GetContents(file)) {
 				mainPkgPath.Set(Dir(file))
 				return Dir(file)
 			}
@@ -70,7 +52,7 @@ func MainPkgPath() string {
 		for path = Dir(lastFile); len(path) > 1 && Exists(path) && path[len(path)-1] != os.PathSeparator; {
 			files, _ := ScanDir(path, "*.go")
 			for _, v := range files {
-				if gregex.IsMatchString(`package\s+main`, GetContents(v)) {
+				if regex.IsMatchString(`package\s+main`, GetContents(v)) {
 					mainPkgPath.Set(path)
 					return path
 				}

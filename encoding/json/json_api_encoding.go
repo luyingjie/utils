@@ -1,18 +1,12 @@
-// Copyright 2017 gf Author(https://github.com/gogf/gf). All Rights Reserved.
-//
-// This Source Code Form is subject to the terms of the MIT License.
-// If a copy of the MIT was not distributed with this file,
-// You can obtain one at https://github.com/gogf/gf.
-
-package gjson
+package json
 
 import (
-	"github.com/gogf/gf/encoding/gini"
-	"github.com/gogf/gf/encoding/gtoml"
-	"github.com/gogf/gf/encoding/gxml"
-	"github.com/gogf/gf/encoding/gyaml"
-	"github.com/gogf/gf/internal/json"
-	"github.com/gogf/gf/util/gconv"
+	"utils/convert/conv"
+	"utils/encoding/ini"
+	"utils/encoding/toml"
+	"utils/encoding/xml"
+	"utils/encoding/yaml"
+	"utils/utils/json"
 )
 
 // ========================================================================
@@ -50,7 +44,7 @@ func (j *Json) MustToJson() []byte {
 }
 
 func (j *Json) MustToJsonString() string {
-	return gconv.UnsafeBytesToStr(j.MustToJson())
+	return conv.UnsafeBytesToStr(j.MustToJson())
 }
 
 func (j *Json) MustToJsonIndent() []byte {
@@ -62,7 +56,7 @@ func (j *Json) MustToJsonIndent() []byte {
 }
 
 func (j *Json) MustToJsonIndentString() string {
-	return gconv.UnsafeBytesToStr(j.MustToJsonIndent())
+	return conv.UnsafeBytesToStr(j.MustToJsonIndent())
 }
 
 // ========================================================================
@@ -70,7 +64,7 @@ func (j *Json) MustToJsonIndentString() string {
 // ========================================================================
 
 func (j *Json) ToXml(rootTag ...string) ([]byte, error) {
-	return gxml.Encode(j.ToMap(), rootTag...)
+	return xml.Encode(j.ToMap(), rootTag...)
 }
 
 func (j *Json) ToXmlString(rootTag ...string) (string, error) {
@@ -79,7 +73,7 @@ func (j *Json) ToXmlString(rootTag ...string) (string, error) {
 }
 
 func (j *Json) ToXmlIndent(rootTag ...string) ([]byte, error) {
-	return gxml.EncodeWithIndent(j.ToMap(), rootTag...)
+	return xml.EncodeWithIndent(j.ToMap(), rootTag...)
 }
 
 func (j *Json) ToXmlIndentString(rootTag ...string) (string, error) {
@@ -96,7 +90,7 @@ func (j *Json) MustToXml(rootTag ...string) []byte {
 }
 
 func (j *Json) MustToXmlString(rootTag ...string) string {
-	return gconv.UnsafeBytesToStr(j.MustToXml(rootTag...))
+	return conv.UnsafeBytesToStr(j.MustToXml(rootTag...))
 }
 
 func (j *Json) MustToXmlIndent(rootTag ...string) []byte {
@@ -108,7 +102,7 @@ func (j *Json) MustToXmlIndent(rootTag ...string) []byte {
 }
 
 func (j *Json) MustToXmlIndentString(rootTag ...string) string {
-	return gconv.UnsafeBytesToStr(j.MustToXmlIndent(rootTag...))
+	return conv.UnsafeBytesToStr(j.MustToXmlIndent(rootTag...))
 }
 
 // ========================================================================
@@ -118,7 +112,7 @@ func (j *Json) MustToXmlIndentString(rootTag ...string) string {
 func (j *Json) ToYaml() ([]byte, error) {
 	j.mu.RLock()
 	defer j.mu.RUnlock()
-	return gyaml.Encode(*(j.p))
+	return yaml.Encode(*(j.p))
 }
 
 func (j *Json) ToYamlString() (string, error) {
@@ -135,7 +129,7 @@ func (j *Json) MustToYaml() []byte {
 }
 
 func (j *Json) MustToYamlString() string {
-	return gconv.UnsafeBytesToStr(j.MustToYaml())
+	return conv.UnsafeBytesToStr(j.MustToYaml())
 }
 
 // ========================================================================
@@ -145,7 +139,7 @@ func (j *Json) MustToYamlString() string {
 func (j *Json) ToToml() ([]byte, error) {
 	j.mu.RLock()
 	defer j.mu.RUnlock()
-	return gtoml.Encode(*(j.p))
+	return toml.Encode(*(j.p))
 }
 
 func (j *Json) ToTomlString() (string, error) {
@@ -162,7 +156,7 @@ func (j *Json) MustToToml() []byte {
 }
 
 func (j *Json) MustToTomlString() string {
-	return gconv.UnsafeBytesToStr(j.MustToToml())
+	return conv.UnsafeBytesToStr(j.MustToToml())
 }
 
 // ========================================================================
@@ -172,7 +166,7 @@ func (j *Json) MustToTomlString() string {
 func (j *Json) ToIni() ([]byte, error) {
 	j.mu.RLock()
 	defer j.mu.RUnlock()
-	return gini.Encode((*(j.p)).(map[string]interface{}))
+	return ini.Encode((*(j.p)).(map[string]interface{}))
 }
 
 func (j *Json) ToIniString() (string, error) {
@@ -189,5 +183,5 @@ func (j *Json) MustToIni() []byte {
 }
 
 func (j *Json) MustToIniString() string {
-	return gconv.UnsafeBytesToStr(j.MustToIni())
+	return conv.UnsafeBytesToStr(j.MustToIni())
 }

@@ -146,3 +146,15 @@ func Log(code, level int, err error) {
 
 	writing(errModel)
 }
+
+// LogText : 写入日志
+func LogText(code, level int, str string) {
+	errModel := ErrorModel{
+		Code:  code,
+		Level: level,
+		// Model: model,
+		Error: base.New(str),
+	}
+
+	writing(errModel)
+}
