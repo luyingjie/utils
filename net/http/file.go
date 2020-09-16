@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	myerr "utils/error"
 	// "github.com/dustin/go-humanize"
 )
 
@@ -45,12 +44,13 @@ func PathExists(path string) bool {
 }
 
 // DelFile : 删除文件
-func DelFile(url string) {
+func DelFile(url string) error {
 	err := os.Remove(url)
 
 	if err != nil {
-		myerr.Try(5000, 3, err)
+		return err
 	}
+	return nil
 }
 
 // SilenceDelFile : 静默删除文件
@@ -69,19 +69,19 @@ func GetFileSize(filename string) int64 {
 }
 
 // GetFile : 获取文件
-func GetFile(url string) []byte {
+func GetFile(url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
-		myerr.Try(5000, 3, err)
+		return nil, err
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		myerr.Try(5000, 3, err)
+		return nil, err
 	}
 
-	return body
+	return body, nil
 }
 
 // 获取目录下的文件列表
@@ -103,45 +103,49 @@ func GetFileNameList(url string) []string {
 }
 
 // GetBase64 : 将客户端的url转成base64
-func GetBase64(url, _type string) string {
-	str := GetFile(url)
+func GetBase64(url, _type string) (string, error) {
+	str, err := GetFile(url)
+	if err != nil {
+		return "", err
+	}
 	base64 := "data:" + _type + ";base64," + base64.StdEncoding.EncodeToString(str)
-	return base64
+	return base64, nil
 }
 
 // 保存文件
-func SaveFile(url, name string, file multipart.File) {
+func SaveFile(url, name string, file multipart.File) error {
 	newFile, err := os.Create(url + name)
 	if err != nil {
-		myerr.Try(5000, 3, err)
+		return err
 	}
 	defer newFile.Close()
 
-	_, err1 := io.Copy(newFile, file)
-	if err1 != nil {
-		myerr.Try(5000, 3, err1)
+	_, err = io.Copy(newFile, file)
+	if err != nil {
+		return err
 	}
+	return nil
 }
 
 // 将文件和表单发送出去, 返回服务器的返回body。 表单参数部分未测试。
-func SendFile(url string, from map[string]string, name string, file multipart.File) string {
+func SendFile(url string, from map[string]string, name string, file multipart.File) (string, error) {
 	bodyBuf := &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(bodyBuf)
 	// bodyWriter.CreateFormField()
 	fileWriter, err := bodyWriter.CreateFormFile("file", name)
 	if err != nil {
-		myerr.Try(5000, 3, err)
+		return "", err
 	}
 
 	_, err = io.Copy(fileWriter, file)
 	if err != nil {
-		myerr.Try(5000, 3, err)
+		return "", err
 	}
 
 	// 处理表单中的参数
 	for k, v := range from {
 		if err := bodyWriter.WriteField(k, v); err != nil {
-			myerr.Try(5000, 3, err)
+			return "", err
 		}
 	}
 
@@ -151,7 +155,7 @@ func SendFile(url string, from map[string]string, name string, file multipart.Fi
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, bodyBuf)
 	if err != nil {
-		myerr.Try(5000, 3, err)
+		return "", err
 	}
 	// Add 和 Set都可以设置成功头信息
 	req.Header.Add("content-type", contentType)
@@ -162,34 +166,35 @@ func SendFile(url string, from map[string]string, name string, file multipart.Fi
 
 	resp_body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		myerr.Try(5000, 3, err)
+		return "", err
 	}
 
-	return string(resp_body)
+	return string(resp_body), nil
 }
 
 // DownloadFile : download file会将url下载到本地文件，它会在下载时写入，而不是将整个文件加载到内存中。
 // 将数据流式传输到文件中，而不必将其全部加载到内存中, 因此大文件比较适合。
-func DownloadFileToMem(filepath string, url string) {
+func DownloadFileToMem(filepath string, url string) error {
 	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
-		myerr.Try(5000, 3, err)
+		return err
 	}
 	defer resp.Body.Close()
 
 	// Create the file
 	out, err := os.Create(filepath)
 	if err != nil {
-		myerr.Try(5000, 3, err)
+		return err
 	}
 	defer out.Close()
 
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
 	if err != nil {
-		myerr.Try(5000, 3, err)
+		return err
 	}
+	return nil
 }
 
 // WriteCounter : 计数器

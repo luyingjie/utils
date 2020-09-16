@@ -5,7 +5,7 @@ import (
 	// . "encoding/json"
 	"strings"
 	"time"
-	"utils/error"
+	myerror "utils/error"
 
 	// "fmt"
 
@@ -16,40 +16,40 @@ import (
 )
 
 //连接ES
-func connect(esUrl, esIndex string) *elastic.Client {
+func connect(esUrl, esIndex string) (*elastic.Client, error) {
 	client, err := elastic.NewClient(
 		elastic.SetURL(esUrl),
 		elastic.SetSniff(false),
 		elastic.SetHealthcheckInterval(10*time.Second))
 	if err != nil {
-		error.Try(2000, 3, err)
-		return nil
+		return nil, err
 	}
 
 	exists, exErr := client.IndexExists(esIndex).Do()
 	if exErr != nil {
-		error.Try(2000, 3, exErr)
-		return nil
+		return nil, exErr
 	}
 	if !exists {
 		createIndex, creErr := client.CreateIndex(esIndex).Do()
 		if creErr != nil {
-			error.Try(2000, 3, creErr)
-			return nil
+			return nil, creErr
 		}
 		if !createIndex.Acknowledged {
-			return nil
+			return nil, myerror.New("连接失败")
 		}
 	}
 
-	return client
+	return client, nil
 }
 
 //保存
-func Save(esUrl, esIndex, esType string, data map[string]interface{}) {
-	client := connect(esUrl, esIndex)
+func Save(esUrl, esIndex, esType string, data map[string]interface{}) error {
+	client, err := connect(esUrl, esIndex)
+	if err != nil {
+		return err
+	}
 	defer client.Stop()
-	_, err := client.Index().
+	_, err = client.Index().
 		Index(esIndex).
 		Type(esType).
 		BodyJson(data).
@@ -57,13 +57,14 @@ func Save(esUrl, esIndex, esType string, data map[string]interface{}) {
 		Do()
 
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
+	return nil
 }
 
 //uuid在什么地方生成需要研究。1.全局生成，贯穿整个Task。2.局部生成，返回传参。
 //将整个库往其他库移动的保存情况要去掉模型中的id。
-func SaveById(esUrl, esIndex, esType, id string, data map[string]interface{}) string {
+func SaveById(esUrl, esIndex, esType, id string, data map[string]interface{}) (string, error) {
 	// var id UUID = uuid.Rand()
 	// fmt.Println(id.Hex())
 	// fmt.Println(id.Raw())
@@ -77,9 +78,12 @@ func SaveById(esUrl, esIndex, esType, id string, data map[string]interface{}) st
 		id = strings.Replace(uuid.Rand().Hex(), "-", "", -1)
 	}
 
-	client := connect(esUrl, esIndex)
+	client, err := connect(esUrl, esIndex)
+	if err != nil {
+		return "", err
+	}
 	defer client.Stop()
-	_, err := client.Index().
+	_, err = client.Index().
 		Index(esIndex).
 		Type(esType).
 		Id(id).
@@ -88,27 +92,29 @@ func SaveById(esUrl, esIndex, esType, id string, data map[string]interface{}) st
 		Do()
 
 	if err != nil {
-		error.Try(2000, 3, err)
+		return "", err
 	}
-	return id
+	return id, nil
 }
 
 //按Id查询
-func SearchById(esUrl, esIndex, esType, id string) *elastic.GetResult {
-	client := connect(esUrl, esIndex)
+func SearchById(esUrl, esIndex, esType, id string) (*elastic.GetResult, error) {
+	client, err := connect(esUrl, esIndex)
+	if err != nil {
+		return nil, err
+	}
 	defer client.Stop()
-	searchResult, err := client.Get().
+	searchResult, err1 := client.Get().
 		Index(esIndex).
 		Type(esType).
 		Id(id).
 		Do()
 
-	if err != nil {
-		error.Try(2000, 3, err)
-		return nil
+	if err1 != nil {
+		return nil, err1
 	}
 
-	return searchResult
+	return searchResult, nil
 }
 
 // func setOperation(name string, ope map[string]interface{},bq *elastic.BoolQuery) *elastic.BoolQuery {
@@ -126,8 +132,11 @@ func SearchById(esUrl, esIndex, esType, id string) *elastic.GetResult {
 
 //查询
 //操作符目前只支持All指定，不支持单独逐个指定，数据结构保持扩展支持。
-func Search(esUrl, esIndex, esType string, searchModel *models.RequestESModel) *elastic.SearchResult { //*elastic.SearchHits {
-	client := connect(esUrl, esIndex)
+func Search(esUrl, esIndex, esType string, searchModel *models.RequestESModel) (*elastic.SearchResult, error) { //*elastic.SearchHits {
+	client, err := connect(esUrl, esIndex)
+	if err != nil {
+		return nil, err
+	}
 	defer client.Stop()
 	searchCommand := client.Search().
 		Index(esIndex).
@@ -270,21 +279,23 @@ func Search(esUrl, esIndex, esType string, searchModel *models.RequestESModel) *
 		searchCommand = searchCommand.From(searchModel.Offset).Size(searchModel.Limit)
 	}
 
-	searchResult, err := searchCommand.Pretty(true).Do()
-	if err != nil {
-		error.Try(2000, 3, err)
-		return nil
+	searchResult, err1 := searchCommand.Pretty(true).Do()
+	if err1 != nil {
+		return nil, err1
 	}
 
 	// return searchResult.Hits
-	return searchResult
+	return searchResult, nil
 }
 
 //按Id删除,补全查询删除。
-func DeleteById(esUrl, esIndex, esType, id string) {
-	client := connect(esUrl, esIndex)
+func DeleteById(esUrl, esIndex, esType, id string) error {
+	client, err := connect(esUrl, esIndex)
+	if err != nil {
+		return err
+	}
 	defer client.Stop()
-	_, err := client.Delete().
+	_, err = client.Delete().
 		Index(esIndex).
 		Type(esType).
 		Id(id).
@@ -292,13 +303,17 @@ func DeleteById(esUrl, esIndex, esType, id string) {
 		Do()
 
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
+	return nil
 }
 
 // 按条件删除
-func Delete(esUrl, esIndex, esType string, searchModel *models.RequestESModel) {
-	client := connect(esUrl, esIndex)
+func Delete(esUrl, esIndex, esType string, searchModel *models.RequestESModel) error {
+	client, err := connect(esUrl, esIndex)
+	if err != nil {
+		return err
+	}
 	defer client.Stop()
 	searchCommand := client.DeleteByQuery().
 		Index(esIndex).
@@ -393,19 +408,22 @@ func Delete(esUrl, esIndex, esType string, searchModel *models.RequestESModel) {
 		}
 	}
 
-	_, err := searchCommand.Query(boolQuery).Do()
+	_, err = searchCommand.Query(boolQuery).Do()
 
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
-
+	return nil
 }
 
 //按Id修改,这里其实支持直接插入map[string]interface{},可以和前面的Save方法合并。分开是可以寻求其他修改文档的方法。
-func UpdateById(esUrl, esIndex, esType, id string, data map[string]interface{}) {
-	client := connect(esUrl, esIndex)
+func UpdateById(esUrl, esIndex, esType, id string, data map[string]interface{}) error {
+	client, err := connect(esUrl, esIndex)
+	if err != nil {
+		return err
+	}
 	defer client.Stop()
-	_, err := client.Index().
+	_, err = client.Index().
 		Index(esIndex).
 		Type(esType).
 		Id(id).
@@ -415,6 +433,7 @@ func UpdateById(esUrl, esIndex, esType, id string, data map[string]interface{}) 
 		Do()
 
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
+	return nil
 }

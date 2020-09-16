@@ -1,8 +1,6 @@
 package mail
 
 import (
-	"utils/error"
-
 	"gopkg.in/gomail.v2"
 )
 
@@ -24,7 +22,7 @@ import (
 // 		</html>
 // 		`
 
-func Send(user, userTitle, password, host string, port int, to, toTitle, subject, body string) {
+func Send(user, userTitle, password, host string, port int, to, toTitle, subject, body string) error {
 	m := gomail.NewMessage()
 	m.SetAddressHeader("From", user, userTitle)
 	m.SetHeader("To", m.FormatAddress(to, toTitle))
@@ -33,7 +31,7 @@ func Send(user, userTitle, password, host string, port int, to, toTitle, subject
 
 	d := gomail.NewPlainDialer(host, port, user, password)
 	if err := d.DialAndSend(m); err != nil {
-		error.Try(2000, 3, err)
-		return
+		return err
 	}
+	return nil
 }

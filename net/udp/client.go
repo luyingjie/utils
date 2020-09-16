@@ -2,23 +2,26 @@ package udp
 
 import (
 	"net"
-	// "log"
-	// "fmt"
-	"utils/error"
 )
 
 //RunClient 运行udp客户端
 //增加出错的处理
-func RunClient(udpType, udpURL, data string) {
+func RunClient(udpType, udpURL, data string) error {
 	//获取udpaddr
 	udpaddr, err := net.ResolveUDPAddr(udpType, udpURL)
-	error.Try(2000, 3, err)
+	if err != nil {
+		return err
+	}
 	//连接，返回udpconn
-	udpconn, err2 := net.DialUDP("udp", nil, udpaddr)
-	error.Try(2000, 3, err2)
+	udpconn, err := net.DialUDP("udp", nil, udpaddr)
+	if err != nil {
+		return err
+	}
 	//写入数据
-	_, err3 := udpconn.Write([]byte(data))
-	error.Try(5000, 3, err3)
+	_, err = udpconn.Write([]byte(data))
+	if err != nil {
+		return err
+	}
 	//udp 貌似不等待返回结果会直接关闭连接，如果等不到返回结果会阻塞。
 	// defer udpconn.Close()
 	// buf := make([]byte, 256);
@@ -26,4 +29,5 @@ func RunClient(udpType, udpURL, data string) {
 	// _, err4 := udpconn.Read(buf);
 	// clientError(err4);
 	// fmt.Println(string(buf));
+	return nil
 }

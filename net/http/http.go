@@ -6,16 +6,15 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
-	"utils/error"
 )
 
 const ContextType string = "application/json;charset=utf-8"
 
 // Post : Post提交和获取Json数据
-func Post(url, data string, request *interface{}, header map[string]string) {
+func Post(url, data string, request *interface{}, header map[string]string) error {
 	resp, err := http.Post(url, ContextType, strings.NewReader(data))
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
 
 	// resp.Header.Add()
@@ -26,21 +25,22 @@ func Post(url, data string, request *interface{}, header map[string]string) {
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		error.Try(5000, 3, err)
+		return err
 	}
 
 	json.Unmarshal(body, request)
+	return nil
 }
 
 // PostToMap : Post提交数据，参数是map，返回interface{}
-func PostToMap(url string, data map[string]interface{}, request *interface{}, header map[string]string) {
+func PostToMap(url string, data map[string]interface{}, request *interface{}, header map[string]string) error {
 	d, err := json.Marshal(data)
 	if err != nil {
-		error.Try(5000, 3, err)
+		return err
 	}
 	resp, err := http.Post(url, ContextType, strings.NewReader(string(d)))
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
 
 	// resp.Header.Add()
@@ -51,17 +51,18 @@ func PostToMap(url string, data map[string]interface{}, request *interface{}, he
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		error.Try(5000, 3, err)
+		return err
 	}
 
 	json.Unmarshal(body, request)
+	return nil
 }
 
 // Get : Get方式提交数据
-func Get(url string, request *interface{}, header map[string]string) {
+func Get(url string, request *interface{}, header map[string]string) error {
 	resp, err := http.Get(url)
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
 
 	// resp.Header.Add()
@@ -72,21 +73,22 @@ func Get(url string, request *interface{}, header map[string]string) {
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		error.Try(5000, 3, err)
+		return err
 	}
 
 	json.Unmarshal(body, request)
+	return nil
 }
 
 // Put : Put方式的数据获取
-func Put(url string, data interface{}, request *interface{}, header map[string]string) {
+func Put(url string, data interface{}, request *interface{}, header map[string]string) error {
 	d, err := json.Marshal(data)
 	if err != nil {
-		error.Try(5000, 3, err)
+		return err
 	}
 	req, err := http.NewRequest("PUT", url, strings.NewReader(string(d)))
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
 
 	// resp.Header.Add()
@@ -96,24 +98,25 @@ func Put(url string, data interface{}, request *interface{}, header map[string]s
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
 
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		error.Try(5000, 3, err)
+		return err
 	}
 
 	json.Unmarshal(body, request)
+	return nil
 }
 
 // Delete : Delete的方式获取数据
-func Delete(url, data string, request *interface{}, header map[string]string) {
+func Delete(url, data string, request *interface{}, header map[string]string) error {
 	// req, err := http.NewRequest("DELETE", url, nil)
 	req, err := http.NewRequest("DELETE", url, strings.NewReader(string(data)))
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
 
 	// resp.Header.Add()
@@ -123,27 +126,28 @@ func Delete(url, data string, request *interface{}, header map[string]string) {
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
 
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		error.Try(5000, 3, err)
+		return err
 	}
 
 	json.Unmarshal(body, request)
+	return nil
 }
 
 // TLSGet : Get提交数据，参数是map，返回interface{}
-func TLSGet(url string, request *interface{}, header map[string]string) {
+func TLSGet(url string, request *interface{}, header map[string]string) error {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: tr}
 	resp, err := client.Get(url)
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
 
 	// resp.Header.Add()
@@ -154,14 +158,15 @@ func TLSGet(url string, request *interface{}, header map[string]string) {
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		error.Try(5000, 3, err)
+		return err
 	}
 
 	json.Unmarshal(body, request)
+	return nil
 }
 
 // TLSPost2 : https的post请求。
-func TLSPost(url, data string, request *interface{}, header map[string]string) {
+func TLSPost(url, data string, request *interface{}, header map[string]string) error {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -169,7 +174,7 @@ func TLSPost(url, data string, request *interface{}, header map[string]string) {
 
 	req, err := http.NewRequest("POST", url, strings.NewReader(data))
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
 
 	// resp.Header.Add()
@@ -179,27 +184,28 @@ func TLSPost(url, data string, request *interface{}, header map[string]string) {
 
 	res, err := client.Do(req)
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
 
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		error.Try(5000, 3, err)
+		return err
 	}
 
 	json.Unmarshal(body, request)
+	return nil
 }
 
 // TLSPost : Post提交数据，参数是map，返回interface{} ，使用client.Post 这个方法目前有问题。
-func TLSPost2(url, data string, request *interface{}, header map[string]string) {
+func TLSPost2(url, data string, request *interface{}, header map[string]string) error {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: tr}
 	resp, err := client.Post(url, ContextType, strings.NewReader(data))
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
 
 	// resp.Header.Add()
@@ -210,14 +216,15 @@ func TLSPost2(url, data string, request *interface{}, header map[string]string) 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		error.Try(5000, 3, err)
+		return err
 	}
 
 	json.Unmarshal(body, request)
+	return nil
 }
 
 // TLSPut : Put方式的数据获取
-func TLSPut(url, data string, request *interface{}, header map[string]string) {
+func TLSPut(url, data string, request *interface{}, header map[string]string) error {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -225,7 +232,7 @@ func TLSPut(url, data string, request *interface{}, header map[string]string) {
 
 	req, err := http.NewRequest("PUT", url, strings.NewReader(data))
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
 
 	// resp.Header.Add()
@@ -235,20 +242,21 @@ func TLSPut(url, data string, request *interface{}, header map[string]string) {
 
 	res, err := client.Do(req)
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
 
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		error.Try(5000, 3, err)
+		return err
 	}
 
 	json.Unmarshal(body, request)
+	return nil
 }
 
 // TLSDelete : Delete的方式获取数据
-func TLSDelete(url, data string, request *interface{}, header map[string]string) {
+func TLSDelete(url, data string, request *interface{}, header map[string]string) error {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -256,7 +264,7 @@ func TLSDelete(url, data string, request *interface{}, header map[string]string)
 
 	req, err := http.NewRequest("DELETE", url, strings.NewReader(data))
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
 
 	// resp.Header.Add()
@@ -266,14 +274,15 @@ func TLSDelete(url, data string, request *interface{}, header map[string]string)
 
 	res, err := client.Do(req)
 	if err != nil {
-		error.Try(2000, 3, err)
+		return err
 	}
 
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		error.Try(5000, 3, err)
+		return err
 	}
 
 	json.Unmarshal(body, request)
+	return nil
 }

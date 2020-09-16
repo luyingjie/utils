@@ -10,72 +10,83 @@ import (
 type M bson.M
 
 // Connect : 连接数据库。连接池的session释放还需要研究。
-func Connect(Url string) *mgo.Session {
+func Connect(Url string) (*mgo.Session, error) {
 	session, err := mgo.Dial(Url)
 	if err != nil {
-		myError.Try(2000, 3, err)
+		return nil, err
 	}
-	return session
+	return session, nil
 }
 
 // Insert : 添加数据
-func Insert(Url, DB, C string, Data interface{}) {
+func Insert(Url, DB, C string, Data interface{}) error {
 	if Url == "" || DB == "" || C == "" || Data == nil {
-		myError.Trys(1000, 2, "确少必要的参数")
-		return
+		return myError.New("确少必要的参数")
 	}
-	session := Connect(Url)
+	session, err := Connect(Url)
+	if err != nil {
+		return err
+	}
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(DB).C(C)
 	defer session.Close()
 
-	err := c.Insert(Data)
+	err = c.Insert(Data)
 	if err != nil {
-		myError.Try(2000, 3, err)
+		return err
 	}
+	return nil
 }
 
 // Remove : 删除数据
-func Remove(Url, DB, C string, Query *M) {
+func Remove(Url, DB, C string, Query *M) error {
 	if Url == "" || DB == "" || C == "" || Query == nil {
-		myError.Trys(1000, 2, "确少必要的参数")
-		return
+		return myError.New("确少必要的参数")
 	}
-	session := Connect(Url)
+	session, err := Connect(Url)
+	if err != nil {
+		return err
+	}
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(DB).C(C)
 	defer session.Close()
 
-	_, err := c.RemoveAll(Query)
+	_, err = c.RemoveAll(Query)
 	if err != nil {
-		myError.Try(2000, 3, err)
+		return err
 	}
+	return nil
 }
 
 // Update : 修改数据
-func Update(Url, DB, C string, Query *M, Data interface{}) {
+func Update(Url, DB, C string, Query *M, Data interface{}) error {
 	if Url == "" || DB == "" || C == "" || Query == nil || Data == nil {
-		myError.Trys(1000, 2, "确少必要的参数")
-		return
+		return myError.New("确少必要的参数")
 	}
-	session := Connect(Url)
+	session, err := Connect(Url)
+	if err != nil {
+		return err
+	}
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(DB).C(C)
 	defer session.Close()
 
-	err := c.Update(Query, bson.M{"$set": Data})
+	err = c.Update(Query, bson.M{"$set": Data})
 	if err != nil {
-		myError.Try(2000, 3, err)
+		return err
 	}
+	return nil
 }
 
 // Select : 查询数据
-func Select(Url, DB, C string, Query *M, ResultModel interface{}, Limit, Skip int, Sort string) {
+func Select(Url, DB, C string, Query *M, ResultModel interface{}, Limit, Skip int, Sort string) error {
 	if Url == "" || DB == "" || C == "" || Query == nil || ResultModel == nil {
-		myError.Trys(1000, 2, "确少必要的参数")
-		return
+		return myError.New("确少必要的参数")
 	}
-	session := Connect(Url)
+	session, err := Connect(Url)
+	if err != nil {
+		return err
+	}
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(DB).C(C)
 	defer session.Close()
@@ -88,8 +99,9 @@ func Select(Url, DB, C string, Query *M, ResultModel interface{}, Limit, Skip in
 		query = query.Sort(Sort)
 	}
 
-	err := query.All(ResultModel)
+	err = query.All(ResultModel)
 	if err != nil {
-		myError.Try(2000, 3, err)
+		return err
 	}
+	return nil
 }

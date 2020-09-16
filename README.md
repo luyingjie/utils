@@ -31,4 +31,6 @@ https://goframe.org/encoding/gbinary/index
     定时
     任务调度
     数据校验
+
+    fsnotify中的异常处理还有问题。
     

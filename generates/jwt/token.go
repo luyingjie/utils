@@ -8,7 +8,8 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-func GenToken(userModel *UserModel) string {
+// GenToken 生成一个Token
+func GenToken(userModel *UserModel) (string, error) {
 	claim := jwt.MapClaims{
 		"key":      userModel.UserKey,
 		"username": userModel.UserName,
@@ -18,9 +19,9 @@ func GenToken(userModel *UserModel) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 	tokens, err := token.SignedString([]byte(conf.GetByKey("tokenkey").(string)))
 	if err != nil {
-		myerror.Try(4000, 3, err)
+		return "", err
 	}
-	return tokens
+	return tokens, nil
 }
 
 // headers: {
@@ -33,47 +34,52 @@ func secret() jwt.Keyfunc {
 	}
 }
 
-func CheckToken(tokenss string) UserModel {
+// CheckToken 检查Token
+func CheckToken(tokenss string) (UserModel, error) {
 	_user := new(UserModel)
 	token, err := jwt.Parse(tokenss, secret())
 	if err != nil {
-		myerror.Try(4000, 3, err)
+		return *_user, err
 	}
 	claim, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		myerror.Trys(4000, 3, "无法转换令牌")
+		return *_user, myerror.New("无法转换令牌")
 	}
 	//验证token，如果token被修改过则为false
 	if !token.Valid {
-		myerror.Trys(4000, 3, "令牌无效")
+		return *_user, myerror.New("令牌无效")
 	}
 
 	_user.UserKey = claim["key"].(string)
 	_user.UserName = claim["username"].(string)
 	_user.TimeUnix = int64(claim["timeunix"].(float64))
-	return *_user
+	return *_user, nil
 }
 
-func Token(userModel *UserModel) map[string]interface{} {
+// Token 解析Token信息
+func Token(userModel *UserModel) (map[string]interface{}, error) {
 	// 验证用户信息
 	// 现在用户数据不在DB中，先用配置文件临时存放
 	var userStore map[interface{}]interface{}
 	if v := conf.Get("user", userModel.UserKey); v == nil {
-		myerror.Trys(4000, 3, "找不到用户对应信息")
+		return nil, myerror.New("找不到用户对应信息")
 	} else {
 		userStore = v.(map[interface{}]interface{})
 	}
 
 	if userStore["PassWord"].(string) != userModel.PassWord {
-		myerror.Trys(4000, 3, "用户或者密码错误")
+		return nil, myerror.New("用户或者密码错误")
 	}
 
 	// 填充用户模型，后面可能要放到缓存中。
 	userModel.UserName = userStore["UserName"].(string)
 
 	// 发放token
-	token := GenToken(userModel)
+	token, err := GenToken(userModel)
+	if err != nil {
+		return nil, err
+	}
 	return map[string]interface{}{
 		"Token": token,
-	}
+	}, nil
 }

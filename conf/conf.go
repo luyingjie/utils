@@ -3,7 +3,6 @@ package conf
 import (
 	"encoding/json"
 	"io/ioutil"
-	myerr "utils/error"
 	"utils/net/http"
 
 	"gopkg.in/yaml.v2"
@@ -12,17 +11,17 @@ import (
 // 这里只留基础的获取文件数据的方法，提供json和yaml。 GetByKey和Get应该移到项目中。
 // 获取配置文件可能不太需要包装的error方法，这类基础方法可能直接抛异常比较好。
 
-func GetConfYaml(fileName string) map[interface{}]interface{} {
+func GetConfYaml(fileName string) (map[interface{}]interface{}, error) {
 	c := make(map[interface{}]interface{})
 	yamlFile, err := ioutil.ReadFile("conf/" + fileName + ".yaml")
 	if err != nil {
-		myerr.Try(3000, 3, err)
+		return nil, err
 	}
 	err = yaml.Unmarshal(yamlFile, &c)
 	if err != nil {
-		myerr.Try(3000, 3, err)
+		return nil, err
 	}
-	return c
+	return c, nil
 }
 
 func GetConf(fileName string) map[string]interface{} {
@@ -48,12 +47,14 @@ func Get(fileName, key string) interface{} {
 	return GetConf(fileName)[key]
 }
 
-func GetYamlByKey(key string) interface{} {
-	return GetConfYaml("conf")[key]
+func GetYamlByKey(key string) (interface{}, error) {
+	m, err := GetConfYaml("conf")
+	return m[key], err
 }
 
-func GetYaml(fileName, key string) interface{} {
-	return GetConfYaml(fileName)[key]
+func GetYaml(fileName, key string) (interface{}, error) {
+	m, err := GetConfYaml(fileName)
+	return m[key], err
 }
 
 //读取用户的配置文件
