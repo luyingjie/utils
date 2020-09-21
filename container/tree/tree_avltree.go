@@ -2,13 +2,12 @@ package tree
 
 import (
 	"fmt"
+	myvar "utils/container/var"
 	"utils/utils/json"
 
 	"utils/convert/conv"
 
 	"utils/utils/rwmutex"
-
-	"github.com/gogf/gf/container/gvar"
 )
 
 type AVLTree struct {
@@ -130,20 +129,20 @@ func (tree *AVLTree) GetOrSetFuncLock(key interface{}, f func() interface{}) int
 	}
 }
 
-func (tree *AVLTree) GetVar(key interface{}) *gvar.Var {
-	return gvar.New(tree.Get(key))
+func (tree *AVLTree) GetVar(key interface{}) *myvar.Var {
+	return myvar.New(tree.Get(key))
 }
 
-func (tree *AVLTree) GetVarOrSet(key interface{}, value interface{}) *gvar.Var {
-	return gvar.New(tree.GetOrSet(key, value))
+func (tree *AVLTree) GetVarOrSet(key interface{}, value interface{}) *myvar.Var {
+	return myvar.New(tree.GetOrSet(key, value))
 }
 
-func (tree *AVLTree) GetVarOrSetFunc(key interface{}, f func() interface{}) *gvar.Var {
-	return gvar.New(tree.GetOrSetFunc(key, f))
+func (tree *AVLTree) GetVarOrSetFunc(key interface{}, f func() interface{}) *myvar.Var {
+	return myvar.New(tree.GetOrSetFunc(key, f))
 }
 
-func (tree *AVLTree) GetVarOrSetFuncLock(key interface{}, f func() interface{}) *gvar.Var {
-	return gvar.New(tree.GetOrSetFuncLock(key, f))
+func (tree *AVLTree) GetVarOrSetFuncLock(key interface{}, f func() interface{}) *myvar.Var {
+	return myvar.New(tree.GetOrSetFuncLock(key, f))
 }
 
 func (tree *AVLTree) SetIfNotExist(key interface{}, value interface{}) bool {

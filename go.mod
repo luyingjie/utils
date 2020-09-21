@@ -9,7 +9,6 @@ require (
 	github.com/fsnotify/fsnotify v1.4.7
 	github.com/garyburd/redigo v1.6.0
 	github.com/go-sql-driver/mysql v1.5.0
-	github.com/gogf/gf v1.13.4
 	github.com/golibs/uuid v0.0.0-20130306162636-1dd34a9ad6c0
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/gqcn/structs v1.1.1
