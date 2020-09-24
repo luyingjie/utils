@@ -15,7 +15,6 @@ import (
 )
 
 var (
-	// Empty strings.
 	emptyStringMap = map[string]struct{}{
 		"":      {},
 		"0":     {},
@@ -24,15 +23,9 @@ var (
 		"false": {},
 	}
 
-	// Priority tags for Map*/Struct* functions.
-	// Note, the "gconv", "param", "params" tags are used by old version of package.
-	// It is strongly recommended using short tag "c" or "p" instead in the future.
 	StructTagPriority = []string{"gconv", "param", "params", "c", "p", "json"}
 )
 
-// Convert converts the variable <i> to the type <t>, the type <t> is specified by string.
-// The optional parameter <params> is used for additional necessary parameter for this conversion.
-// It supports common types conversion as its conversion based on type name string.
 func Convert(i interface{}, t string, params ...interface{}) interface{} {
 	switch t {
 	case "int":
@@ -262,7 +255,6 @@ func Convert(i interface{}, t string, params ...interface{}) interface{} {
 	}
 }
 
-// Byte converts <i> to byte.
 func Byte(i interface{}) byte {
 	if v, ok := i.(byte); ok {
 		return v
@@ -270,7 +262,6 @@ func Byte(i interface{}) byte {
 	return Uint8(i)
 }
 
-// Bytes converts <i> to []byte.
 func Bytes(i interface{}) []byte {
 	if i == nil {
 		return nil
@@ -285,7 +276,6 @@ func Bytes(i interface{}) []byte {
 	}
 }
 
-// Rune converts <i> to rune.
 func Rune(i interface{}) rune {
 	if v, ok := i.(rune); ok {
 		return v
@@ -293,7 +283,6 @@ func Rune(i interface{}) rune {
 	return rune(Int32(i))
 }
 
-// Runes converts <i> to []rune.
 func Runes(i interface{}) []rune {
 	if v, ok := i.([]rune); ok {
 		return v
@@ -301,8 +290,6 @@ func Runes(i interface{}) []rune {
 	return []rune(String(i))
 }
 
-// String converts <i> to string.
-// It's most common used converting function.
 func String(i interface{}) string {
 	if i == nil {
 		return ""
@@ -400,8 +387,6 @@ func String(i interface{}) string {
 	}
 }
 
-// Bool converts <i> to bool.
-// It returns false if <i> is: false, "", 0, "false", "off", "no", empty slice/map.
 func Bool(i interface{}) bool {
 	if i == nil {
 		return false
@@ -442,7 +427,6 @@ func Bool(i interface{}) bool {
 	}
 }
 
-// Int converts <i> to int.
 func Int(i interface{}) int {
 	if i == nil {
 		return 0
@@ -453,7 +437,6 @@ func Int(i interface{}) int {
 	return int(Int64(i))
 }
 
-// Int8 converts <i> to int8.
 func Int8(i interface{}) int8 {
 	if i == nil {
 		return 0
@@ -464,7 +447,6 @@ func Int8(i interface{}) int8 {
 	return int8(Int64(i))
 }
 
-// Int16 converts <i> to int16.
 func Int16(i interface{}) int16 {
 	if i == nil {
 		return 0
@@ -475,7 +457,6 @@ func Int16(i interface{}) int16 {
 	return int16(Int64(i))
 }
 
-// Int32 converts <i> to int32.
 func Int32(i interface{}) int32 {
 	if i == nil {
 		return 0
@@ -486,7 +467,6 @@ func Int32(i interface{}) int32 {
 	return int32(Int64(i))
 }
 
-// Int64 converts <i> to int64.
 func Int64(i interface{}) int64 {
 	if i == nil {
 		return 0
@@ -564,7 +544,6 @@ func Int64(i interface{}) int64 {
 	}
 }
 
-// Uint converts <i> to uint.
 func Uint(i interface{}) uint {
 	if i == nil {
 		return 0
@@ -575,7 +554,6 @@ func Uint(i interface{}) uint {
 	return uint(Uint64(i))
 }
 
-// Uint8 converts <i> to uint8.
 func Uint8(i interface{}) uint8 {
 	if i == nil {
 		return 0
@@ -586,7 +564,6 @@ func Uint8(i interface{}) uint8 {
 	return uint8(Uint64(i))
 }
 
-// Uint16 converts <i> to uint16.
 func Uint16(i interface{}) uint16 {
 	if i == nil {
 		return 0
@@ -597,7 +574,6 @@ func Uint16(i interface{}) uint16 {
 	return uint16(Uint64(i))
 }
 
-// Uint32 converts <i> to uint32.
 func Uint32(i interface{}) uint32 {
 	if i == nil {
 		return 0
@@ -608,7 +584,6 @@ func Uint32(i interface{}) uint32 {
 	return uint32(Uint64(i))
 }
 
-// Uint64 converts <i> to uint64.
 func Uint64(i interface{}) uint64 {
 	if i == nil {
 		return 0
@@ -668,7 +643,6 @@ func Uint64(i interface{}) uint64 {
 	}
 }
 
-// Float32 converts <i> to float32.
 func Float32(i interface{}) float32 {
 	if i == nil {
 		return 0
@@ -686,7 +660,6 @@ func Float32(i interface{}) float32 {
 	}
 }
 
-// Float64 converts <i> to float64.
 func Float64(i interface{}) float64 {
 	if i == nil {
 		return 0

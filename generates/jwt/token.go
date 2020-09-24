@@ -60,11 +60,11 @@ func CheckToken(tokenss string) (UserModel, error) {
 func Token(userModel *UserModel) (map[string]interface{}, error) {
 	// 验证用户信息
 	// 现在用户数据不在DB中，先用配置文件临时存放
-	var userStore map[interface{}]interface{}
+	var userStore map[string]interface{}
 	if v := conf.Get("user", userModel.UserKey); v == nil {
 		return nil, myerror.New("找不到用户对应信息")
 	} else {
-		userStore = v.(map[interface{}]interface{})
+		userStore = v.(map[string]interface{})
 	}
 
 	if userStore["PassWord"].(string) != userModel.PassWord {
