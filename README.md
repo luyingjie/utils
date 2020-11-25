@@ -20,6 +20,7 @@ https://goframe.org/encoding/gbinary/index
 
 ## 计划完成
      
+    log还不够完善，信息比较冗余。
     文件处理
     出去基础包直接报错的代码
     
