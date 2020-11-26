@@ -1,4 +1,4 @@
-module github.com/luyingjie/utils
+module utils
 
 go 1.14
 
