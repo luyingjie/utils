@@ -2,7 +2,7 @@ package tree
 
 import (
 	"fmt"
-	myvar "utils/container/var"
+	"utils/container/var"
 	"utils/utils/json"
 
 	"utils/base/util"
@@ -170,20 +170,20 @@ func (tree *RedBlackTree) GetOrSetFuncLock(key interface{}, f func() interface{}
 	}
 }
 
-func (tree *RedBlackTree) GetVar(key interface{}) *myvar.Var {
-	return myvar.New(tree.Get(key))
+func (tree *RedBlackTree) GetVar(key interface{}) *vvar.Var {
+	return vvar.New(tree.Get(key))
 }
 
-func (tree *RedBlackTree) GetVarOrSet(key interface{}, value interface{}) *myvar.Var {
-	return myvar.New(tree.GetOrSet(key, value))
+func (tree *RedBlackTree) GetVarOrSet(key interface{}, value interface{}) *vvar.Var {
+	return vvar.New(tree.GetOrSet(key, value))
 }
 
-func (tree *RedBlackTree) GetVarOrSetFunc(key interface{}, f func() interface{}) *myvar.Var {
-	return myvar.New(tree.GetOrSetFunc(key, f))
+func (tree *RedBlackTree) GetVarOrSetFunc(key interface{}, f func() interface{}) *vvar.Var {
+	return vvar.New(tree.GetOrSetFunc(key, f))
 }
 
-func (tree *RedBlackTree) GetVarOrSetFuncLock(key interface{}, f func() interface{}) *myvar.Var {
-	return myvar.New(tree.GetOrSetFuncLock(key, f))
+func (tree *RedBlackTree) GetVarOrSetFuncLock(key interface{}, f func() interface{}) *vvar.Var {
+	return vvar.New(tree.GetOrSetFuncLock(key, f))
 }
 
 func (tree *RedBlackTree) SetIfNotExist(key interface{}, value interface{}) bool {

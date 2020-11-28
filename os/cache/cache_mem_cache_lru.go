@@ -4,27 +4,27 @@ import (
 	"time"
 
 	"utils/container/list"
-	mymap "utils/container/map"
-	mytype "utils/container/type"
+	vmap "utils/container/map"
+	vtype "utils/container/type"
 
 	"utils/os/timer"
 )
 
 type memCacheLru struct {
 	cache   *memCache
-	data    *mymap.Map
+	data    *vmap.Map
 	list    *list.List
 	rawList *list.List
-	closed  *mytype.Bool
+	closed  *vtype.Bool
 }
 
 func newMemCacheLru(cache *memCache) *memCacheLru {
 	lru := &memCacheLru{
 		cache:   cache,
-		data:    mymap.New(true),
+		data:    vmap.New(true),
 		list:    list.New(true),
 		rawList: list.New(true),
-		closed:  mytype.NewBool(),
+		closed:  vtype.NewBool(),
 	}
 	timer.AddSingleton(time.Second, lru.SyncAndClear)
 	return lru

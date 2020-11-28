@@ -4,11 +4,10 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
+	"utils/container/var"
 	"utils/utils/json"
 
 	"utils/convert/conv"
-
-	myvar "utils/container/var"
 
 	"utils/utils/rwmutex"
 )
@@ -128,20 +127,20 @@ func (tree *Tree) GetOrSetFuncLock(key interface{}, f func() interface{}) interf
 	}
 }
 
-func (tree *Tree) GetVar(key interface{}) *myvar.Var {
-	return myvar.New(tree.Get(key))
+func (tree *Tree) GetVar(key interface{}) *vvar.Var {
+	return vvar.New(tree.Get(key))
 }
 
-func (tree *Tree) GetVarOrSet(key interface{}, value interface{}) *myvar.Var {
-	return myvar.New(tree.GetOrSet(key, value))
+func (tree *Tree) GetVarOrSet(key interface{}, value interface{}) *vvar.Var {
+	return vvar.New(tree.GetOrSet(key, value))
 }
 
-func (tree *Tree) GetVarOrSetFunc(key interface{}, f func() interface{}) *myvar.Var {
-	return myvar.New(tree.GetOrSetFunc(key, f))
+func (tree *Tree) GetVarOrSetFunc(key interface{}, f func() interface{}) *vvar.Var {
+	return vvar.New(tree.GetOrSetFunc(key, f))
 }
 
-func (tree *Tree) GetVarOrSetFuncLock(key interface{}, f func() interface{}) *myvar.Var {
-	return myvar.New(tree.GetOrSetFuncLock(key, f))
+func (tree *Tree) GetVarOrSetFuncLock(key interface{}, f func() interface{}) *vvar.Var {
+	return vvar.New(tree.GetOrSetFuncLock(key, f))
 }
 
 func (tree *Tree) SetIfNotExist(key interface{}, value interface{}) bool {

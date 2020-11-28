@@ -5,17 +5,17 @@ import (
 	"sync"
 	"time"
 
-	myvar "utils/container/var"
+	vtype "utils/container/type"
+	vvar "utils/container/var"
 
-	mytime "utils/os/time"
+	"utils/os/time"
+	vtime "utils/os/time"
 
 	"utils/os/timer"
 
 	"utils/container/list"
 
 	"utils/container/set"
-
-	mytype "utils/container/type"
 
 	"utils/convert/conv"
 )
@@ -41,7 +41,7 @@ type memCache struct {
 
 	eventList *list.List
 
-	closed *mytype.Bool
+	closed *vtype.Bool
 }
 
 type memCacheItem struct {
@@ -65,7 +65,7 @@ func newMemCache(lruCap ...int) *memCache {
 		expireTimes: make(map[interface{}]int64),
 		expireSets:  make(map[int64]*set.Set),
 		eventList:   list.New(true),
-		closed:      mytype.NewBool(),
+		closed:      vtype.NewBool(),
 	}
 	if len(lruCap) > 0 {
 		c.cap = lruCap[0]
@@ -114,7 +114,7 @@ func (c *memCache) UpdateExpire(key interface{}, duration time.Duration) (oldDur
 			k: key,
 			e: newExpireTime,
 		})
-		return time.Duration(item.e-mytime.TimestampMilli()) * time.Millisecond
+		return time.Duration(item.e-vtime.TimestampMilli()) * time.Millisecond
 	}
 	return -1
 }
@@ -123,7 +123,7 @@ func (c *memCache) GetExpire(key interface{}) time.Duration {
 	c.dataMu.RLock()
 	defer c.dataMu.RUnlock()
 	if item, ok := c.data[key]; ok {
-		return time.Duration(item.e-mytime.TimestampMilli()) * time.Millisecond
+		return time.Duration(item.e-vtime.TimestampMilli()) * time.Millisecond
 	}
 	return -1
 }
@@ -150,7 +150,7 @@ func (c *memCache) getInternalExpire(duration time.Duration) int64 {
 	if duration == 0 {
 		return gDEFAULT_MAX_EXPIRE
 	} else {
-		return mytime.TimestampMilli() + duration.Nanoseconds()/1000000
+		return vtime.TimestampMilli() + duration.Nanoseconds()/1000000
 	}
 }
 
@@ -216,8 +216,8 @@ func (c *memCache) Get(key interface{}) interface{} {
 	return nil
 }
 
-func (c *memCache) GetVar(key interface{}) *myvar.Var {
-	return myvar.New(c.Get(key))
+func (c *memCache) GetVar(key interface{}) *vvar.Var {
+	return vvar.New(c.Get(key))
 }
 
 func (c *memCache) GetOrSet(key interface{}, value interface{}, duration time.Duration) interface{} {
@@ -262,7 +262,7 @@ func (c *memCache) Remove(keys ...interface{}) (value interface{}) {
 			delete(c.data, key)
 			c.eventList.PushBack(&memCacheEvent{
 				k: key,
-				e: mytime.TimestampMilli() - 1000,
+				e: vtime.TimestampMilli() - 1000,
 			})
 		}
 	}
@@ -372,7 +372,7 @@ func (c *memCache) syncEventAndClearExpired() {
 	}
 	var (
 		expireSet *set.Set
-		ek        = c.makeExpireKey(mytime.TimestampMilli())
+		ek        = c.makeExpireKey(vtime.TimestampMilli())
 		eks       = []int64{ek - 1000, ek - 2000, ek - 3000, ek - 4000, ek - 5000}
 	)
 	for _, expireTime := range eks {

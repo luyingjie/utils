@@ -1,4 +1,4 @@
-package mytype
+package vtype
 
 type Type = Interface
 

@@ -1,4 +1,4 @@
-package mytype
+package vtype
 
 import (
 	"sync/atomic"

@@ -10,11 +10,11 @@ import (
 	"utils/os/cache"
 
 	"utils/container/list"
-	mymap "utils/container/map"
+	vmap "utils/container/map"
 
 	"utils/container/queue"
 
-	mytype "utils/container/type"
+	vtype "utils/container/type"
 
 	gitFsnotify "github.com/fsnotify/fsnotify"
 )
@@ -24,7 +24,7 @@ type Watcher struct {
 	events    *queue.Queue
 	cache     *cache.Cache
 	nameSet   *set.StrSet
-	callbacks *mymap.StrAnyMap
+	callbacks *vmap.StrAnyMap
 	closeChan chan struct{}
 }
 
@@ -61,8 +61,8 @@ const (
 
 var (
 	defaultWatcher      *Watcher
-	callbackIdMap       = mymap.NewIntAnyMap(true)
-	callbackIdGenerator = mytype.NewInt()
+	callbackIdMap       = vmap.NewIntAnyMap(true)
+	callbackIdGenerator = vtype.NewInt()
 )
 
 func init() {
@@ -79,7 +79,7 @@ func New() (*Watcher, error) {
 		events:    queue.New(),
 		nameSet:   set.NewStrSet(true),
 		closeChan: make(chan struct{}),
-		callbacks: mymap.NewStrAnyMap(true),
+		callbacks: vmap.NewStrAnyMap(true),
 	}
 	if watcher, err := gitFsnotify.NewWatcher(); err == nil {
 		w.watcher = watcher

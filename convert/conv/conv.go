@@ -9,7 +9,7 @@ import (
 
 	"utils/utils/json"
 
-	mytime "utils/os/time"
+	vtime "utils/os/time"
 
 	"utils/encoding/binary"
 )
@@ -192,31 +192,31 @@ func Convert(i interface{}, t string, params ...interface{}) interface{} {
 		}
 		return &v
 
-	case "MyTime", "mytime.Time":
+	case "Vime", "vtime.Time":
 		if len(params) > 0 {
-			if v := MyTime(i, String(params[0])); v != nil {
+			if v := VTime(i, String(params[0])); v != nil {
 				return *v
 			} else {
-				return *mytime.New()
+				return *vtime.New()
 			}
 		}
-		if v := MyTime(i); v != nil {
+		if v := VTime(i); v != nil {
 			return *v
 		} else {
-			return *mytime.New()
+			return *vtime.New()
 		}
-	case "*mytime.Time":
+	case "*vtime.Time":
 		if len(params) > 0 {
-			if v := MyTime(i, String(params[0])); v != nil {
+			if v := VTime(i, String(params[0])); v != nil {
 				return v
 			} else {
-				return mytime.New()
+				return vtime.New()
 			}
 		}
-		if v := MyTime(i); v != nil {
+		if v := VTime(i); v != nil {
 			return v
 		} else {
-			return mytime.New()
+			return vtime.New()
 		}
 
 	case "Duration", "time.Duration":
@@ -335,12 +335,12 @@ func String(i interface{}) string {
 			return ""
 		}
 		return value.String()
-	case mytime.Time:
+	case vtime.Time:
 		if value.IsZero() {
 			return ""
 		}
 		return value.String()
-	case *mytime.Time:
+	case *vtime.Time:
 		if value == nil {
 			return ""
 		}

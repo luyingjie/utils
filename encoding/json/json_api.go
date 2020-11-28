@@ -8,9 +8,9 @@ import (
 
 	"utils/convert/conv"
 
-	mytime "utils/os/time"
+	"utils/os/time"
 
-	myvar "utils/container/var"
+	"utils/container/var"
 )
 
 func (j *Json) Value() interface{} {
@@ -52,12 +52,12 @@ func (j *Json) Get(pattern string, def ...interface{}) interface{} {
 	return nil
 }
 
-func (j *Json) GetVar(pattern string, def ...interface{}) *myvar.Var {
-	return myvar.New(j.Get(pattern, def...))
+func (j *Json) GetVar(pattern string, def ...interface{}) *vvar.Var {
+	return vvar.New(j.Get(pattern, def...))
 }
 
-func (j *Json) GetVars(pattern string, def ...interface{}) []*myvar.Var {
-	return myvar.New(j.Get(pattern, def...)).Vars()
+func (j *Json) GetVars(pattern string, def ...interface{}) []*vvar.Var {
+	return vvar.New(j.Get(pattern, def...)).Vars()
 }
 
 func (j *Json) GetMap(pattern string, def ...interface{}) map[string]interface{} {
@@ -200,8 +200,8 @@ func (j *Json) GetDuration(pattern string, def ...interface{}) time.Duration {
 	return conv.Duration(j.Get(pattern, def...))
 }
 
-func (j *Json) GetMyTime(pattern string, format ...string) *mytime.Time {
-	return conv.MyTime(j.Get(pattern), format...)
+func (j *Json) GetVTime(pattern string, format ...string) *vtime.Time {
+	return conv.VTime(j.Get(pattern), format...)
 }
 
 func (j *Json) Set(pattern string, value interface{}) error {

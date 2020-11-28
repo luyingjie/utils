@@ -1,4 +1,4 @@
-package myvar
+package vvar
 
 import (
 	"time"
@@ -6,9 +6,8 @@ import (
 
 	"utils/utils/empty"
 
-	mytype "utils/container/type"
 	"utils/convert/conv"
-	mytime "utils/os/time"
+	vtime "utils/os/time"
 )
 
 type Var struct {
@@ -20,7 +19,7 @@ func New(value interface{}, safe ...bool) *Var {
 	v := Var{}
 	if len(safe) > 0 && !safe[0] {
 		v.safe = true
-		v.value = mytype.NewInterface(value)
+		v.value = vtype.NewInterface(value)
 	} else {
 		v.value = value
 	}
@@ -31,7 +30,7 @@ func Create(value interface{}, safe ...bool) Var {
 	v := Var{}
 	if len(safe) > 0 && !safe[0] {
 		v.safe = true
-		v.value = mytype.NewInterface(value)
+		v.value = vtype.NewInterface(value)
 	} else {
 		v.value = value
 	}
@@ -44,7 +43,7 @@ func (v *Var) Clone() *Var {
 
 func (v *Var) Set(value interface{}) (old interface{}) {
 	if v.safe {
-		if t, ok := v.value.(*mytype.Interface); ok {
+		if t, ok := v.value.(*vtype.Interface); ok {
 			old = t.Set(value)
 			return
 		}
@@ -59,7 +58,7 @@ func (v *Var) Val() interface{} {
 		return nil
 	}
 	if v.safe {
-		if t, ok := v.value.(*mytype.Interface); ok {
+		if t, ok := v.value.(*vtype.Interface); ok {
 			return t.Val()
 		}
 	}
@@ -186,8 +185,8 @@ func (v *Var) Duration() time.Duration {
 	return conv.Duration(v.Val())
 }
 
-func (v *Var) MyTime(format ...string) *mytime.Time {
-	return conv.MyTime(v.Val(), format...)
+func (v *Var) VTime(format ...string) *vtime.Time {
+	return conv.VTime(v.Val(), format...)
 }
 
 func (v *Var) MarshalJSON() ([]byte, error) {

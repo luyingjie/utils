@@ -1,4 +1,4 @@
-package error
+package verror
 
 import (
 	"testing"

@@ -15,7 +15,7 @@ func Time(i interface{}, format ...string) time.Time {
 			return v
 		}
 	}
-	if t := MyTime(i, format...); t != nil {
+	if t := VTime(i, format...); t != nil {
 		return t.Time
 	}
 	return time.Time{}
@@ -34,7 +34,7 @@ func Duration(i interface{}) time.Duration {
 	return time.Duration(Int64(i))
 }
 
-func MyTime(i interface{}, format ...string) *mtime.Time {
+func VTime(i interface{}, format ...string) *mtime.Time {
 	if i == nil {
 		return nil
 	}

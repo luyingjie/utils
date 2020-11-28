@@ -1,7 +1,7 @@
-package mymap
+package vmap
 
 import (
-	myvar "utils/container/var"
+	"utils/container/var"
 	"utils/utils/json"
 
 	"utils/utils/empty"
@@ -205,20 +205,20 @@ func (m *StrAnyMap) GetOrSetFuncLock(key string, f func() interface{}) interface
 	}
 }
 
-func (m *StrAnyMap) GetVar(key string) *myvar.Var {
-	return myvar.New(m.Get(key))
+func (m *StrAnyMap) GetVar(key string) *vvar.Var {
+	return vvar.New(m.Get(key))
 }
 
-func (m *StrAnyMap) GetVarOrSet(key string, value interface{}) *myvar.Var {
-	return myvar.New(m.GetOrSet(key, value))
+func (m *StrAnyMap) GetVarOrSet(key string, value interface{}) *vvar.Var {
+	return vvar.New(m.GetOrSet(key, value))
 }
 
-func (m *StrAnyMap) GetVarOrSetFunc(key string, f func() interface{}) *myvar.Var {
-	return myvar.New(m.GetOrSetFunc(key, f))
+func (m *StrAnyMap) GetVarOrSetFunc(key string, f func() interface{}) *vvar.Var {
+	return vvar.New(m.GetOrSetFunc(key, f))
 }
 
-func (m *StrAnyMap) GetVarOrSetFuncLock(key string, f func() interface{}) *myvar.Var {
-	return myvar.New(m.GetOrSetFuncLock(key, f))
+func (m *StrAnyMap) GetVarOrSetFuncLock(key string, f func() interface{}) *vvar.Var {
+	return vvar.New(m.GetOrSetFuncLock(key, f))
 }
 
 func (m *StrAnyMap) SetIfNotExist(key string, value interface{}) bool {

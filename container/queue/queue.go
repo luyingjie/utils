@@ -3,7 +3,7 @@ package queue
 import (
 	"math"
 
-	mytype "utils/container/type"
+	"utils/container/type"
 
 	"utils/container/list"
 )
@@ -11,7 +11,7 @@ import (
 type Queue struct {
 	limit  int
 	list   *list.List
-	closed *mytype.Bool
+	closed *vtype.Bool
 	events chan struct{}
 	C      chan interface{}
 }
@@ -23,7 +23,7 @@ const (
 
 func New(limit ...int) *Queue {
 	q := &Queue{
-		closed: mytype.NewBool(),
+		closed: vtype.NewBool(),
 	}
 	if len(limit) > 0 && limit[0] > 0 {
 		q.limit = limit[0]

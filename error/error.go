@@ -1,4 +1,4 @@
-package error
+package verror
 
 import (
 	"errors"
@@ -10,21 +10,6 @@ import (
 
 	"utils/error/base"
 )
-
-// 错误码大类
-// 5000		系统错误
-// 4000		权限等错误
-// 3000		资源错误
-// 2000		连接错误
-// 1000		参数错误
-
-// 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
-type ErrorModel struct {
-	Code  int
-	Level int
-	Model string
-	Error error
-}
 
 var _log *log.Logger
 
@@ -76,6 +61,7 @@ func New(text string) error {
 	return errors.New(text)
 }
 
+// Newf 创建一个格式化错误对象
 func Newf(format string, args ...interface{}) error {
 	if format == "" {
 		return nil
@@ -83,7 +69,7 @@ func Newf(format string, args ...interface{}) error {
 	return errors.New(fmt.Sprintf(format, args...))
 }
 
-// Try : 处理异常。Leve : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
+// Try 处理异常。Leve : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
 func Try(code, level int, err error) {
 	errModel := ErrorModel{
 		Code:  code,
@@ -91,12 +77,13 @@ func Try(code, level int, err error) {
 		// Model: model,
 		Error: base.Wrap(err, ""),
 	}
+	errModel.SetMessage()
 
 	writing(errModel)
 	panic(errModel)
 }
 
-// Trys : 处理string的异常。Level : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
+// TryText 处理string的异常。Level : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
 func TryText(code, level int, str string) {
 	errModel := ErrorModel{
 		Code:  code,
@@ -104,12 +91,13 @@ func TryText(code, level int, str string) {
 		// Model: model,
 		Error: base.New(str),
 	}
+	errModel.SetMessage()
 
 	writing(errModel)
 	panic(errModel)
 }
 
-// Error : 处理异常。Leve : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
+// Error 处理异常。Leve : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
 func Error(code, level int, err error) ErrorModel {
 	errModel := ErrorModel{
 		Code:  code,
@@ -117,12 +105,13 @@ func Error(code, level int, err error) ErrorModel {
 		// Model: model,
 		Error: base.Wrap(err, ""),
 	}
+	errModel.SetMessage()
 
 	writing(errModel)
 	return errModel
 }
 
-// ErrorText : 处理string的异常。Level : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
+// ErrorText 处理string的异常。Level : 0(Debug), 1(Info), 2(Warn), 3(Error), 4(Panic), 5(Fatal)
 func ErrorText(code, level int, str string) ErrorModel {
 	errModel := ErrorModel{
 		Code:  code,
@@ -130,12 +119,13 @@ func ErrorText(code, level int, str string) ErrorModel {
 		// Model: model,
 		Error: base.New(str),
 	}
+	errModel.SetMessage()
 
 	writing(errModel)
 	return errModel
 }
 
-// Log : 写入日志
+// Log 写入日志
 func Log(code, level int, err error) {
 	errModel := ErrorModel{
 		Code:  code,
@@ -143,11 +133,12 @@ func Log(code, level int, err error) {
 		// Model: model,
 		Error: base.Wrap(err, ""),
 	}
+	errModel.SetMessage()
 
 	writing(errModel)
 }
 
-// LogText : 写入日志
+// LogText 写入日志
 func LogText(code, level int, str string) {
 	errModel := ErrorModel{
 		Code:  code,
@@ -155,6 +146,7 @@ func LogText(code, level int, str string) {
 		// Model: model,
 		Error: base.New(str),
 	}
+	errModel.SetMessage()
 
 	writing(errModel)
 }

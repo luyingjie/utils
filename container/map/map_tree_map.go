@@ -1,4 +1,4 @@
-package mymap
+package vmap
 
 import (
 	"utils/container/tree"

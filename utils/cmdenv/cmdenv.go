@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	myvar "utils/container/var"
+	vvar "utils/container/var"
 )
 
 var (
@@ -26,7 +26,7 @@ func doInit() {
 	}
 }
 
-func Get(key string, def ...interface{}) *myvar.Var {
+func Get(key string, def ...interface{}) *vvar.Var {
 	value := interface{}(nil)
 	if len(def) > 0 {
 		value = def[0]
@@ -40,5 +40,5 @@ func Get(key string, def ...interface{}) *myvar.Var {
 			value = v
 		}
 	}
-	return myvar.New(value)
+	return vvar.New(value)
 }

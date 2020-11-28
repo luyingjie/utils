@@ -1,4 +1,4 @@
-package myvar
+package vvar
 
 import "utils/convert/conv"
 

@@ -5,11 +5,11 @@ import (
 	"time"
 
 	"utils/container/list"
-	mytype "utils/container/type"
+	vtype "utils/container/type"
 )
 
 type Timer struct {
-	status     *mytype.Int
+	status     *vtype.Int
 	wheels     []*wheel
 	length     int
 	number     int
@@ -21,7 +21,7 @@ type wheel struct {
 	level      int
 	slots      []*list.List
 	number     int64
-	ticks      *mytype.Int64
+	ticks      *vtype.Int64
 	totalMs    int64
 	createMs   int64
 	intervalMs int64
@@ -36,7 +36,7 @@ func New(slot int, interval time.Duration, level ...int) *Timer {
 		length = level[0]
 	}
 	t := &Timer{
-		status:     mytype.NewInt(STATUS_RUNNING),
+		status:     vtype.NewInt(STATUS_RUNNING),
 		wheels:     make([]*wheel, length),
 		length:     length,
 		number:     slot,
@@ -65,7 +65,7 @@ func (t *Timer) newWheel(level int, slot int, interval time.Duration) *wheel {
 		level:      level,
 		slots:      make([]*list.List, slot),
 		number:     int64(slot),
-		ticks:      mytype.NewInt64(),
+		ticks:      vtype.NewInt64(),
 		totalMs:    int64(slot) * interval.Nanoseconds() / 1e6,
 		createMs:   time.Now().UnixNano() / 1e6,
 		intervalMs: interval.Nanoseconds() / 1e6,

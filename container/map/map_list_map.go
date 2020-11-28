@@ -1,4 +1,4 @@
-package mymap
+package vmap
 
 import (
 	"utils/utils/json"
@@ -8,7 +8,7 @@ import (
 	"utils/convert/conv"
 
 	"utils/container/list"
-	myvar "utils/container/var"
+	"utils/container/var"
 	"utils/utils/rwmutex"
 )
 
@@ -278,20 +278,20 @@ func (m *ListMap) GetOrSetFuncLock(key interface{}, f func() interface{}) interf
 	}
 }
 
-func (m *ListMap) GetVar(key interface{}) *myvar.Var {
-	return myvar.New(m.Get(key))
+func (m *ListMap) GetVar(key interface{}) *vvar.Var {
+	return vvar.New(m.Get(key))
 }
 
-func (m *ListMap) GetVarOrSet(key interface{}, value interface{}) *myvar.Var {
-	return myvar.New(m.GetOrSet(key, value))
+func (m *ListMap) GetVarOrSet(key interface{}, value interface{}) *vvar.Var {
+	return vvar.New(m.GetOrSet(key, value))
 }
 
-func (m *ListMap) GetVarOrSetFunc(key interface{}, f func() interface{}) *myvar.Var {
-	return myvar.New(m.GetOrSetFunc(key, f))
+func (m *ListMap) GetVarOrSetFunc(key interface{}, f func() interface{}) *vvar.Var {
+	return vvar.New(m.GetOrSetFunc(key, f))
 }
 
-func (m *ListMap) GetVarOrSetFuncLock(key interface{}, f func() interface{}) *myvar.Var {
-	return myvar.New(m.GetOrSetFuncLock(key, f))
+func (m *ListMap) GetVarOrSetFuncLock(key interface{}, f func() interface{}) *vvar.Var {
+	return vvar.New(m.GetOrSetFuncLock(key, f))
 }
 
 func (m *ListMap) SetIfNotExist(key interface{}, value interface{}) bool {

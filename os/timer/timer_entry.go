@@ -3,15 +3,15 @@ package timer
 import (
 	"time"
 
-	mytype "utils/container/type"
+	vtype "utils/container/type"
 )
 
 type Entry struct {
 	wheel         *wheel
 	job           JobFunc
-	singleton     *mytype.Bool
-	status        *mytype.Int
-	times         *mytype.Int
+	singleton     *vtype.Bool
+	status        *vtype.Int
+	times         *vtype.Int
 	create        int64
 	interval      int64
 	createMs      int64
@@ -37,11 +37,11 @@ func (w *wheel) addEntry(interval time.Duration, job JobFunc, singleton bool, ti
 	entry := &Entry{
 		wheel:         w,
 		job:           job,
-		times:         mytype.NewInt(times),
-		status:        mytype.NewInt(status),
+		times:         vtype.NewInt(times),
+		status:        vtype.NewInt(status),
 		create:        ticks,
 		interval:      num,
-		singleton:     mytype.NewBool(singleton),
+		singleton:     vtype.NewBool(singleton),
 		createMs:      nowMs,
 		intervalMs:    ms,
 		rawIntervalMs: ms,

@@ -1,4 +1,4 @@
-package mymap
+package vmap
 
 type (
 	Map     = AnyAnyMap

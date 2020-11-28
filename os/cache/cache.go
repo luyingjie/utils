@@ -2,7 +2,7 @@ package cache
 
 import (
 	"time"
-	myvar "utils/container/var"
+	vvar "utils/container/var"
 )
 
 var defaultCache = New()
@@ -27,7 +27,7 @@ func Get(key interface{}) interface{} {
 	return defaultCache.Get(key)
 }
 
-func GetVar(key interface{}) *myvar.Var {
+func GetVar(key interface{}) *vvar.Var {
 	return defaultCache.GetVar(key)
 }
 
