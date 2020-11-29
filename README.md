@@ -4,6 +4,11 @@
 https://goframe.org/util/gconv/index
 https://goframe.org/encoding/gbinary/index
 
+
+# 功能
+    类型转换: convert/conv
+
+
 ## v2.0.1
     重写error部分，报错会返回更多信息。
     错误会返回堆栈信息。
