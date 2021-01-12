@@ -7,8 +7,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// 和其他共用
-// type M bson.M
+type M bson.M
 
 type DB struct {
 	session *mgo.Session

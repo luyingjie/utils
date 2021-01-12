@@ -7,7 +7,8 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-type M bson.M
+// 和其他共用
+// type M bson.M
 
 // Connect : 连接数据库。连接池的session释放还需要研究。
 func Connect(Url string) (*mgo.Session, error) {
