@@ -8,6 +8,7 @@ import (
 )
 
 type M bson.M
+type RegEx bson.RegEx
 
 type DB struct {
 	session *mgo.Session
@@ -24,6 +25,15 @@ func NewId() bson.ObjectId {
 	return bson.NewObjectId()
 }
 
+func ToId(id string) bson.ObjectId {
+	return bson.ObjectIdHex(id)
+}
+
+func NewStrId() string {
+	return bson.NewObjectId().Hex()
+}
+
+// NewDB 创建新连接。 每次都要创建连接使用完后关闭。pool应该交给包，不应该在外面单独做。
 func NewDB(_url, dbName string) (*DB, error) {
 	_session, err := mgo.Dial(_url)
 	if err != nil {
