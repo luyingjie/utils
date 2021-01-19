@@ -150,7 +150,7 @@ func (db *DB) Update(C string, Query *M, Data interface{}) error {
 		}
 	}()
 
-	err := c.Update(Query, bson.M{"$set": Data})
+	err := c.Update(Query, Data) // bson.M{"$set": Data}
 	return err
 }
 
@@ -166,7 +166,7 @@ func (db *DB) UpdateAll(C string, Query *M, Data interface{}) error {
 		}
 	}()
 
-	_, err := c.UpdateAll(Query, bson.M{"$set": Data})
+	_, err := c.UpdateAll(Query, Data)
 	return err
 }
 
@@ -182,7 +182,7 @@ func (db *DB) UpdateId(C string, id interface{}, Data interface{}) error {
 		}
 	}()
 
-	err := c.UpdateId(id, bson.M{"$set": Data})
+	err := c.UpdateId(id, Data)
 	return err
 }
 
