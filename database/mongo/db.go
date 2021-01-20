@@ -228,3 +228,21 @@ func (db *DB) FindId(C string, id interface{}, ResultModel interface{}) error {
 	err := query.One(ResultModel)
 	return err
 }
+
+func (db *DB) Find(C string, Query *M, ResultModel interface{}) error {
+	if C == "" || Query == nil || ResultModel == nil {
+		return errors.New("确少必要的参数")
+	}
+
+	c := db.db.C(C)
+	defer func() {
+		if db.isClose {
+			db.session.Close()
+		}
+	}()
+
+	query := c.Find(Query)
+
+	err := query.One(ResultModel)
+	return err
+}
