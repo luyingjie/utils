@@ -229,7 +229,7 @@ func (db *DB) FindId(C string, id interface{}, ResultModel interface{}) error {
 	return err
 }
 
-func (db *DB) Find(C string, Query *M, ResultModel interface{}) error {
+func (db *DB) Find(C string, Query *M, Sort string, ResultModel interface{}) error {
 	if C == "" || Query == nil || ResultModel == nil {
 		return errors.New("确少必要的参数")
 	}
@@ -242,6 +242,9 @@ func (db *DB) Find(C string, Query *M, ResultModel interface{}) error {
 	}()
 
 	query := c.Find(Query)
+	if Sort != "" {
+		query = query.Sort(Sort)
+	}
 
 	err := query.One(ResultModel)
 	return err
