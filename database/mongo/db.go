@@ -9,6 +9,7 @@ import (
 
 type M bson.M
 type RegEx bson.RegEx
+type D bson.D
 
 type DB struct {
 	session *mgo.Session
@@ -211,6 +212,7 @@ func (db *DB) Select(C string, Query *M, ResultModel interface{}, Limit, Skip in
 	return err
 }
 
+// 这个方法调用有问题，找不到对应的id string。
 func (db *DB) FindId(C string, id interface{}, ResultModel interface{}) error {
 	if C == "" || id == nil || ResultModel == nil {
 		return errors.New("确少必要的参数")
