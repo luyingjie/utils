@@ -249,3 +249,19 @@ func (db *DB) Find(C string, Query *M, Sort string, ResultModel interface{}) err
 	err := query.One(ResultModel)
 	return err
 }
+
+// Count : 查询总数
+func (db *DB) Count(C string, Query *M) (int, error) {
+	if C == "" || Query == nil {
+		return 0, errors.New("确少必要的参数")
+	}
+
+	c := db.db.C(C)
+	defer func() {
+		if db.isClose {
+			db.session.Close()
+		}
+	}()
+
+	return c.Count()
+}
