@@ -1,12 +1,10 @@
 # utils
 基础包
 版本： v2.0.1
-https://goframe.org/util/gconv/index
-https://goframe.org/encoding/gbinary/index
 
 
 # 功能
-    类型转换: convert/conv
+    类型转换: convert
 
 
 ## v2.0.1
