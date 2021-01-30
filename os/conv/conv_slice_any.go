@@ -2,7 +2,7 @@ package conv
 
 import (
 	"reflect"
-	"utils/util/internal"
+	iutil "utils/internal/util"
 )
 
 func SliceAny(i interface{}) []interface{} {
@@ -110,7 +110,7 @@ func Interfaces(i interface{}) []interface{} {
 				array = make([]interface{}, 0)
 				for i := 0; i < rv.NumField(); i++ {
 					// Only public attributes.
-					if !internal.IsLetterUpper(rt.Field(i).Name[0]) {
+					if !iutil.IsLetterUpper(rt.Field(i).Name[0]) {
 						continue
 					}
 					array = append(array, rv.Field(i).Interface())

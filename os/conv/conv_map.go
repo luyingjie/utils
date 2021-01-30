@@ -3,9 +3,9 @@ package conv
 import (
 	"reflect"
 	"strings"
+	iutil "utils/internal/util"
 	verror "utils/os/error"
 	"utils/util/empty"
-	"utils/util/internal"
 	"utils/util/json"
 )
 
@@ -158,7 +158,7 @@ func doMapConvert(value interface{}, recursive bool, tags ...string) map[string]
 				rvField = rv.Field(i)
 				// Only convert the public attributes.
 				fieldName := rtField.Name
-				if !internal.IsLetterUpper(fieldName[0]) {
+				if !iutil.IsLetterUpper(fieldName[0]) {
 					continue
 				}
 				name = ""

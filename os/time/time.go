@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
+	iutil "utils/internal/util"
 	baseError "utils/os/error/base"
-	"utils/util/internal"
 
 	"utils/text/regex"
 )
@@ -170,7 +170,7 @@ func parseDateStr(s string) (year, month, day int) {
 		return
 	}
 
-	if internal.IsNumeric(array[1]) {
+	if iutil.IsNumeric(array[1]) {
 		year, _ = strconv.Atoi(array[0])
 		month, _ = strconv.Atoi(array[1])
 		day, _ = strconv.Atoi(array[2])
@@ -331,7 +331,7 @@ func ParseTimeFromContent(content string, format ...string) *Time {
 }
 
 func ParseDuration(s string) (time.Duration, error) {
-	if internal.IsNumeric(s) {
+	if iutil.IsNumeric(s) {
 		v, err := strconv.ParseInt(s, 10, 64)
 		if err != nil {
 			return 0, err

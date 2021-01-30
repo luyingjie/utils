@@ -8,8 +8,8 @@ import (
 
 	verror "utils/os/error"
 
+	iutil "utils/internal/util"
 	"utils/util/empty"
-	"utils/util/internal"
 	"utils/util/structs"
 )
 
@@ -21,13 +21,10 @@ func Struct(params interface{}, pointer interface{}, mapping ...map[string]strin
 	return doStruct(params, pointer, false, mapping...)
 }
 
-// StructDeep do Struct function recursively.
-// See Struct.
 func StructDeep(params interface{}, pointer interface{}, mapping ...map[string]string) error {
 	return doStruct(params, pointer, true, mapping...)
 }
 
-// doStruct is the core internal converting function for any data to struct recursively or not.
 func doStruct(params interface{}, pointer interface{}, recursive bool, mapping ...map[string]string) (err error) {
 	if params == nil {
 		return verror.New("params cannot be nil")
@@ -56,8 +53,6 @@ func doStruct(params interface{}, pointer interface{}, recursive bool, mapping .
 		return verror.Newf("invalid params: %v", params)
 	}
 
-	// Using reflect to do the converting,
-	// it also supports type of reflect.Value for <pointer>(always in internal usage).
 	elem, ok := pointer.(reflect.Value)
 	if !ok {
 		rv := reflect.ValueOf(pointer)
@@ -129,7 +124,7 @@ func doStruct(params interface{}, pointer interface{}, recursive bool, mapping .
 	for i := 0; i < elem.NumField(); i++ {
 		elemFieldType = elemType.Field(i)
 		// Only do converting to public attributes.
-		if !internal.IsLetterUpper(elemFieldType.Name[0]) {
+		if !iutil.IsLetterUpper(elemFieldType.Name[0]) {
 			continue
 		}
 		// Maybe it's struct/*struct.
@@ -213,7 +208,7 @@ func doStruct(params interface{}, pointer interface{}, recursive bool, mapping .
 	if recursive && elem.Kind() == reflect.Struct {
 		for i := 0; i < elemType.NumField(); i++ {
 			// Only do converting to public attributes.
-			if !internal.IsLetterUpper(elemType.Field(i).Name[0]) {
+			if !iutil.IsLetterUpper(elemType.Field(i).Name[0]) {
 				continue
 			}
 			fieldValue := elem.Field(i)
@@ -284,8 +279,6 @@ func bindVarToReflectValue(structFieldValue reflect.Value, value interface{}, re
 			structFieldValue.Set(reflect.ValueOf(value).Convert(structFieldValue.Type()))
 		}
 
-	// Note that the slice element might be type of struct,
-	// so it uses Struct function doing the converting internally.
 	case reflect.Slice, reflect.Array:
 		a := reflect.Value{}
 		v := reflect.ValueOf(value)
