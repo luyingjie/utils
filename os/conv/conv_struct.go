@@ -6,10 +6,10 @@ import (
 	"regexp"
 	"strings"
 
-	myerror "utils/os/error"
+	verror "utils/os/error"
 
-	"utils/util"
 	"utils/util/empty"
+	"utils/util/internal"
 	"utils/util/structs"
 )
 
@@ -30,10 +30,10 @@ func StructDeep(params interface{}, pointer interface{}, mapping ...map[string]s
 // doStruct is the core internal converting function for any data to struct recursively or not.
 func doStruct(params interface{}, pointer interface{}, recursive bool, mapping ...map[string]string) (err error) {
 	if params == nil {
-		return myerror.New("params cannot be nil")
+		return verror.New("params cannot be nil")
 	}
 	if pointer == nil {
-		return myerror.New("object pointer cannot be nil")
+		return verror.New("object pointer cannot be nil")
 	}
 	defer func() {
 		// Catch the panic, especially the reflect operation panics.
@@ -53,7 +53,7 @@ func doStruct(params interface{}, pointer interface{}, recursive bool, mapping .
 	// DO NOT use MapDeep here.
 	paramsMap := Map(params)
 	if paramsMap == nil {
-		return myerror.Newf("invalid params: %v", params)
+		return verror.Newf("invalid params: %v", params)
 	}
 
 	// Using reflect to do the converting,
@@ -62,11 +62,11 @@ func doStruct(params interface{}, pointer interface{}, recursive bool, mapping .
 	if !ok {
 		rv := reflect.ValueOf(pointer)
 		if kind := rv.Kind(); kind != reflect.Ptr {
-			return myerror.Newf("object pointer should be type of '*struct', but got '%v'", kind)
+			return verror.Newf("object pointer should be type of '*struct', but got '%v'", kind)
 		}
 		// Using IsNil on reflect.Ptr variable is OK.
 		if !rv.IsValid() || rv.IsNil() {
-			return myerror.New("object pointer cannot be nil")
+			return verror.New("object pointer cannot be nil")
 		}
 		elem = rv.Elem()
 	}
@@ -75,7 +75,7 @@ func doStruct(params interface{}, pointer interface{}, recursive bool, mapping .
 	if elem.Kind() == reflect.Interface {
 		elem = elem.Elem()
 		if !elem.IsValid() {
-			return myerror.New("interface type converting is not supported")
+			return verror.New("interface type converting is not supported")
 		}
 	}
 
@@ -129,7 +129,7 @@ func doStruct(params interface{}, pointer interface{}, recursive bool, mapping .
 	for i := 0; i < elem.NumField(); i++ {
 		elemFieldType = elemType.Field(i)
 		// Only do converting to public attributes.
-		if !util.IsLetterUpper(elemFieldType.Name[0]) {
+		if !internal.IsLetterUpper(elemFieldType.Name[0]) {
 			continue
 		}
 		// Maybe it's struct/*struct.
@@ -213,7 +213,7 @@ func doStruct(params interface{}, pointer interface{}, recursive bool, mapping .
 	if recursive && elem.Kind() == reflect.Struct {
 		for i := 0; i < elemType.NumField(); i++ {
 			// Only do converting to public attributes.
-			if !util.IsLetterUpper(elemType.Field(i).Name[0]) {
+			if !internal.IsLetterUpper(elemType.Field(i).Name[0]) {
 				continue
 			}
 			fieldValue := elem.Field(i)
@@ -359,7 +359,7 @@ func bindVarToReflectValue(structFieldValue reflect.Value, value interface{}, re
 	default:
 		defer func() {
 			if e := recover(); e != nil {
-				err = myerror.New(
+				err = verror.New(
 					fmt.Sprintf(`cannot convert value "%+v" to type "%s"`,
 						value,
 						structFieldValue.Type().String(),

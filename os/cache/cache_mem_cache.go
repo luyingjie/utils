@@ -8,7 +8,6 @@ import (
 	vtype "utils/container/type"
 	vvar "utils/container/var"
 
-	"utils/os/time"
 	vtime "utils/os/time"
 
 	"utils/os/timer"
@@ -17,7 +16,7 @@ import (
 
 	"utils/container/set"
 
-	"utils/convert/conv"
+	"utils/os/conv"
 )
 
 type memCache struct {

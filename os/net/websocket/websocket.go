@@ -3,7 +3,7 @@ package websocket
 import (
 	"net/http"
 
-	myerror "utils/os/error"
+	verror "utils/os/error"
 
 	"github.com/gorilla/websocket"
 )
@@ -29,7 +29,7 @@ func NewWebSocket(path string, handler WebSocketHandler) *WebSocket {
 func (ws *WebSocket) Upgrade(w http.ResponseWriter, r *http.Request) {
 	conn, err := ws.Upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		myerror.Log(2000, 3, err)
+		verror.Log(2000, 3, err)
 		return
 	}
 	defer conn.Close()

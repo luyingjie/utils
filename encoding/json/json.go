@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-	"utils/convert/conv"
-	"utils/utils/rwmutex"
+	"utils/os/conv"
+	"utils/util/rwmutex"
 
 	"utils/text/str"
 )

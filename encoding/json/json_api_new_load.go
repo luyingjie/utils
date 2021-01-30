@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"reflect"
 
-	"utils/utils/json"
+	"utils/util/json"
 
-	"utils/utils/rwmutex"
+	"utils/util/rwmutex"
 
 	"utils/text/regex"
 
-	"utils/convert/conv"
+	"utils/os/conv"
 
 	"utils/os/file"
 

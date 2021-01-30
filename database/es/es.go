@@ -5,7 +5,7 @@ import (
 	// . "encoding/json"
 	"strings"
 	"time"
-	myerror "utils/error"
+	verror "utils/os/error"
 
 	// "fmt"
 
@@ -35,7 +35,7 @@ func connect(esUrl, esIndex string) (*elastic.Client, error) {
 			return nil, creErr
 		}
 		if !createIndex.Acknowledged {
-			return nil, myerror.New("连接失败")
+			return nil, verror.New("连接失败")
 		}
 	}
 
@@ -132,7 +132,7 @@ func SearchById(esUrl, esIndex, esType, id string) (*elastic.GetResult, error) {
 
 //查询
 //操作符目前只支持All指定，不支持单独逐个指定，数据结构保持扩展支持。
-func Search(esUrl, esIndex, esType string, searchModel *models.RequestESModel) (*elastic.SearchResult, error) { //*elastic.SearchHits {
+func Search(esUrl, esIndex, esType string, searchModel *RequestESModel) (*elastic.SearchResult, error) { //*elastic.SearchHits {
 	client, err := connect(esUrl, esIndex)
 	if err != nil {
 		return nil, err
@@ -309,7 +309,7 @@ func DeleteById(esUrl, esIndex, esType, id string) error {
 }
 
 // 按条件删除
-func Delete(esUrl, esIndex, esType string, searchModel *models.RequestESModel) error {
+func Delete(esUrl, esIndex, esType string, searchModel *RequestESModel) error {
 	client, err := connect(esUrl, esIndex)
 	if err != nil {
 		return err

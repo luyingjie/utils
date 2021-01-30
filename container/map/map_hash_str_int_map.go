@@ -1,11 +1,11 @@
 package vmap
 
 import (
-	"utils/utils/json"
+	"utils/util/json"
 
-	"utils/convert/conv"
-	"utils/utils/empty"
-	"utils/utils/rwmutex"
+	"utils/os/conv"
+	"utils/util/empty"
+	"utils/util/rwmutex"
 )
 
 type StrIntMap struct {

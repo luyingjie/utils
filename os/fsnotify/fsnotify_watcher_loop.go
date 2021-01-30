@@ -2,7 +2,7 @@ package fsnotify
 
 import (
 	"utils/container/list"
-	"utils/error"
+	"utils/os/error"
 )
 
 func (w *Watcher) startWatchLoop() {

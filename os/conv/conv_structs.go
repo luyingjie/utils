@@ -2,7 +2,7 @@ package conv
 
 import (
 	"reflect"
-	myerror "utils/os/error"
+	verror "utils/os/error"
 )
 
 func Structs(params interface{}, pointer interface{}, mapping ...map[string]string) (err error) {
@@ -15,21 +15,21 @@ func StructsDeep(params interface{}, pointer interface{}, mapping ...map[string]
 
 func doStructs(params interface{}, pointer interface{}, deep bool, mapping ...map[string]string) (err error) {
 	if params == nil {
-		return myerror.New("params cannot be nil")
+		return verror.New("params cannot be nil")
 	}
 	if pointer == nil {
-		return myerror.New("object pointer cannot be nil")
+		return verror.New("object pointer cannot be nil")
 	}
 	defer func() {
 		if e := recover(); e != nil {
-			err = myerror.Newf("%v", e)
+			err = verror.Newf("%v", e)
 		}
 	}()
 	pointerRv, ok := pointer.(reflect.Value)
 	if !ok {
 		pointerRv = reflect.ValueOf(pointer)
 		if kind := pointerRv.Kind(); kind != reflect.Ptr {
-			return myerror.Newf("pointer should be type of pointer, but got: %v", kind)
+			return verror.Newf("pointer should be type of pointer, but got: %v", kind)
 		}
 	}
 	params = Maps(params)
@@ -83,6 +83,6 @@ func doStructs(params interface{}, pointer interface{}, deep bool, mapping ...ma
 		pointerRv.Elem().Set(array)
 		return nil
 	default:
-		return myerror.Newf("params should be type of slice, but got: %v", reflectKind)
+		return verror.Newf("params should be type of slice, but got: %v", reflectKind)
 	}
 }

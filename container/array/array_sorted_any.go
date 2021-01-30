@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"math"
 	"sort"
-	"utils/base/util"
+	"utils/util"
 	"utils/text/str"
-	"utils/utils/empty"
-	"utils/utils/json"
+	"utils/util/empty"
+	"utils/util/json"
 
-	"utils/utils/rwmutex"
+	"utils/util/rwmutex"
 
-	"utils/convert/conv"
+	"utils/os/conv"
 
-	"utils/utils/rand"
+	"utils/generates/rand"
 )
 
 // SortedArray is a golang sorted array with rich features.

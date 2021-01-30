@@ -2,8 +2,8 @@ package jwt
 
 import (
 	"time"
-	"utils/conf"
-	myerror "utils/error"
+	"utils/os/conf"
+	verror "utils/os/error"
 
 	"github.com/dgrijalva/jwt-go"
 )
@@ -43,11 +43,11 @@ func CheckToken(tokenss string) (UserModel, error) {
 	}
 	claim, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return *_user, myerror.New("无法转换令牌")
+		return *_user, verror.New("无法转换令牌")
 	}
 	//验证token，如果token被修改过则为false
 	if !token.Valid {
-		return *_user, myerror.New("令牌无效")
+		return *_user, verror.New("令牌无效")
 	}
 
 	_user.UserKey = claim["key"].(string)
@@ -62,13 +62,13 @@ func Token(userModel *UserModel) (map[string]interface{}, error) {
 	// 现在用户数据不在DB中，先用配置文件临时存放
 	var userStore map[string]interface{}
 	if v := conf.Get("user", userModel.UserKey); v == nil {
-		return nil, myerror.New("找不到用户对应信息")
+		return nil, verror.New("找不到用户对应信息")
 	} else {
 		userStore = v.(map[string]interface{})
 	}
 
 	if userStore["PassWord"].(string) != userModel.PassWord {
-		return nil, myerror.New("用户或者密码错误")
+		return nil, verror.New("用户或者密码错误")
 	}
 
 	// 填充用户模型，后面可能要放到缓存中。

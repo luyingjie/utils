@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"math"
 	"sort"
-	"utils/utils/json"
+	"utils/util/json"
 
-	"utils/utils/rwmutex"
+	"utils/util/rwmutex"
 
-	"utils/convert/conv"
-	"utils/utils/rand"
+	"utils/generates/rand"
+	"utils/os/conv"
 )
 
 type SortedIntArray struct {

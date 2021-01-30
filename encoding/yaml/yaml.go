@@ -1,11 +1,11 @@
 package yaml
 
 import (
-	"utils/utils/json"
+	"utils/util/json"
 
 	"gopkg.in/yaml.v3"
 
-	"utils/convert/conv"
+	"utils/os/conv"
 )
 
 func Encode(v interface{}) ([]byte, error) {

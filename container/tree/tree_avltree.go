@@ -2,12 +2,12 @@ package tree
 
 import (
 	"fmt"
-	"utils/container/var"
-	"utils/utils/json"
+	vvar "utils/container/var"
+	"utils/util/json"
 
-	"utils/convert/conv"
+	"utils/os/conv"
 
-	"utils/utils/rwmutex"
+	"utils/util/rwmutex"
 )
 
 type AVLTree struct {

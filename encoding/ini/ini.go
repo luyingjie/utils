@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
-	"utils/utils/json"
+	"utils/util/json"
 )
 
 func Decode(data []byte) (res map[string]interface{}, err error) {

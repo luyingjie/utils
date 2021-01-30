@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"sync/atomic"
 
-	"utils/convert/conv"
+	"utils/os/conv"
 )
 
 type Bool struct {

@@ -1,7 +1,7 @@
 package psql
 
 import (
-	"utils/conf"
+	"utils/os/conf"
 
 	"github.com/jinzhu/gorm"
 

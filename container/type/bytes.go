@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"sync/atomic"
-	"utils/convert/conv"
+	"utils/os/conv"
 )
 
 type Bytes struct {

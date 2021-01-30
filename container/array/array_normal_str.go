@@ -7,14 +7,14 @@ import (
 	"math"
 	"sort"
 	"strings"
-	"utils/utils/json"
+	"utils/util/json"
 
 	"utils/text/str"
 
-	"utils/utils/rwmutex"
+	"utils/util/rwmutex"
 
-	"utils/convert/conv"
-	"utils/utils/rand"
+	"utils/os/conv"
+	"utils/generates/rand"
 )
 
 type StrArray struct {

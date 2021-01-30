@@ -1,7 +1,7 @@
 package vvar
 
 import (
-	"utils/base/util"
+	"utils/util"
 )
 
 func (v *Var) ListItemValues(key interface{}) (values []interface{}) {

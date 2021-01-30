@@ -2,7 +2,7 @@ package toml
 
 import (
 	"bytes"
-	"utils/utils/json"
+	"utils/util/json"
 
 	"github.com/BurntSushi/toml"
 )

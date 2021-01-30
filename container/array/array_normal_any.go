@@ -6,16 +6,16 @@ import (
 	"fmt"
 	"math"
 	"sort"
-	"utils/utils/empty"
+	"utils/util/empty"
 
-	"utils/utils/json"
+	"utils/util/json"
 
 	"utils/text/str"
 
-	"utils/utils/rwmutex"
+	"utils/util/rwmutex"
 
-	"utils/convert/conv"
-	"utils/utils/rand"
+	"utils/os/conv"
+	"utils/generates/rand"
 )
 
 type Array struct {

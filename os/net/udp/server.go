@@ -6,7 +6,6 @@ import (
 	// "log"
 	// "fmt"
 	"time"
-	"utils/convert"
 )
 
 func clientHandle(conn *net.UDPConn, size int, f func(data string)) error {
@@ -32,7 +31,7 @@ func clientHandle(conn *net.UDPConn, size int, f func(data string)) error {
 	// buf = bytes.TrimRight(buf, "\u0000") //\x00
 	if f != nil {
 		// 如果后面的操作需要考虑循序，就不明使用并发。
-		go f(convert.ByteToString(buf))
+		go f(string(buf[:]))
 		// f(convert.ByteToString(buf))
 	}
 	//向客户端发送数据，  测试用。

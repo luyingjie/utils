@@ -3,7 +3,7 @@ package vtype
 import (
 	"strconv"
 	"sync/atomic"
-	"utils/convert/conv"
+	"utils/os/conv"
 )
 
 type Uint64 struct {

@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"time"
 
-	"utils/base/util"
+	"utils/util"
 
-	"utils/convert/conv"
+	"utils/os/conv"
 
-	"utils/os/time"
+	vtime "utils/os/time"
 
-	"utils/container/var"
+	vvar "utils/container/var"
 )
 
 func (j *Json) Value() interface{} {

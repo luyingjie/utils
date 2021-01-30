@@ -3,7 +3,7 @@ package fsnotify
 import (
 	"errors"
 	"fmt"
-	myerror "utils/error"
+	verror "utils/os/error"
 
 	mylist "utils/container/list"
 )
@@ -22,7 +22,7 @@ func (w *Watcher) AddOnce(name, path string, callbackFunc func(event *Event), re
 			for _, subPath := range fileAllDirs(path) {
 				if fileIsDir(subPath) {
 					if err := w.watcher.Add(subPath); err != nil {
-						myerror.Log(5000, 3, err)
+						verror.Log(5000, 3, err)
 					} else {
 						// intlog.Printf("watcher adds monitor for: %s", subPath)
 					}
@@ -67,7 +67,7 @@ func (w *Watcher) addWithCallbackFunc(name, path string, callbackFunc func(event
 	})
 
 	if err := w.watcher.Add(path); err != nil {
-		myerror.Log(5000, 3, err)
+		verror.Log(5000, 3, err)
 	} else {
 		// intlog.Printf("watcher adds monitor for: %s", path)
 	}
@@ -80,7 +80,7 @@ func (w *Watcher) addWithCallbackFunc(name, path string, callbackFunc func(event
 func (w *Watcher) Close() {
 	w.events.Close()
 	if err := w.watcher.Close(); err != nil {
-		myerror.Log(5000, 3, err)
+		verror.Log(5000, 3, err)
 	}
 	close(w.closeChan)
 }
@@ -101,7 +101,7 @@ func (w *Watcher) Remove(path string) error {
 		for _, subPath := range subPaths {
 			if w.checkPathCanBeRemoved(subPath) {
 				if err := w.watcher.Remove(subPath); err != nil {
-					myerror.Log(5000, 3, err)
+					verror.Log(5000, 3, err)
 				}
 			}
 		}

@@ -1,5 +1,9 @@
 package util
 
+import (
+	 "utils/util/internal"
+)
+
 func MapCopy(data map[string]interface{}) (copy map[string]interface{}) {
 	copy = make(map[string]interface{}, len(data))
 	for k, v := range data {
@@ -49,7 +53,7 @@ func MapPossibleItemByKey(data map[string]interface{}, key string) (foundKey str
 	}
 	// Loop checking.
 	for k, v := range data {
-		if EqualFoldWithoutChars(k, key) {
+		if internal.EqualFoldWithoutChars(k, key) {
 			return k, v
 		}
 	}

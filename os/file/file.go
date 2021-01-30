@@ -9,9 +9,9 @@ import (
 
 	"utils/text/str"
 
-	"utils/convert/conv"
+	"utils/os/conv"
 
-	"utils/container/type"
+	vtype "utils/container/type"
 )
 
 var (
@@ -21,7 +21,7 @@ var (
 
 	DefaultPermCopy = os.FileMode(0777)
 
-	mainPkgPath = type.NewString()
+	mainPkgPath = vtype.NewString()
 
 	selfPath = ""
 
@@ -41,7 +41,6 @@ func init() {
 	}
 }
 
-
 func Mkdir(path string) error {
 	err := os.MkdirAll(path, os.ModePerm)
 	if err != nil {
@@ -49,7 +48,6 @@ func Mkdir(path string) error {
 	}
 	return nil
 }
-
 
 func Create(path string) (*os.File, error) {
 	dir := Dir(path)
@@ -61,16 +59,13 @@ func Create(path string) (*os.File, error) {
 	return os.Create(path)
 }
 
-
 func Open(path string) (*os.File, error) {
 	return os.Open(path)
 }
 
-
 func OpenFile(path string, flag int, perm os.FileMode) (*os.File, error) {
 	return os.OpenFile(path, flag, perm)
 }
-
 
 func OpenWithFlag(path string, flag int) (*os.File, error) {
 	f, err := os.OpenFile(path, flag, DefaultPermOpen)
@@ -80,7 +75,6 @@ func OpenWithFlag(path string, flag int) (*os.File, error) {
 	return f, nil
 }
 
-
 func OpenWithFlagPerm(path string, flag int, perm os.FileMode) (*os.File, error) {
 	f, err := os.OpenFile(path, flag, perm)
 	if err != nil {
@@ -88,7 +82,6 @@ func OpenWithFlagPerm(path string, flag int, perm os.FileMode) (*os.File, error)
 	}
 	return f, nil
 }
-
 
 func Join(paths ...string) string {
 	var s string
@@ -101,14 +94,12 @@ func Join(paths ...string) string {
 	return s
 }
 
-
 func Exists(path string) bool {
 	if stat, err := os.Stat(path); stat != nil && !os.IsNotExist(err) {
 		return true
 	}
 	return false
 }
-
 
 func IsDir(path string) bool {
 	s, err := os.Stat(path)
@@ -118,7 +109,6 @@ func IsDir(path string) bool {
 	return s.IsDir()
 }
 
-
 func Pwd() string {
 	path, err := os.Getwd()
 	if err != nil {
@@ -127,11 +117,9 @@ func Pwd() string {
 	return path
 }
 
-
 func Chdir(dir string) error {
 	return os.Chdir(dir)
 }
-
 
 func IsFile(path string) bool {
 	s, err := os.Stat(path)
@@ -141,26 +129,21 @@ func IsFile(path string) bool {
 	return !s.IsDir()
 }
 
-
 func Info(path string) (os.FileInfo, error) {
 	return Stat(path)
 }
-
 
 func Stat(path string) (os.FileInfo, error) {
 	return os.Stat(path)
 }
 
-
 func Move(src string, dst string) error {
 	return os.Rename(src, dst)
 }
 
-
 func Rename(src string, dst string) error {
 	return Move(src, dst)
 }
-
 
 func DirNames(path string) ([]string, error) {
 	f, err := os.Open(path)
@@ -174,7 +157,6 @@ func DirNames(path string) ([]string, error) {
 	}
 	return list, nil
 }
-
 
 func Glob(pattern string, onlyNames ...bool) ([]string, error) {
 	if list, err := filepath.Glob(pattern); err == nil {
@@ -191,11 +173,9 @@ func Glob(pattern string, onlyNames ...bool) ([]string, error) {
 	}
 }
 
-
 func Remove(path string) error {
 	return os.RemoveAll(path)
 }
-
 
 func IsReadable(path string) bool {
 	result := true
@@ -206,7 +186,6 @@ func IsReadable(path string) bool {
 	file.Close()
 	return result
 }
-
 
 func IsWritable(path string) bool {
 	result := true
@@ -229,17 +208,14 @@ func IsWritable(path string) bool {
 	return result
 }
 
-
 func Chmod(path string, mode os.FileMode) error {
 	return os.Chmod(path, mode)
 }
-
 
 func Abs(path string) string {
 	p, _ := filepath.Abs(path)
 	return p
 }
-
 
 func RealPath(path string) string {
 	p, err := filepath.Abs(path)
@@ -252,26 +228,21 @@ func RealPath(path string) string {
 	return p
 }
 
-
 func SelfPath() string {
 	return selfPath
 }
-
 
 func SelfName() string {
 	return Basename(SelfPath())
 }
 
-
 func SelfDir() string {
 	return filepath.Dir(SelfPath())
 }
 
-
 func Basename(path string) string {
 	return filepath.Base(path)
 }
-
 
 func Name(path string) string {
 	base := filepath.Base(path)
@@ -281,11 +252,9 @@ func Name(path string) string {
 	return base
 }
 
-
 func Dir(path string) string {
 	return filepath.Dir(path)
 }
-
 
 func IsEmpty(path string) bool {
 	stat, err := Stat(path)
@@ -308,7 +277,6 @@ func IsEmpty(path string) bool {
 	}
 }
 
-
 func Ext(path string) string {
 	ext := filepath.Ext(path)
 	if p := strings.IndexByte(ext, '?'); p != -1 {
@@ -317,11 +285,9 @@ func Ext(path string) string {
 	return ext
 }
 
-
 func ExtName(path string) string {
 	return strings.TrimLeft(Ext(path), ".")
 }
-
 
 func TempDir(names ...string) string {
 	path := tempDir

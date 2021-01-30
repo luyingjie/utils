@@ -3,7 +3,7 @@ package conv
 import (
 	"time"
 
-	"utils/util"
+	"utils/util/internal"
 
 	mtime "utils/os/time"
 )
@@ -27,7 +27,7 @@ func Duration(i interface{}) time.Duration {
 		return v
 	}
 	s := String(i)
-	if !util.IsNumeric(s) {
+	if !internal.IsNumeric(s) {
 		d, _ := mtime.ParseDuration(s)
 		return d
 	}
@@ -53,7 +53,7 @@ func VTime(i interface{}, format ...string) *mtime.Time {
 		t, _ := mtime.StrToTimeFormat(s, format[0])
 		return t
 	}
-	if util.IsNumeric(s) {
+	if internal.IsNumeric(s) {
 		return mtime.NewFromTimeStamp(Int64(s))
 	} else {
 		t, _ := mtime.StrToTime(s)
