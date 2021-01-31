@@ -1,156 +1,82 @@
 package redis
 
 import (
-	"errors"
-	"io"
-	"strings"
-	"time"
-
-	"github.com/gomodule/redigo/redis"
+	"github.com/garyburd/redigo/redis"
 )
 
-func newPool(addr string, password string) *redis.Pool {
-	return &redis.Pool{
-		MaxIdle:     100,
-		IdleTimeout: 240 * time.Second,
-		// Other pool configuration not shown in this example.
-		Dial: func() (redis.Conn, error) {
-			c, err := redis.Dial("tcp", addr)
-			if err != nil {
-				return nil, err
-			}
-			if password != "" {
-				if _, err := c.Do("AUTH", password); err != nil {
-					c.Close()
-					return nil, err
-				}
-			}
-
-			return c, nil
-		},
-	}
-}
-
-var (
-	redisPool *redis.Pool
-)
-
-/*
-RedisInit redis 初始化
-*/
-func RedisInit(host, port, password string) {
-	redisPool = newPool(host+":"+port, password)
-}
-
-type MyRedisReConn struct {
-	RedisConn redis.Conn
-	ReidsDB   int
-}
-
-/*
-GetRedisConn 从redis池子拿去一个n号库的链接
-n int redis 对应的n号库
-*/
-func GetRedisConn(n int) (conn *MyRedisReConn, err error) {
-	conn = &MyRedisReConn{}
-	conn.RedisConn = redisPool.Get()
-	_, err = conn.RedisConn.Do("SELECT", n)
+//连接 redis
+func connect(url string) (redis.Conn, error) {
+	c, err := redis.Dial("tcp", url)
 	if err != nil {
 		return nil, err
 	}
-	conn.ReidsDB = n
-	return conn, nil
+	return c, nil
+	// defer c.Close()
 }
 
-/*
-IsConnError 判断是否有错误
-*/
-func IsConnError(err error) bool {
-	var needNewConn bool
-
-	if err == nil {
-		return false
+func PushList(url, name, value string) error {
+	c, err := connect(url)
+	if err != nil {
+		return err
 	}
-
-	if err == io.EOF {
-		needNewConn = true
-	}
-	if strings.Contains(err.Error(), "use of closed network connection") {
-		needNewConn = true
-	}
-	if strings.Contains(err.Error(), "connect: connection refused") {
-		needNewConn = true
-	}
-	if strings.Contains(err.Error(), "connection closed") {
-		needNewConn = true
-	}
-	return needNewConn
+	defer c.Close()
+	c.Do("rpush", name, value)
+	// 报错会无意义的开销，并且会产生大量的垃圾日志，如果抛出还会中断监听。
+	// _, err := c.Do("rpush",name, value)
+	// if err != nil {
+	// 	return err
+	// }
+	return nil
 }
 
-/*
-Redo 在pool加入TestOnBorrow方法来去除扫描坏连接，并重新连接redis
-*/
-func (myredis MyRedisReConn) Redo(command string, opt ...interface{}) (interface{}, error) {
-	defer myredis.RedisConn.Close()
-	var conn redis.Conn
-	var err error
-	var maxretry = 3
-	var needNewConn bool
-	resp, err := myredis.RedisConn.Do(command, opt...)
-	needNewConn = IsConnError(err)
-	if !needNewConn {
-		return resp, err
-	} else {
-		conn, err = redisPool.Dial()
-		_, err = conn.Do("SELECT", myredis.ReidsDB)
+func GetList(url, name string) (string, error) {
+	c, err := connect(url)
+	if err != nil {
+		return "", err
 	}
-	for index := 0; index < maxretry; index++ {
-		if conn == nil && index+1 > maxretry {
-			return resp, err
-		}
-		if conn == nil {
-			conn, err = redisPool.Dial()
-			_, err = conn.Do("SELECT", myredis.ReidsDB)
-		}
-		if err != nil {
-			continue
-		}
-		resp, err := conn.Do(command, opt...)
-		needNewConn = IsConnError(err)
-		if !needNewConn {
-			return resp, err
-		} else {
-			conn, err = redisPool.Dial()
-			_, err = conn.Do("SELECT", myredis.ReidsDB)
-		}
+	defer c.Close()
+	value, err1 := redis.String(c.Do("lpop", name))
+	if err1 != nil {
+		return "", err1
 	}
-	conn.Close()
-	return "", errors.New("redis error")
+	return value, nil
 }
 
-//插入值
-func (myredis MyRedisReConn) Set(key, value string) error {
-	_, err := myredis.Redo("SET", key, value)
-	return err
-}
-
-//失效方式插入值
-func (myredis MyRedisReConn) ExpiresSet(key, value string, expiresTime int) error {
-	_, err := myredis.Redo("SET", key, value, "EX", expiresTime)
-	return err
-}
-
-//取值
-func (myredis MyRedisReConn) Get(key string) (string, error) {
-	s, err := redis.String(myredis.Redo("GET", key))
-	if s == "" {
-		return "", errors.New("nil data")
+func Set(url, key string, val interface{}) (interface{}, error) {
+	c, err := connect(url)
+	if err != nil {
+		return nil, err
 	}
-	return s, err
+	defer c.Close()
+	value, err1 := c.Do("SET", key, val)
+	if err1 != nil {
+		return nil, err1
+	}
+	return value, nil
 }
 
-//删除
-func (myredis MyRedisReConn) Del(key string) error {
-	_, err := myredis.Redo("DEL", key)
-	return err
+func GetToStr(url, key string) (string, error) {
+	c, err := connect(url)
+	if err != nil {
+		return "", err
+	}
+	defer c.Close()
+	value, err1 := redis.String(c.Do("GET", key))
+	if err1 != nil {
+		return "", err
+	}
+	return value, nil
+}
+
+func GetToInt(url, key string) (int, error) {
+	c, err := connect(url)
+	if err != nil {
+		return 0, err
+	}
+	defer c.Close()
+	value, err1 := redis.Int(c.Do("GET", key))
+	if err1 != nil {
+		return 0, err1
+	}
+	return value, nil
 }
