@@ -33,3 +33,23 @@ func Instance(name ...string) *Config {
 		return c
 	}).(*Config)
 }
+
+// InstanceF 类似Instance，逻辑一样，多出一个可以指定文件格式的第二参数，用于非toml格式的读取，比如json。
+func InstanceF(name ...string) *Config {
+	key := DEFAULT_NAME
+	if len(name) > 0 && name[0] != "" {
+		key = name[0]
+	}
+	f := "toml"
+	if len(name) > 1 && name[1] != "" {
+		f = name[1]
+	}
+	return instances.GetOrSetFuncLock(key, func() interface{} {
+		c := New()
+		file := fmt.Sprintf(`%s.`+f, key)
+		if c.Available(file) {
+			c.SetFileName(file)
+		}
+		return c
+	}).(*Config)
+}
