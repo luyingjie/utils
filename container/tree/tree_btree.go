@@ -12,60 +12,60 @@ import (
 	"utils/util/rwmutex"
 )
 
-type Tree struct {
+type BTree struct {
 	mu         rwmutex.RWMutex
-	root       *TreeNode
+	root       *BTreeNode
 	comparator func(v1, v2 interface{}) int
 	size       int
 	m          int
 }
 
-type TreeNode struct {
-	Parent   *TreeNode
-	Entries  []*TreeEntry
-	Children []*TreeNode
+type BTreeNode struct {
+	Parent   *BTreeNode
+	Entries  []*BTreeEntry
+	Children []*BTreeNode
 }
 
-type TreeEntry struct {
+type BTreeEntry struct {
 	Key   interface{}
 	Value interface{}
 }
 
-func NewTree(m int, comparator func(v1, v2 interface{}) int, safe ...bool) *Tree {
+func NewBTree(m int, comparator func(v1, v2 interface{}) int, safe ...bool) *BTree {
 	if m < 3 {
 		panic("Invalid order, should be at least 3")
 	}
-	return &Tree{
+	return &BTree{
 		comparator: comparator,
 		mu:         rwmutex.Create(safe...),
 		m:          m,
 	}
 }
 
-func NewTreeFrom(m int, comparator func(v1, v2 interface{}) int, data map[interface{}]interface{}, safe ...bool) *Tree {
-	tree := NewTree(m, comparator, safe...)
+func NewBTreeFrom(m int, comparator func(v1, v2 interface{}) int, data map[interface{}]interface{}, safe ...bool) *BTree {
+	tree := NewBTree(m, comparator, safe...)
 	for k, v := range data {
 		tree.doSet(k, v)
 	}
 	return tree
 }
 
-func (tree *Tree) Clone() *Tree {
-	newTree := NewTree(tree.m, tree.comparator, !tree.mu.IsSafe())
+func (tree *BTree) Clone() *BTree {
+	newTree := NewBTree(tree.m, tree.comparator, !tree.mu.IsSafe())
 	newTree.Sets(tree.Map())
 	return newTree
 }
 
-func (tree *Tree) Set(key interface{}, value interface{}) {
+func (tree *BTree) Set(key interface{}, value interface{}) {
 	tree.mu.Lock()
 	defer tree.mu.Unlock()
 	tree.doSet(key, value)
 }
 
-func (tree *Tree) doSet(key interface{}, value interface{}) {
-	entry := &TreeEntry{Key: key, Value: value}
+func (tree *BTree) doSet(key interface{}, value interface{}) {
+	entry := &BTreeEntry{Key: key, Value: value}
 	if tree.root == nil {
-		tree.root = &TreeNode{Entries: []*TreeEntry{entry}, Children: []*TreeNode{}}
+		tree.root = &BTreeNode{Entries: []*BTreeEntry{entry}, Children: []*BTreeNode{}}
 		tree.size++
 		return
 	}
@@ -75,7 +75,7 @@ func (tree *Tree) doSet(key interface{}, value interface{}) {
 	}
 }
 
-func (tree *Tree) Sets(data map[interface{}]interface{}) {
+func (tree *BTree) Sets(data map[interface{}]interface{}) {
 	tree.mu.Lock()
 	defer tree.mu.Unlock()
 	for k, v := range data {
@@ -83,12 +83,12 @@ func (tree *Tree) Sets(data map[interface{}]interface{}) {
 	}
 }
 
-func (tree *Tree) Get(key interface{}) (value interface{}) {
+func (tree *BTree) Get(key interface{}) (value interface{}) {
 	value, _ = tree.Search(key)
 	return
 }
 
-func (tree *Tree) doSetWithLockCheck(key interface{}, value interface{}) interface{} {
+func (tree *BTree) doSetWithLockCheck(key interface{}, value interface{}) interface{} {
 	tree.mu.Lock()
 	defer tree.mu.Unlock()
 	if entry := tree.doSearch(key); entry != nil {
@@ -103,7 +103,7 @@ func (tree *Tree) doSetWithLockCheck(key interface{}, value interface{}) interfa
 	return value
 }
 
-func (tree *Tree) GetOrSet(key interface{}, value interface{}) interface{} {
+func (tree *BTree) GetOrSet(key interface{}, value interface{}) interface{} {
 	if v, ok := tree.Search(key); !ok {
 		return tree.doSetWithLockCheck(key, value)
 	} else {
@@ -111,7 +111,7 @@ func (tree *Tree) GetOrSet(key interface{}, value interface{}) interface{} {
 	}
 }
 
-func (tree *Tree) GetOrSetFunc(key interface{}, f func() interface{}) interface{} {
+func (tree *BTree) GetOrSetFunc(key interface{}, f func() interface{}) interface{} {
 	if v, ok := tree.Search(key); !ok {
 		return tree.doSetWithLockCheck(key, f())
 	} else {
@@ -119,7 +119,7 @@ func (tree *Tree) GetOrSetFunc(key interface{}, f func() interface{}) interface{
 	}
 }
 
-func (tree *Tree) GetOrSetFuncLock(key interface{}, f func() interface{}) interface{} {
+func (tree *BTree) GetOrSetFuncLock(key interface{}, f func() interface{}) interface{} {
 	if v, ok := tree.Search(key); !ok {
 		return tree.doSetWithLockCheck(key, f)
 	} else {
@@ -127,23 +127,23 @@ func (tree *Tree) GetOrSetFuncLock(key interface{}, f func() interface{}) interf
 	}
 }
 
-func (tree *Tree) GetVar(key interface{}) *vvar.Var {
+func (tree *BTree) GetVar(key interface{}) *vvar.Var {
 	return vvar.New(tree.Get(key))
 }
 
-func (tree *Tree) GetVarOrSet(key interface{}, value interface{}) *vvar.Var {
+func (tree *BTree) GetVarOrSet(key interface{}, value interface{}) *vvar.Var {
 	return vvar.New(tree.GetOrSet(key, value))
 }
 
-func (tree *Tree) GetVarOrSetFunc(key interface{}, f func() interface{}) *vvar.Var {
+func (tree *BTree) GetVarOrSetFunc(key interface{}, f func() interface{}) *vvar.Var {
 	return vvar.New(tree.GetOrSetFunc(key, f))
 }
 
-func (tree *Tree) GetVarOrSetFuncLock(key interface{}, f func() interface{}) *vvar.Var {
+func (tree *BTree) GetVarOrSetFuncLock(key interface{}, f func() interface{}) *vvar.Var {
 	return vvar.New(tree.GetOrSetFuncLock(key, f))
 }
 
-func (tree *Tree) SetIfNotExist(key interface{}, value interface{}) bool {
+func (tree *BTree) SetIfNotExist(key interface{}, value interface{}) bool {
 	if !tree.Contains(key) {
 		tree.doSetWithLockCheck(key, value)
 		return true
@@ -151,7 +151,7 @@ func (tree *Tree) SetIfNotExist(key interface{}, value interface{}) bool {
 	return false
 }
 
-func (tree *Tree) SetIfNotExistFunc(key interface{}, f func() interface{}) bool {
+func (tree *BTree) SetIfNotExistFunc(key interface{}, f func() interface{}) bool {
 	if !tree.Contains(key) {
 		tree.doSetWithLockCheck(key, f())
 		return true
@@ -159,7 +159,7 @@ func (tree *Tree) SetIfNotExistFunc(key interface{}, f func() interface{}) bool 
 	return false
 }
 
-func (tree *Tree) SetIfNotExistFuncLock(key interface{}, f func() interface{}) bool {
+func (tree *BTree) SetIfNotExistFuncLock(key interface{}, f func() interface{}) bool {
 	if !tree.Contains(key) {
 		tree.doSetWithLockCheck(key, f)
 		return true
@@ -167,12 +167,12 @@ func (tree *Tree) SetIfNotExistFuncLock(key interface{}, f func() interface{}) b
 	return false
 }
 
-func (tree *Tree) Contains(key interface{}) bool {
+func (tree *BTree) Contains(key interface{}) bool {
 	_, ok := tree.Search(key)
 	return ok
 }
 
-func (tree *Tree) doRemove(key interface{}) (value interface{}) {
+func (tree *BTree) doRemove(key interface{}) (value interface{}) {
 	node, index, found := tree.searchRecursively(tree.root, key)
 	if found {
 		value = node.Entries[index].Value
@@ -182,13 +182,13 @@ func (tree *Tree) doRemove(key interface{}) (value interface{}) {
 	return
 }
 
-func (tree *Tree) Remove(key interface{}) (value interface{}) {
+func (tree *BTree) Remove(key interface{}) (value interface{}) {
 	tree.mu.Lock()
 	defer tree.mu.Unlock()
 	return tree.doRemove(key)
 }
 
-func (tree *Tree) Removes(keys []interface{}) {
+func (tree *BTree) Removes(keys []interface{}) {
 	tree.mu.Lock()
 	defer tree.mu.Unlock()
 	for _, key := range keys {
@@ -196,17 +196,17 @@ func (tree *Tree) Removes(keys []interface{}) {
 	}
 }
 
-func (tree *Tree) IsEmpty() bool {
+func (tree *BTree) IsEmpty() bool {
 	return tree.Size() == 0
 }
 
-func (tree *Tree) Size() int {
+func (tree *BTree) Size() int {
 	tree.mu.RLock()
 	defer tree.mu.RUnlock()
 	return tree.size
 }
 
-func (tree *Tree) Keys() []interface{} {
+func (tree *BTree) Keys() []interface{} {
 	keys := make([]interface{}, tree.Size())
 	index := 0
 	tree.IteratorAsc(func(key, value interface{}) bool {
@@ -217,7 +217,7 @@ func (tree *Tree) Keys() []interface{} {
 	return keys
 }
 
-func (tree *Tree) Values() []interface{} {
+func (tree *BTree) Values() []interface{} {
 	values := make([]interface{}, tree.Size())
 	index := 0
 	tree.IteratorAsc(func(key, value interface{}) bool {
@@ -228,7 +228,7 @@ func (tree *Tree) Values() []interface{} {
 	return values
 }
 
-func (tree *Tree) Map() map[interface{}]interface{} {
+func (tree *BTree) Map() map[interface{}]interface{} {
 	m := make(map[interface{}]interface{}, tree.Size())
 	tree.IteratorAsc(func(key, value interface{}) bool {
 		m[key] = value
@@ -237,7 +237,7 @@ func (tree *Tree) Map() map[interface{}]interface{} {
 	return m
 }
 
-func (tree *Tree) MapStrAny() map[string]interface{} {
+func (tree *BTree) MapStrAny() map[string]interface{} {
 	m := make(map[string]interface{}, tree.Size())
 	tree.IteratorAsc(func(key, value interface{}) bool {
 		m[conv.String(key)] = value
@@ -246,14 +246,14 @@ func (tree *Tree) MapStrAny() map[string]interface{} {
 	return m
 }
 
-func (tree *Tree) Clear() {
+func (tree *BTree) Clear() {
 	tree.mu.Lock()
 	defer tree.mu.Unlock()
 	tree.root = nil
 	tree.size = 0
 }
 
-func (tree *Tree) Replace(data map[interface{}]interface{}) {
+func (tree *BTree) Replace(data map[interface{}]interface{}) {
 	tree.mu.Lock()
 	defer tree.mu.Unlock()
 	tree.root = nil
@@ -263,27 +263,27 @@ func (tree *Tree) Replace(data map[interface{}]interface{}) {
 	}
 }
 
-func (tree *Tree) Height() int {
+func (tree *BTree) Height() int {
 	tree.mu.RLock()
 	defer tree.mu.RUnlock()
 	return tree.root.height()
 }
 
-func (tree *Tree) Left() *TreeEntry {
+func (tree *BTree) Left() *BTreeEntry {
 	tree.mu.RLock()
 	defer tree.mu.RUnlock()
 	node := tree.left(tree.root)
 	return node.Entries[0]
 }
 
-func (tree *Tree) Right() *TreeEntry {
+func (tree *BTree) Right() *BTreeEntry {
 	tree.mu.RLock()
 	defer tree.mu.RUnlock()
 	node := tree.right(tree.root)
 	return node.Entries[len(node.Entries)-1]
 }
 
-func (tree *Tree) String() string {
+func (tree *BTree) String() string {
 	tree.mu.RLock()
 	defer tree.mu.RUnlock()
 	var buffer bytes.Buffer
@@ -293,7 +293,7 @@ func (tree *Tree) String() string {
 	return buffer.String()
 }
 
-func (tree *Tree) Search(key interface{}) (value interface{}, found bool) {
+func (tree *BTree) Search(key interface{}) (value interface{}, found bool) {
 	tree.mu.RLock()
 	defer tree.mu.RUnlock()
 	node, index, found := tree.searchRecursively(tree.root, key)
@@ -303,7 +303,7 @@ func (tree *Tree) Search(key interface{}) (value interface{}, found bool) {
 	return nil, false
 }
 
-func (tree *Tree) doSearch(key interface{}) *TreeEntry {
+func (tree *BTree) doSearch(key interface{}) *BTreeEntry {
 	node, index, found := tree.searchRecursively(tree.root, key)
 	if found {
 		return node.Entries[index]
@@ -311,19 +311,19 @@ func (tree *Tree) doSearch(key interface{}) *TreeEntry {
 	return nil
 }
 
-func (tree *Tree) Print() {
+func (tree *BTree) Print() {
 	fmt.Println(tree.String())
 }
 
-func (tree *Tree) Iterator(f func(key, value interface{}) bool) {
+func (tree *BTree) Iterator(f func(key, value interface{}) bool) {
 	tree.IteratorAsc(f)
 }
 
-func (tree *Tree) IteratorFrom(key interface{}, match bool, f func(key, value interface{}) bool) {
+func (tree *BTree) IteratorFrom(key interface{}, match bool, f func(key, value interface{}) bool) {
 	tree.IteratorAscFrom(key, match, f)
 }
 
-func (tree *Tree) IteratorAsc(f func(key, value interface{}) bool) {
+func (tree *BTree) IteratorAsc(f func(key, value interface{}) bool) {
 	tree.mu.RLock()
 	defer tree.mu.RUnlock()
 	node := tree.left(tree.root)
@@ -333,7 +333,7 @@ func (tree *Tree) IteratorAsc(f func(key, value interface{}) bool) {
 	tree.doIteratorAsc(node, node.Entries[0], 0, f)
 }
 
-func (tree *Tree) IteratorAscFrom(key interface{}, match bool, f func(key, value interface{}) bool) {
+func (tree *BTree) IteratorAscFrom(key interface{}, match bool, f func(key, value interface{}) bool) {
 	tree.mu.RLock()
 	defer tree.mu.RUnlock()
 	node, index, found := tree.searchRecursively(tree.root, key)
@@ -346,7 +346,7 @@ func (tree *Tree) IteratorAscFrom(key interface{}, match bool, f func(key, value
 	}
 }
 
-func (tree *Tree) doIteratorAsc(node *TreeNode, entry *TreeEntry, index int, f func(key, value interface{}) bool) {
+func (tree *BTree) doIteratorAsc(node *BTreeNode, entry *BTreeEntry, index int, f func(key, value interface{}) bool) {
 	first := true
 loop:
 	if entry == nil {
@@ -389,7 +389,7 @@ loop:
 	}
 }
 
-func (tree *Tree) IteratorDesc(f func(key, value interface{}) bool) {
+func (tree *BTree) IteratorDesc(f func(key, value interface{}) bool) {
 	tree.mu.RLock()
 	defer tree.mu.RUnlock()
 	node := tree.right(tree.root)
@@ -401,7 +401,7 @@ func (tree *Tree) IteratorDesc(f func(key, value interface{}) bool) {
 	tree.doIteratorDesc(node, entry, index, f)
 }
 
-func (tree *Tree) IteratorDescFrom(key interface{}, match bool, f func(key, value interface{}) bool) {
+func (tree *BTree) IteratorDescFrom(key interface{}, match bool, f func(key, value interface{}) bool) {
 	tree.mu.RLock()
 	defer tree.mu.RUnlock()
 	node, index, found := tree.searchRecursively(tree.root, key)
@@ -414,7 +414,7 @@ func (tree *Tree) IteratorDescFrom(key interface{}, match bool, f func(key, valu
 	}
 }
 
-func (tree *Tree) doIteratorDesc(node *TreeNode, entry *TreeEntry, index int, f func(key, value interface{}) bool) {
+func (tree *BTree) doIteratorDesc(node *BTreeNode, entry *BTreeEntry, index int, f func(key, value interface{}) bool) {
 	first := true
 loop:
 	if entry == nil {
@@ -458,7 +458,7 @@ loop:
 	}
 }
 
-func (tree *Tree) output(buffer *bytes.Buffer, node *TreeNode, level int, isTail bool) {
+func (tree *BTree) output(buffer *bytes.Buffer, node *BTreeNode, level int, isTail bool) {
 	for e := 0; e < len(node.Entries)+1; e++ {
 		if e < len(node.Children) {
 			tree.output(buffer, node.Children[e], level+1, true)
@@ -472,7 +472,7 @@ func (tree *Tree) output(buffer *bytes.Buffer, node *TreeNode, level int, isTail
 	}
 }
 
-func (node *TreeNode) height() int {
+func (node *BTreeNode) height() int {
 	h := 0
 	n := node
 	for ; n != nil; n = n.Children[0] {
@@ -484,39 +484,39 @@ func (node *TreeNode) height() int {
 	return h
 }
 
-func (tree *Tree) isLeaf(node *TreeNode) bool {
+func (tree *BTree) isLeaf(node *BTreeNode) bool {
 	return len(node.Children) == 0
 }
 
-//func (tree *Tree) isFull(node *TreeNode) bool {
+//func (tree *BTree) isFull(node *BTreeNode) bool {
 //	return len(node.Entries) == tree.maxEntries()
 //}
 
-func (tree *Tree) shouldSplit(node *TreeNode) bool {
+func (tree *BTree) shouldSplit(node *BTreeNode) bool {
 	return len(node.Entries) > tree.maxEntries()
 }
 
-func (tree *Tree) maxChildren() int {
+func (tree *BTree) maxChildren() int {
 	return tree.m
 }
 
-func (tree *Tree) minChildren() int {
+func (tree *BTree) minChildren() int {
 	return (tree.m + 1) / 2 // ceil(m/2)
 }
 
-func (tree *Tree) maxEntries() int {
+func (tree *BTree) maxEntries() int {
 	return tree.maxChildren() - 1
 }
 
-func (tree *Tree) minEntries() int {
+func (tree *BTree) minEntries() int {
 	return tree.minChildren() - 1
 }
 
-func (tree *Tree) middle() int {
+func (tree *BTree) middle() int {
 	return (tree.m - 1) / 2
 }
 
-func (tree *Tree) search(node *TreeNode, key interface{}) (index int, found bool) {
+func (tree *BTree) search(node *BTreeNode, key interface{}) (index int, found bool) {
 	low, mid, high := 0, 0, len(node.Entries)-1
 	for low <= high {
 		mid = (high + low) / 2
@@ -533,7 +533,7 @@ func (tree *Tree) search(node *TreeNode, key interface{}) (index int, found bool
 	return low, false
 }
 
-func (tree *Tree) searchRecursively(startNode *TreeNode, key interface{}) (node *TreeNode, index int, found bool) {
+func (tree *BTree) searchRecursively(startNode *BTreeNode, key interface{}) (node *BTreeNode, index int, found bool) {
 	if tree.size == 0 {
 		return nil, -1, false
 	}
@@ -550,14 +550,14 @@ func (tree *Tree) searchRecursively(startNode *TreeNode, key interface{}) (node 
 	}
 }
 
-func (tree *Tree) insert(node *TreeNode, entry *TreeEntry) (inserted bool) {
+func (tree *BTree) insert(node *BTreeNode, entry *BTreeEntry) (inserted bool) {
 	if tree.isLeaf(node) {
 		return tree.insertIntoLeaf(node, entry)
 	}
 	return tree.insertIntoInternal(node, entry)
 }
 
-func (tree *Tree) insertIntoLeaf(node *TreeNode, entry *TreeEntry) (inserted bool) {
+func (tree *BTree) insertIntoLeaf(node *BTreeNode, entry *BTreeEntry) (inserted bool) {
 	insertPosition, found := tree.search(node, entry.Key)
 	if found {
 		node.Entries[insertPosition] = entry
@@ -570,7 +570,7 @@ func (tree *Tree) insertIntoLeaf(node *TreeNode, entry *TreeEntry) (inserted boo
 	return true
 }
 
-func (tree *Tree) insertIntoInternal(node *TreeNode, entry *TreeEntry) (inserted bool) {
+func (tree *BTree) insertIntoInternal(node *BTreeNode, entry *BTreeEntry) (inserted bool) {
 	insertPosition, found := tree.search(node, entry.Key)
 	if found {
 		node.Entries[insertPosition] = entry
@@ -579,7 +579,7 @@ func (tree *Tree) insertIntoInternal(node *TreeNode, entry *TreeEntry) (inserted
 	return tree.insert(node.Children[insertPosition], entry)
 }
 
-func (tree *Tree) split(node *TreeNode) {
+func (tree *BTree) split(node *BTreeNode) {
 	if !tree.shouldSplit(node) {
 		return
 	}
@@ -592,16 +592,16 @@ func (tree *Tree) split(node *TreeNode) {
 	tree.splitNonRoot(node)
 }
 
-func (tree *Tree) splitNonRoot(node *TreeNode) {
+func (tree *BTree) splitNonRoot(node *BTreeNode) {
 	middle := tree.middle()
 	parent := node.Parent
 
-	left := &TreeNode{Entries: append([]*TreeEntry(nil), node.Entries[:middle]...), Parent: parent}
-	right := &TreeNode{Entries: append([]*TreeEntry(nil), node.Entries[middle+1:]...), Parent: parent}
+	left := &BTreeNode{Entries: append([]*BTreeEntry(nil), node.Entries[:middle]...), Parent: parent}
+	right := &BTreeNode{Entries: append([]*BTreeEntry(nil), node.Entries[middle+1:]...), Parent: parent}
 
 	if !tree.isLeaf(node) {
-		left.Children = append([]*TreeNode(nil), node.Children[:middle+1]...)
-		right.Children = append([]*TreeNode(nil), node.Children[middle+1:]...)
+		left.Children = append([]*BTreeNode(nil), node.Children[:middle+1]...)
+		right.Children = append([]*BTreeNode(nil), node.Children[middle+1:]...)
 		setParent(left.Children, left)
 		setParent(right.Children, right)
 	}
@@ -621,21 +621,21 @@ func (tree *Tree) splitNonRoot(node *TreeNode) {
 	tree.split(parent)
 }
 
-func (tree *Tree) splitRoot() {
+func (tree *BTree) splitRoot() {
 	middle := tree.middle()
-	left := &TreeNode{Entries: append([]*TreeEntry(nil), tree.root.Entries[:middle]...)}
-	right := &TreeNode{Entries: append([]*TreeEntry(nil), tree.root.Entries[middle+1:]...)}
+	left := &BTreeNode{Entries: append([]*BTreeEntry(nil), tree.root.Entries[:middle]...)}
+	right := &BTreeNode{Entries: append([]*BTreeEntry(nil), tree.root.Entries[middle+1:]...)}
 
 	if !tree.isLeaf(tree.root) {
-		left.Children = append([]*TreeNode(nil), tree.root.Children[:middle+1]...)
-		right.Children = append([]*TreeNode(nil), tree.root.Children[middle+1:]...)
+		left.Children = append([]*BTreeNode(nil), tree.root.Children[:middle+1]...)
+		right.Children = append([]*BTreeNode(nil), tree.root.Children[middle+1:]...)
 		setParent(left.Children, left)
 		setParent(right.Children, right)
 	}
 
-	newRoot := &TreeNode{
-		Entries:  []*TreeEntry{tree.root.Entries[middle]},
-		Children: []*TreeNode{left, right},
+	newRoot := &BTreeNode{
+		Entries:  []*BTreeEntry{tree.root.Entries[middle]},
+		Children: []*BTreeNode{left, right},
 	}
 
 	left.Parent = newRoot
@@ -643,13 +643,13 @@ func (tree *Tree) splitRoot() {
 	tree.root = newRoot
 }
 
-func setParent(nodes []*TreeNode, parent *TreeNode) {
+func setParent(nodes []*BTreeNode, parent *BTreeNode) {
 	for _, node := range nodes {
 		node.Parent = parent
 	}
 }
 
-func (tree *Tree) left(node *TreeNode) *TreeNode {
+func (tree *BTree) left(node *BTreeNode) *BTreeNode {
 	if tree.size == 0 {
 		return nil
 	}
@@ -662,7 +662,7 @@ func (tree *Tree) left(node *TreeNode) *TreeNode {
 	}
 }
 
-func (tree *Tree) right(node *TreeNode) *TreeNode {
+func (tree *BTree) right(node *BTreeNode) *BTreeNode {
 	if tree.size == 0 {
 		return nil
 	}
@@ -675,7 +675,7 @@ func (tree *Tree) right(node *TreeNode) *TreeNode {
 	}
 }
 
-func (tree *Tree) leftSibling(node *TreeNode, key interface{}) (*TreeNode, int) {
+func (tree *BTree) leftSibling(node *BTreeNode, key interface{}) (*BTreeNode, int) {
 	if node.Parent != nil {
 		index, _ := tree.search(node.Parent, key)
 		index--
@@ -686,7 +686,7 @@ func (tree *Tree) leftSibling(node *TreeNode, key interface{}) (*TreeNode, int) 
 	return nil, -1
 }
 
-func (tree *Tree) rightSibling(node *TreeNode, key interface{}) (*TreeNode, int) {
+func (tree *BTree) rightSibling(node *BTreeNode, key interface{}) (*BTreeNode, int) {
 	if node.Parent != nil {
 		index, _ := tree.search(node.Parent, key)
 		index++
@@ -697,7 +697,7 @@ func (tree *Tree) rightSibling(node *TreeNode, key interface{}) (*TreeNode, int)
 	return nil, -1
 }
 
-func (tree *Tree) delete(node *TreeNode, index int) {
+func (tree *BTree) delete(node *BTreeNode, index int) {
 	if tree.isLeaf(node) {
 		deletedKey := node.Entries[index].Key
 		tree.deleteEntry(node, index)
@@ -716,20 +716,20 @@ func (tree *Tree) delete(node *TreeNode, index int) {
 	tree.rebalance(leftLargestNode, deletedKey)
 }
 
-func (tree *Tree) rebalance(node *TreeNode, deletedKey interface{}) {
+func (tree *BTree) rebalance(node *BTreeNode, deletedKey interface{}) {
 	if node == nil || len(node.Entries) >= tree.minEntries() {
 		return
 	}
 
 	leftSibling, leftSiblingIndex := tree.leftSibling(node, deletedKey)
 	if leftSibling != nil && len(leftSibling.Entries) > tree.minEntries() {
-		node.Entries = append([]*TreeEntry{node.Parent.Entries[leftSiblingIndex]}, node.Entries...)
+		node.Entries = append([]*BTreeEntry{node.Parent.Entries[leftSiblingIndex]}, node.Entries...)
 		node.Parent.Entries[leftSiblingIndex] = leftSibling.Entries[len(leftSibling.Entries)-1]
 		tree.deleteEntry(leftSibling, len(leftSibling.Entries)-1)
 		if !tree.isLeaf(leftSibling) {
 			leftSiblingRightMostChild := leftSibling.Children[len(leftSibling.Children)-1]
 			leftSiblingRightMostChild.Parent = node
-			node.Children = append([]*TreeNode{leftSiblingRightMostChild}, node.Children...)
+			node.Children = append([]*BTreeNode{leftSiblingRightMostChild}, node.Children...)
 			tree.deleteChild(leftSibling, len(leftSibling.Children)-1)
 		}
 		return
@@ -758,7 +758,7 @@ func (tree *Tree) rebalance(node *TreeNode, deletedKey interface{}) {
 		tree.appendChildren(node.Parent.Children[rightSiblingIndex], node)
 		tree.deleteChild(node.Parent, rightSiblingIndex)
 	} else if leftSibling != nil {
-		entries := append([]*TreeEntry(nil), leftSibling.Entries...)
+		entries := append([]*BTreeEntry(nil), leftSibling.Entries...)
 		entries = append(entries, node.Parent.Entries[leftSiblingIndex])
 		node.Entries = append(entries, node.Entries...)
 		deletedKey = node.Parent.Entries[leftSiblingIndex].Key
@@ -776,24 +776,24 @@ func (tree *Tree) rebalance(node *TreeNode, deletedKey interface{}) {
 	tree.rebalance(node.Parent, deletedKey)
 }
 
-func (tree *Tree) prependChildren(fromNode *TreeNode, toNode *TreeNode) {
-	children := append([]*TreeNode(nil), fromNode.Children...)
+func (tree *BTree) prependChildren(fromNode *BTreeNode, toNode *BTreeNode) {
+	children := append([]*BTreeNode(nil), fromNode.Children...)
 	toNode.Children = append(children, toNode.Children...)
 	setParent(fromNode.Children, toNode)
 }
 
-func (tree *Tree) appendChildren(fromNode *TreeNode, toNode *TreeNode) {
+func (tree *BTree) appendChildren(fromNode *BTreeNode, toNode *BTreeNode) {
 	toNode.Children = append(toNode.Children, fromNode.Children...)
 	setParent(fromNode.Children, toNode)
 }
 
-func (tree *Tree) deleteEntry(node *TreeNode, index int) {
+func (tree *BTree) deleteEntry(node *BTreeNode, index int) {
 	copy(node.Entries[index:], node.Entries[index+1:])
 	node.Entries[len(node.Entries)-1] = nil
 	node.Entries = node.Entries[:len(node.Entries)-1]
 }
 
-func (tree *Tree) deleteChild(node *TreeNode, index int) {
+func (tree *BTree) deleteChild(node *BTreeNode, index int) {
 	if index >= len(node.Children) {
 		return
 	}
@@ -802,11 +802,11 @@ func (tree *Tree) deleteChild(node *TreeNode, index int) {
 	node.Children = node.Children[:len(node.Children)-1]
 }
 
-func (tree *Tree) MarshalJSON() ([]byte, error) {
+func (tree *BTree) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tree.Map())
 }
 
-func (tree *Tree) getComparator() func(a, b interface{}) int {
+func (tree *BTree) getComparator() func(a, b interface{}) int {
 	if tree.comparator == nil {
 		panic("comparator is missing for tree")
 	}
