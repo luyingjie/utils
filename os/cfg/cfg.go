@@ -20,7 +20,7 @@ import (
 
 const (
 	DEFAULT_CONFIG_FILE = "config.toml" // The default configuration file name.
-	gCMDENV_KEY         = "gf.gcfg"     // Configuration key for command argument or environment.
+	CMDENV_KEY          = "utils.cfg"   // Configuration key for command argument or environment.
 )
 
 // Configuration struct.
@@ -48,7 +48,7 @@ func New(file ...string) *Config {
 		jsons: vmap.NewStrAnyMap(true),
 	}
 	// Customized dir path from env/cmd.
-	if envPath := cmdenv.Get(fmt.Sprintf("%s.path", gCMDENV_KEY)).String(); envPath != "" {
+	if envPath := cmdenv.Get(fmt.Sprintf("%s.path", CMDENV_KEY)).String(); envPath != "" {
 		if vfile.Exists(envPath) {
 			_ = c.SetPath(envPath)
 		} else {
@@ -81,7 +81,7 @@ func (c *Config) filePath(file ...string) (path string) {
 	if path == "" {
 		buffer := bytes.NewBuffer(nil)
 		if c.paths.Len() > 0 {
-			buffer.WriteString(fmt.Sprintf("[gcfg] cannot find config file \"%s\" in following paths:", name))
+			buffer.WriteString(fmt.Sprintf("[cfg] cannot find config file \"%s\" in following paths:", name))
 			c.paths.RLockFunc(func(array []string) {
 				index := 1
 				for _, v := range array {
@@ -93,7 +93,7 @@ func (c *Config) filePath(file ...string) (path string) {
 				}
 			})
 		} else {
-			buffer.WriteString(fmt.Sprintf("[gcfg] cannot find config file \"%s\" with no path set/add", name))
+			buffer.WriteString(fmt.Sprintf("[cfg] cannot find config file \"%s\" with no path set/add", name))
 		}
 		if errorPrint() {
 			verror.TryText(5000, 3, buffer.String())
@@ -135,14 +135,14 @@ func (c *Config) SetPath(path string) error {
 	if realPath == "" {
 		buffer := bytes.NewBuffer(nil)
 		if c.paths.Len() > 0 {
-			buffer.WriteString(fmt.Sprintf("[gcfg] SetPath failed: cannot find directory \"%s\" in following paths:", path))
+			buffer.WriteString(fmt.Sprintf("[cfg] SetPath failed: cannot find directory \"%s\" in following paths:", path))
 			c.paths.RLockFunc(func(array []string) {
 				for k, v := range array {
 					buffer.WriteString(fmt.Sprintf("\n%d. %s", k+1, v))
 				}
 			})
 		} else {
-			buffer.WriteString(fmt.Sprintf(`[gcfg] SetPath failed: path "%s" does not exist`, path))
+			buffer.WriteString(fmt.Sprintf(`[cfg] SetPath failed: path "%s" does not exist`, path))
 		}
 		err := errors.New(buffer.String())
 		if errorPrint() {
@@ -152,7 +152,7 @@ func (c *Config) SetPath(path string) error {
 	}
 	// Should be a directory.
 	if !isDir {
-		err := fmt.Errorf(`[gcfg] SetPath failed: path "%s" should be directory type`, path)
+		err := fmt.Errorf(`[cfg] SetPath failed: path "%s" should be directory type`, path)
 		if errorPrint() {
 			verror.Try(5000, 3, err)
 		}
@@ -211,14 +211,14 @@ func (c *Config) AddPath(path string) error {
 	if realPath == "" {
 		buffer := bytes.NewBuffer(nil)
 		if c.paths.Len() > 0 {
-			buffer.WriteString(fmt.Sprintf("[gcfg] AddPath failed: cannot find directory \"%s\" in following paths:", path))
+			buffer.WriteString(fmt.Sprintf("[cfg] AddPath failed: cannot find directory \"%s\" in following paths:", path))
 			c.paths.RLockFunc(func(array []string) {
 				for k, v := range array {
 					buffer.WriteString(fmt.Sprintf("\n%d. %s", k+1, v))
 				}
 			})
 		} else {
-			buffer.WriteString(fmt.Sprintf(`[gcfg] AddPath failed: path "%s" does not exist`, path))
+			buffer.WriteString(fmt.Sprintf(`[cfg] AddPath failed: path "%s" does not exist`, path))
 		}
 		err := errors.New(buffer.String())
 		if errorPrint() {
@@ -227,7 +227,7 @@ func (c *Config) AddPath(path string) error {
 		return err
 	}
 	if !isDir {
-		err := fmt.Errorf(`[gcfg] AddPath failed: path "%s" should be directory type`, path)
+		err := fmt.Errorf(`[cfg] AddPath failed: path "%s" should be directory type`, path)
 		if errorPrint() {
 			verror.Try(5000, 3, err)
 		}

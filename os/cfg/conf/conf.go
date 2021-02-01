@@ -13,7 +13,7 @@ import (
 
 func GetConfYaml(fileName string) (map[interface{}]interface{}, error) {
 	c := make(map[interface{}]interface{})
-	yamlFile, err := ioutil.ReadFile("conf/" + fileName + ".yaml")
+	yamlFile, err := ioutil.ReadFile("config/" + fileName + ".yaml")
 	if err != nil {
 		return nil, err
 	}
@@ -26,12 +26,12 @@ func GetConfYaml(fileName string) (map[interface{}]interface{}, error) {
 
 func GetConf(fileName string) map[string]interface{} {
 	c := make(map[string]interface{})
-	Reload("conf/"+fileName+".json", &c)
+	Reload("config/"+fileName+".json", &c)
 	return c
 }
 
 func GetByKey(key string) interface{} {
-	return GetConf("conf")[key]
+	return GetConf("config")[key]
 }
 
 func GetByKeyString(key string) map[string]string {
@@ -48,7 +48,7 @@ func Get(fileName, key string) interface{} {
 }
 
 func GetYamlByKey(key string) (interface{}, error) {
-	m, err := GetConfYaml("conf")
+	m, err := GetConfYaml("config")
 	return m[key], err
 }
 
