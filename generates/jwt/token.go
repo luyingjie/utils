@@ -2,7 +2,8 @@ package jwt
 
 import (
 	"time"
-	"utils/os/conf"
+	"utils/os/cfg"
+	"utils/os/cfg/conf"
 	verror "utils/os/error"
 
 	"github.com/dgrijalva/jwt-go"
@@ -17,7 +18,7 @@ func GenToken(userModel *UserModel) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
-	tokens, err := token.SignedString([]byte(conf.GetByKey("tokenkey").(string)))
+	tokens, err := token.SignedString([]byte(cfg.Instance().GetString("tokenkey")))
 	if err != nil {
 		return "", err
 	}
@@ -30,7 +31,7 @@ func GenToken(userModel *UserModel) (string, error) {
 
 func secret() jwt.Keyfunc {
 	return func(token *jwt.Token) (interface{}, error) {
-		return []byte(conf.GetByKey("tokenkey").(string)), nil
+		return []byte(cfg.Instance().GetString("tokenkey")), nil
 	}
 }
 
@@ -61,6 +62,7 @@ func Token(userModel *UserModel) (map[string]interface{}, error) {
 	// 验证用户信息
 	// 现在用户数据不在DB中，先用配置文件临时存放
 	var userStore map[string]interface{}
+	// 这里读取方法也是每次读，不放单例中。
 	if v := conf.Get("user", userModel.UserKey); v == nil {
 		return nil, verror.New("找不到用户对应信息")
 	} else {
