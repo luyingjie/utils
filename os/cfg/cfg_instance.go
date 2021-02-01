@@ -40,7 +40,7 @@ func InstanceF(name ...string) *Config {
 	if len(name) > 0 && name[0] != "" {
 		key = name[0]
 	}
-	f := "toml"
+	f := "json"
 	if len(name) > 1 && name[1] != "" {
 		f = name[1]
 	}
