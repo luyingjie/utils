@@ -6,7 +6,7 @@ import (
 	"time"
 
 	vtype "utils/container/type"
-	"utils/os/conv"
+	"utils/conv"
 	"utils/os/timer"
 )
 

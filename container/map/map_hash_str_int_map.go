@@ -3,7 +3,7 @@ package vmap
 import (
 	"utils/util/json"
 
-	"utils/os/conv"
+	"utils/conv"
 	"utils/util/empty"
 	"utils/util/rwmutex"
 )

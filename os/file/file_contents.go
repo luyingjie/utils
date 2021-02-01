@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"utils/os/conv"
+	"utils/conv"
 )
 
 var (

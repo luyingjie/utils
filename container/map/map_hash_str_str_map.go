@@ -1,7 +1,7 @@
 package vmap
 
 import (
-	"utils/os/conv"
+	"utils/conv"
 	"utils/util/json"
 
 	"utils/util/empty"

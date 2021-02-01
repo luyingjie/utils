@@ -12,7 +12,7 @@ import (
 
 	"utils/text/regex"
 
-	"utils/os/conv"
+	"utils/conv"
 
 	"utils/os/file"
 

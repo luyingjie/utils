@@ -2,7 +2,7 @@ package util
 
 import (
 	"strings"
-	"utils/os/conv"
+	"utils/conv"
 )
 
 // Comparator is a function that compare a and b, and returns the result as int.

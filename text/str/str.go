@@ -11,7 +11,7 @@ import (
 
 	iutil "utils/internal/util"
 
-	"utils/os/conv"
+	"utils/conv"
 
 	"utils/generates/rand"
 )

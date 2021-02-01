@@ -3,7 +3,7 @@ package crc32
 import (
 	"hash/crc32"
 
-	"utils/os/conv"
+	"utils/conv"
 )
 
 // Encrypt encrypts any type of variable using CRC32 algorithms.

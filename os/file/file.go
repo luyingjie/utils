@@ -9,7 +9,7 @@ import (
 
 	"utils/text/str"
 
-	"utils/os/conv"
+	"utils/conv"
 
 	vtype "utils/container/type"
 )

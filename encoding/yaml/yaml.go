@@ -5,7 +5,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"utils/os/conv"
+	"utils/conv"
 )
 
 func Encode(v interface{}) ([]byte, error) {

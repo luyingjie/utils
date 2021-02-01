@@ -2,7 +2,7 @@ package str
 
 import (
 	"strings"
-	"utils/os/conv"
+	"utils/conv"
 )
 
 func CompareVersion(a, b string) int {

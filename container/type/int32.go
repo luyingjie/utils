@@ -3,7 +3,7 @@ package vtype
 import (
 	"strconv"
 	"sync/atomic"
-	"utils/os/conv"
+	"utils/conv"
 )
 
 type Int32 struct {

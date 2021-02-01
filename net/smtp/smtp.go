@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"net/smtp"
 	"strings"
-	"utils/os/conv"
+	"utils/conv"
 )
 
 // SMTP is the structure for smtp connection
