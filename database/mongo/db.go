@@ -265,5 +265,5 @@ func (db *DB) Count(C string, Query *M) (int, error) {
 		}
 	}()
 
-	return c.Count()
+	return c.Find(Query).Count()
 }
