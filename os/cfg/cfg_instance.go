@@ -7,7 +7,7 @@ import (
 
 const (
 	// Default group name for instance usage.
-	DEFAULT_NAME = "default"
+	DEFAULT_NAME = "config"
 )
 
 var (
@@ -34,7 +34,7 @@ func Instance(name ...string) *Config {
 	}).(*Config)
 }
 
-// InstanceF 类似Instance，逻辑一样，多出一个可以指定文件格式的第二参数，用于非toml格式的读取，比如json。
+// InstanceF 类似Instance，逻辑一样，多出一个可以指定文件格式的第二参数，用于非toml格式的读取。默认为json。
 func InstanceF(name ...string) *Config {
 	key := DEFAULT_NAME
 	if len(name) > 0 && name[0] != "" {
