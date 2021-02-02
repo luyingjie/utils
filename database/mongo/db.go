@@ -201,7 +201,7 @@ func (db *DB) Select(C string, Query *M, ResultModel interface{}, Limit, Skip in
 	}()
 
 	query := c.Find(Query)
-	if Limit != 0 && Skip != 0 {
+	if Limit != 0 {
 		query = query.Limit(Limit).Skip(Skip)
 	}
 	if Sort != "" {
