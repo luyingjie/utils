@@ -1,16 +1,21 @@
 package jwt
 
 import (
+	"net/http"
+	"strings"
 	"time"
-	"utils/os/cfg"
-	"utils/os/cfg/conf"
+	"utils/conv"
 	verror "utils/os/error"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
+const (
+	DEFAULT_Time_Unix int64 = 3600
+)
+
 // GenToken 生成一个Token
-func GenToken(userModel *UserModel) (string, error) {
+func GenToken(userModel *UserModel, key string) (string, error) {
 	claim := jwt.MapClaims{
 		"key":      userModel.UserKey,
 		"username": userModel.UserName,
@@ -18,7 +23,7 @@ func GenToken(userModel *UserModel) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
-	tokens, err := token.SignedString([]byte(cfg.Instance().GetString("tokenkey")))
+	tokens, err := token.SignedString([]byte(key))
 	if err != nil {
 		return "", err
 	}
@@ -29,16 +34,16 @@ func GenToken(userModel *UserModel) (string, error) {
 // 	'Authorization': 'Bearer ' + token
 //   }
 
-func secret() jwt.Keyfunc {
+func secret(key string) jwt.Keyfunc {
 	return func(token *jwt.Token) (interface{}, error) {
-		return []byte(cfg.Instance().GetString("tokenkey")), nil
+		return []byte(key), nil
 	}
 }
 
 // CheckToken 检查Token
-func CheckToken(tokenss string) (UserModel, error) {
+func CheckToken(tokenss string, key string, timeunix ...int64) (UserModel, error) {
 	_user := new(UserModel)
-	token, err := jwt.Parse(tokenss, secret())
+	token, err := jwt.Parse(tokenss, secret(key))
 	if err != nil {
 		return *_user, err
 	}
@@ -51,37 +56,40 @@ func CheckToken(tokenss string) (UserModel, error) {
 		return *_user, verror.New("令牌无效")
 	}
 
+	// 判断时间戳
+	tu := conv.Int64(claim["timeunix"])
+
+	// 判断时效
+	_timeUnix := DEFAULT_Time_Unix
+	if len(timeunix) > 0 && timeunix[0] != 0 {
+		_timeUnix = timeunix[0]
+	}
+	if _timeUnix != 0 {
+		if time.Now().Unix()-tu > _timeUnix {
+			return *_user, verror.New("用户认证信息失效！")
+		}
+	}
+	if claim["key"].(string) == "" {
+		return *_user, verror.New("用户认证信息错误！")
+	}
+
 	_user.UserKey = claim["key"].(string)
 	_user.UserName = claim["username"].(string)
-	_user.TimeUnix = int64(claim["timeunix"].(float64))
+	_user.TimeUnix = tu
 	return *_user, nil
 }
 
-// Token 解析Token信息
-func Token(userModel *UserModel) (map[string]interface{}, error) {
-	// 验证用户信息
-	// 现在用户数据不在DB中，先用配置文件临时存放
-	var userStore map[string]interface{}
-	// 这里读取方法也是每次读，不放单例中。
-	if v := conf.Get("user", userModel.UserKey); v == nil {
-		return nil, verror.New("找不到用户对应信息")
+// BearerAuth 从http中解析出Token
+func BearerAuth(r *http.Request) (string, bool) {
+	auth := r.Header.Get("Authorization")
+	prefix := "Bearer "
+	token := ""
+
+	if auth != "" && strings.HasPrefix(auth, prefix) {
+		token = auth[len(prefix):]
 	} else {
-		userStore = v.(map[string]interface{})
+		token = r.FormValue("access_token")
 	}
 
-	if userStore["PassWord"].(string) != userModel.PassWord {
-		return nil, verror.New("用户或者密码错误")
-	}
-
-	// 填充用户模型，后面可能要放到缓存中。
-	userModel.UserName = userStore["UserName"].(string)
-
-	// 发放token
-	token, err := GenToken(userModel)
-	if err != nil {
-		return nil, err
-	}
-	return map[string]interface{}{
-		"Token": token,
-	}, nil
+	return token, token != ""
 }
