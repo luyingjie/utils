@@ -1,6 +1,8 @@
 package util
 
 import (
+	"bytes"
+	"encoding/gob"
 	"utils/util/empty"
 )
 
@@ -21,23 +23,32 @@ func IsEmpty(value interface{}) bool {
 	return empty.IsEmpty(value)
 }
 
-// 深克隆
-func DeepCopy(value interface{}) interface{} {
+// MapDeepCopy Map深克隆
+func MapDeepCopy(value interface{}) interface{} {
 	if valueMap, ok := value.(map[string]interface{}); ok {
 		newMap := make(map[string]interface{})
 		for k, v := range valueMap {
-			newMap[k] = DeepCopy(v)
+			newMap[k] = MapDeepCopy(v)
 		}
 
 		return newMap
 	} else if valueSlice, ok := value.([]interface{}); ok {
 		newSlice := make([]interface{}, len(valueSlice))
 		for k, v := range valueSlice {
-			newSlice[k] = DeepCopy(v)
+			newSlice[k] = MapDeepCopy(v)
 		}
 
 		return newSlice
 	}
 
 	return value
+}
+
+// DeepCopy 深克隆
+func DeepCopy(dst, src interface{}) error {
+	var buf bytes.Buffer
+	if err := gob.NewEncoder(&buf).Encode(src); err != nil {
+		return err
+	}
+	return gob.NewDecoder(bytes.NewBuffer(buf.Bytes())).Decode(dst)
 }
