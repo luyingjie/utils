@@ -13,7 +13,7 @@ import (
 
 const (
 	// Default TCP server name.
-	gDEFAULT_SERVER = "default"
+	DEFAULT_SERVER = "default"
 )
 
 // TCP Server.
@@ -32,7 +32,7 @@ var serverMapping = map.NewStrAnyMap(true)
 // or it returns a new normal TCP server named <name> if it does not exist.
 // The parameter <name> is used to specify the TCP server
 func GetServer(name ...interface{}) *Server {
-	serverName := gDEFAULT_SERVER
+	serverName := DEFAULT_SERVER
 	if len(name) > 0 && name[0] != "" {
 		serverName = conv.String(name[0])
 	}

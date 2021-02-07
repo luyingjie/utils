@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	gPKG_HEADER_SIZE_DEFAULT = 2 // Header size for simple package protocol.
-	gPKG_HEADER_SIZE_MAX     = 4 // Max header size for simple package protocol.
+	PKG_HEADER_SIZE_DEFAULT = 2 // Header size for simple package protocol.
+	PKG_HEADER_SIZE_MAX     = 4 // Max header size for simple package protocol.
 )
 
 // Package option for simple protocol.
@@ -45,10 +45,10 @@ func (c *Conn) SendPkg(data []byte, option ...PkgOption) error {
 			length, pkgOption.MaxDataSize,
 		)
 	}
-	offset := gPKG_HEADER_SIZE_MAX - pkgOption.HeaderSize
-	buffer := make([]byte, gPKG_HEADER_SIZE_MAX+len(data))
+	offset := PKG_HEADER_SIZE_MAX - pkgOption.HeaderSize
+	buffer := make([]byte, PKG_HEADER_SIZE_MAX+len(data))
 	binary.BigEndian.PutUint32(buffer[0:], uint32(length))
-	copy(buffer[gPKG_HEADER_SIZE_MAX:], data)
+	copy(buffer[PKG_HEADER_SIZE_MAX:], data)
 	if pkgOption.Retry.Count > 0 {
 		return c.Send(buffer[offset:], pkgOption.Retry)
 	}
@@ -138,12 +138,12 @@ func getPkgOption(option ...PkgOption) (*PkgOption, error) {
 		pkgOption = option[0]
 	}
 	if pkgOption.HeaderSize == 0 {
-		pkgOption.HeaderSize = gPKG_HEADER_SIZE_DEFAULT
+		pkgOption.HeaderSize = PKG_HEADER_SIZE_DEFAULT
 	}
-	if pkgOption.HeaderSize > gPKG_HEADER_SIZE_MAX {
+	if pkgOption.HeaderSize > PKG_HEADER_SIZE_MAX {
 		return nil, fmt.Errorf(
 			`package header size %d definition exceeds max header size %d`,
-			pkgOption.HeaderSize, gPKG_HEADER_SIZE_MAX,
+			pkgOption.HeaderSize, PKG_HEADER_SIZE_MAX,
 		)
 	}
 	if pkgOption.MaxDataSize == 0 {

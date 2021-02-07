@@ -20,7 +20,7 @@ type Conn struct {
 
 const (
 	// Default interval for reading buffer.
-	gRECV_ALL_WAIT_TIMEOUT = time.Millisecond
+	RECV_ALL_WAIT_TIMEOUT = time.Millisecond
 )
 
 // NewConn creates and returns a new connection with given address.
@@ -59,7 +59,7 @@ func NewConnByNetConn(conn net.Conn) *Conn {
 		reader:         bufio.NewReader(conn),
 		recvDeadline:   time.Time{},
 		sendDeadline:   time.Time{},
-		recvBufferWait: gRECV_ALL_WAIT_TIMEOUT,
+		recvBufferWait: RECV_ALL_WAIT_TIMEOUT,
 	}
 }
 

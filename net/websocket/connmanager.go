@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	verror "utils/os/error"
 )
 
 // ConnManager 连接管理模块
@@ -34,7 +35,7 @@ func (connMgr *ConnManager) Add(conn *WebSocket) {
 }
 
 //删除连接
-func (connMgr *ConnManager) Remove(conn viface.IConnection) {
+func (connMgr *ConnManager) Remove(conn *WebSocket) {
 	//保护共享资源Map 加写锁
 	connMgr.connLock.Lock()
 	defer connMgr.connLock.Unlock()
@@ -46,7 +47,7 @@ func (connMgr *ConnManager) Remove(conn viface.IConnection) {
 }
 
 //利用ConnID获取链接
-func (connMgr *ConnManager) Get(connID uint32) (viface.IConnection, error) {
+func (connMgr *ConnManager) Get(connID string) (*WebSocket, error) {
 	//保护共享资源Map 加读锁
 	connMgr.connLock.RLock()
 	defer connMgr.connLock.RUnlock()
@@ -72,7 +73,10 @@ func (connMgr *ConnManager) ClearConn() {
 	//停止并删除全部的连接信息
 	for connID, conn := range connMgr.connections {
 		//停止
-		conn.Stop()
+		err := conn.Stop()
+		if err != nil {
+			verror.Log(2000, 3, err)
+		}
 		//删除
 		delete(connMgr.connections, connID)
 	}
