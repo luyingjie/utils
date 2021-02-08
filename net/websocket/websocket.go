@@ -1,3 +1,4 @@
+// ws的连接包，基于 "github.com/gorilla/websocket" 封装，实现了IConnection接口，可以用于连接管理。
 package websocket
 
 import (
@@ -9,25 +10,29 @@ import (
 type WebSocketHandler func(*WebSocket)
 
 type WebSocket struct {
-	Key 	string
+	key     string
 	Path    string
 	Handler WebSocketHandler
 
+	w http.ResponseWriter
+	r *http.Request
 	*websocket.Upgrader
 	*websocket.Conn
 }
 
-func NewWebSocket(path string, key string, handler WebSocketHandler) *WebSocket {
+func NewWebSocket(path string, key string, w http.ResponseWriter, r *http.Request, handler WebSocketHandler) *WebSocket {
 	return &WebSocket{
-		Key:  	  key,
+		key:      key,
 		Path:     path,
+		w: w,
+		r: r,
 		Upgrader: &websocket.Upgrader{},
 		Handler:  handler,
 	}
 }
 
-func (ws *WebSocket) Upgrade(w http.ResponseWriter, r *http.Request) error {
-	conn, err := ws.Upgrader.Upgrade(w, r, nil)
+func (ws *WebSocket) Start() error {
+	conn, err := ws.Upgrader.Upgrade(ws.w, ws.r, nil)
 	if err != nil {
 		return err
 	}
@@ -39,7 +44,7 @@ func (ws *WebSocket) Upgrade(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (ws *WebSocket) GetConnID() string {
-	return ws.Key
+	return ws.key
 }
 
 func (ws *WebSocket) Stop() error {
@@ -48,4 +53,12 @@ func (ws *WebSocket) Stop() error {
 		return err
 	}
 	return nil
+}
+
+func (ws *WebSocket) GetConnection() interface{} {
+	return ws
+}
+
+func (ws *WebSocket) SendMsg(id int, data []byte) error {
+	return ws.WriteMessage(id, data)
 }
