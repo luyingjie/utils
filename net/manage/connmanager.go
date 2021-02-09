@@ -9,8 +9,8 @@ import (
 
 // ConnManager 连接管理模块
 type ConnManager struct {
-	connections map[string]IConnection 		//管理的连接信息
-	connLock    sync.RWMutex                //读写连接的读写锁
+	connections map[string]IConnection //管理的连接信息
+	connLock    sync.RWMutex           //读写连接的读写锁
 }
 
 // NewConnManager 创建一个链接管理
@@ -33,15 +33,15 @@ func (connMgr *ConnManager) Add(conn IConnection) {
 }
 
 // Remove 删除连接
-func (connMgr *ConnManager) Remove(conn IConnection) {
+func (connMgr *ConnManager) Remove(connID string) {
 	//保护共享资源Map 加写锁
 	connMgr.connLock.Lock()
 	defer connMgr.connLock.Unlock()
 
 	//删除连接信息
-	delete(connMgr.connections, conn.GetConnID())
+	delete(connMgr.connections, connID)
 
-	fmt.Println("connection Remove ConnID=", conn.GetConnID(), " successfully: conn num = ", connMgr.Len())
+	fmt.Println("connection Remove ConnID=", connID, " successfully: conn num = ", connMgr.Len())
 }
 
 // Get 利用ConnID获取链接
