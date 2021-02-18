@@ -24,8 +24,8 @@ func NewWebSocket(path string, key string, w http.ResponseWriter, r *http.Reques
 	return &WebSocket{
 		key:      key,
 		Path:     path,
-		w: w,
-		r: r,
+		w:        w,
+		r:        r,
 		Upgrader: &websocket.Upgrader{},
 		Handler:  handler,
 	}
