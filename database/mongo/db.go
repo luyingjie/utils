@@ -7,6 +7,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+// 这里的属性是为了将bson的结构扩展出去，外面可以不引用bson。但是这样有时候使用还是需要引用bson反而容易混乱。
 type M bson.M
 type RegEx bson.RegEx
 type D bson.D
@@ -28,6 +29,10 @@ func NewId() bson.ObjectId {
 
 func ToId(id string) bson.ObjectId {
 	return bson.ObjectIdHex(id)
+}
+
+func ToStringId(id bson.ObjectId) string {
+	return id.Hex()
 }
 
 func NewStrId() string {
