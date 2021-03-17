@@ -94,10 +94,10 @@ func Get2(url string, request *interface{}, header ...map[string]string) error {
 }
 
 // GetBody 直接返回整个返回体。
-func GetBody(url string, header ...map[string]string) (string, error) {
+func GetBody(url string, header ...map[string]string) (string, http.Header, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 
 	if len(header) > 0 && header[0] != nil {
@@ -108,16 +108,16 @@ func GetBody(url string, header ...map[string]string) (string, error) {
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 
-	return string(body), nil
+	return string(body), res.Header, nil
 }
 
 // Post2 : Post方式的数据获取
