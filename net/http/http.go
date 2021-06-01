@@ -49,10 +49,16 @@ func PostToMap(url string, data map[string]interface{}, request *interface{}) er
 }
 
 // FilePost 文件处理的Post，用于下载
-func FilePost(url, data string) ([]byte, error) {
+func FilePost(url, data string, header ...map[string]string) ([]byte, error) {
 	resp, err := http.Post(url, ContextType, strings.NewReader(data))
 	if err != nil {
 		return nil, err
+	}
+
+	if len(header) > 0 && header[0] != nil {
+		for key, value := range header[0] {
+			resp.Header.Add(key, value)
+		}
 	}
 
 	defer resp.Body.Close()
