@@ -48,6 +48,22 @@ func PostToMap(url string, data map[string]interface{}, request *interface{}) er
 	return nil
 }
 
+// FilePost 文件处理的Post，用于下载
+func FilePost(url, data string, request *interface{}) ([]byte, error) {
+	resp, err := http.Post(url, ContextType, strings.NewReader(data))
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+
 // Get : Get方式提交数据
 func Get(url string, request *interface{}) error {
 	resp, err := http.Get(url)
