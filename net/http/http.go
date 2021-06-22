@@ -233,9 +233,9 @@ func Put(url, data string, request *interface{}, header ...map[string]string) er
 }
 
 // Delete : Delete的方式获取数据
-func Delete(url, data string, request *interface{}, header ...map[string]string) error {
+func Delete(url string, request *interface{}, header ...map[string]string) error {
 	// req, err := http.NewRequest("DELETE", url, nil)
-	req, err := http.NewRequest("DELETE", url, strings.NewReader(string(data)))
+	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return err
 	}

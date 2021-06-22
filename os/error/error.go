@@ -39,6 +39,10 @@ func writing(err ErrorModel) {
 		_log.Warn(fmt.Sprintf("%+v", err.Error))
 	case 3:
 		_log.Error(fmt.Sprintf("%+v", err.Error))
+	case 4:
+		_log.Error(fmt.Sprintf("%+v", err.Error))
+	case 5:
+		_log.Error(fmt.Sprintf("%+v", err.Error))
 	}
 }
 
