@@ -24,6 +24,7 @@ var ErrorStatus map[int]string = map[int]string{
 	2000: "连接错误",
 	3000: "资源错误",
 	4000: "权限等错误",
+	4050: "用户名密码错误",
 	5000: "系统错误",
 }
 
