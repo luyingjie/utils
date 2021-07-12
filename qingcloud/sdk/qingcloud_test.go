@@ -1,4 +1,4 @@
-package qingcloud
+package sdk
 
 import (
 	"fmt"
