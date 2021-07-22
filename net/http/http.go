@@ -8,6 +8,17 @@ import (
 	"strings"
 )
 
+func setResponse(body []byte, request *interface{}, resp *http.Response) {
+	err := json.Unmarshal(body, &request)
+	if err != nil {
+		if len(body) != 0 {
+			*request = string(body)
+		} else {
+			*request = resp.Status
+		}
+	}
+}
+
 var ContextType string = "application/json;charset=utf-8"
 
 // Post : Post提交和获取Json数据
@@ -23,7 +34,8 @@ func Post(url, data string, request *interface{}) error {
 		return err
 	}
 
-	json.Unmarshal(body, request)
+	// json.Unmarshal(body, request)
+	setResponse(body, request, resp)
 	return nil
 }
 
@@ -44,7 +56,7 @@ func PostToMap(url string, data map[string]interface{}, request *interface{}) er
 		return err
 	}
 
-	json.Unmarshal(body, request)
+	setResponse(body, request, resp)
 	return nil
 }
 
@@ -90,7 +102,7 @@ func Get(url string, request *interface{}) error {
 		return err
 	}
 
-	json.Unmarshal(body, request)
+	setResponse(body, request, resp)
 	return nil
 }
 
@@ -118,7 +130,7 @@ func Get2(url string, request *interface{}, header ...map[string]string) error {
 		return err
 	}
 
-	json.Unmarshal(body, request)
+	setResponse(body, request, res)
 	return nil
 }
 
@@ -173,7 +185,7 @@ func Post2(url, data string, request *interface{}, header ...map[string]string) 
 		return err
 	}
 
-	json.Unmarshal(body, request)
+	setResponse(body, request, res)
 	return nil
 }
 
@@ -228,7 +240,7 @@ func Put(url, data string, request *interface{}, header ...map[string]string) er
 		return err
 	}
 
-	json.Unmarshal(body, request)
+	setResponse(body, request, res)
 	return nil
 }
 
@@ -257,7 +269,7 @@ func Delete(url string, request *interface{}, header ...map[string]string) error
 		return err
 	}
 
-	json.Unmarshal(body, request)
+	setResponse(body, request, res)
 	return nil
 }
 
@@ -267,24 +279,24 @@ func TLSGet(url string, request *interface{}, header ...map[string]string) error
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: tr}
-	req, err := client.Get(url)
+	res, err := client.Get(url)
 	if err != nil {
 		return err
 	}
 
 	if len(header) > 0 && header[0] != nil {
 		for key, value := range header[0] {
-			req.Header.Add(key, value)
+			res.Header.Add(key, value)
 		}
 	}
 
-	defer req.Body.Close()
-	body, err := ioutil.ReadAll(req.Body)
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return err
 	}
 
-	json.Unmarshal(body, request)
+	setResponse(body, request, res)
 	return nil
 }
 
@@ -317,7 +329,7 @@ func TLSPost(url, data string, request *interface{}, header ...map[string]string
 		return err
 	}
 
-	json.Unmarshal(body, request)
+	setResponse(body, request, res)
 	return nil
 }
 
@@ -327,24 +339,24 @@ func TLSPost2(url, data string, request *interface{}, header ...map[string]strin
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: tr}
-	req, err := client.Post(url, ContextType, strings.NewReader(data))
+	res, err := client.Post(url, ContextType, strings.NewReader(data))
 	if err != nil {
 		return err
 	}
 
 	if len(header) > 0 && header[0] != nil {
 		for key, value := range header[0] {
-			req.Header.Add(key, value)
+			res.Header.Add(key, value)
 		}
 	}
 
-	defer req.Body.Close()
-	body, err := ioutil.ReadAll(req.Body)
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return err
 	}
 
-	json.Unmarshal(body, request)
+	setResponse(body, request, res)
 	return nil
 }
 
@@ -377,7 +389,7 @@ func TLSPut(url, data string, request *interface{}, header ...map[string]string)
 		return err
 	}
 
-	json.Unmarshal(body, request)
+	setResponse(body, request, res)
 	return nil
 }
 
@@ -410,6 +422,6 @@ func TLSDelete(url, data string, request *interface{}, header ...map[string]stri
 		return err
 	}
 
-	json.Unmarshal(body, request)
+	setResponse(body, request, res)
 	return nil
 }
