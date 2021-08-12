@@ -51,12 +51,18 @@ func InstanceF(name ...string) *Config {
 	}
 	return instances.GetOrSetFuncLock(key, func() interface{} {
 		c := New()
-		if len(name) > 2 {
-			for _, v := range name[2:] {
-				c.AddPath(v)
+		file := ""
+		if name[0] == "" && name[1] == "" && name[2] != "" {
+			file = name[2]
+		} else {
+			if len(name) > 2 && name[2] != "" {
+				for _, v := range name[2:] {
+					c.AddPath(v)
+				}
 			}
+			file = fmt.Sprintf(`%s.%s`, key, format)
 		}
-		file := fmt.Sprintf(`%s.%s`, key, format)
+
 		if c.Available(file) {
 			c.SetFileName(file)
 		}
