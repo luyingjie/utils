@@ -52,7 +52,7 @@ func InstanceF(name ...string) *Config {
 	return instances.GetOrSetFuncLock(key, func() interface{} {
 		c := New()
 		file := ""
-		if name[0] == "" && name[1] == "" && name[2] != "" {
+		if len(name) > 3 && name[0] == "" && name[1] == "" && name[2] != "" {
 			file = name[2]
 		} else {
 			if len(name) > 2 && name[2] != "" {
