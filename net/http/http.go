@@ -21,24 +21,6 @@ func setResponse(body []byte, request *interface{}, resp *http.Response) {
 
 var ContextType string = "application/json;charset=utf-8"
 
-// Post : Post提交和获取Json数据
-func Post(url, data string, request *interface{}) error {
-	resp, err := http.Post(url, ContextType, strings.NewReader(data))
-	if err != nil {
-		return err
-	}
-
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-
-	// json.Unmarshal(body, request)
-	setResponse(body, request, resp)
-	return nil
-}
-
 // PostToMap : Post提交数据，参数是map，返回interface{}
 func PostToMap(url string, data map[string]interface{}, request *interface{}) error {
 	d, err := json.Marshal(data)
@@ -62,26 +44,31 @@ func PostToMap(url string, data map[string]interface{}, request *interface{}) er
 
 // FilePost 文件处理的Post，用于下载
 func FilePost(url, data string, header ...map[string]string) (map[string]string, []byte, error) {
-	resp, err := http.Post(url, ContextType, strings.NewReader(data))
+	req, err := http.NewRequest("POST", url, strings.NewReader(data))
 	if err != nil {
 		return nil, nil, err
 	}
 
 	if len(header) > 0 && header[0] != nil {
 		for key, value := range header[0] {
-			resp.Header.Add(key, value)
+			req.Header.Add(key, value)
 		}
 	}
 
-	contentDisposition := resp.Header.Get("Content-Disposition")
-	contentType := resp.Header.Get("Content-Type")
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	contentDisposition := res.Header.Get("Content-Disposition")
+	contentType := res.Header.Get("Content-Type")
 	head := map[string]string{
 		"Content-Disposition": contentDisposition,
 		"Content-Type":        contentType,
 	}
 
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -159,6 +146,24 @@ func GetBody(url string, header ...map[string]string) (string, http.Header, erro
 	}
 
 	return string(body), res.Header, nil
+}
+
+// Post : Post提交和获取Json数据
+func Post(url, data string, request *interface{}) error {
+	resp, err := http.Post(url, ContextType, strings.NewReader(data))
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	// json.Unmarshal(body, request)
+	setResponse(body, request, resp)
+	return nil
 }
 
 // Post2 : Post方式的数据获取
@@ -273,8 +278,40 @@ func Delete(url string, request *interface{}, header ...map[string]string) error
 	return nil
 }
 
-// TLSGet : Get提交数据，参数是map，返回interface{}
 func TLSGet(url string, request *interface{}, header ...map[string]string) error {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
+
+	req, err := http.NewRequest("GET", url, strings.NewReader(data))
+	if err != nil {
+		return err
+	}
+
+	if len(header) > 0 && header[0] != nil {
+		for key, value := range header[0] {
+			req.Header.Add(key, value)
+		}
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	setResponse(body, request, res)
+	return nil
+}
+
+// TLSGet : Get提交数据，参数是map，返回interface{}
+func TLSGet2(url string, request *interface{}) error {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -282,12 +319,6 @@ func TLSGet(url string, request *interface{}, header ...map[string]string) error
 	res, err := client.Get(url)
 	if err != nil {
 		return err
-	}
-
-	if len(header) > 0 && header[0] != nil {
-		for key, value := range header[0] {
-			res.Header.Add(key, value)
-		}
 	}
 
 	defer res.Body.Close()
@@ -333,8 +364,8 @@ func TLSPost(url, data string, request *interface{}, header ...map[string]string
 	return nil
 }
 
-// TLSPost : Post提交数据，参数是map，返回interface{} ，使用client.Post 这个方法目前有问题。
-func TLSPost2(url, data string, request *interface{}, header ...map[string]string) error {
+// TLSPost : Post提交数据。
+func TLSPost2(url, data string, request *interface{}) error {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -342,12 +373,6 @@ func TLSPost2(url, data string, request *interface{}, header ...map[string]strin
 	res, err := client.Post(url, ContextType, strings.NewReader(data))
 	if err != nil {
 		return err
-	}
-
-	if len(header) > 0 && header[0] != nil {
-		for key, value := range header[0] {
-			res.Header.Add(key, value)
-		}
 	}
 
 	defer res.Body.Close()
