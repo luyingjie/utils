@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"strings"
 )
 
@@ -284,7 +286,7 @@ func TLSGet(url string, request *interface{}, header ...map[string]string) error
 	}
 	client := &http.Client{Transport: tr}
 
-	req, err := http.NewRequest("GET", url, strings.NewReader(data))
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
 	}
@@ -449,4 +451,11 @@ func TLSDelete(url, data string, request *interface{}, header ...map[string]stri
 
 	setResponse(body, request, res)
 	return nil
+}
+
+// Proxy Http的反向代理
+func Proxy(_url string, rw http.ResponseWriter, req *http.Request) {
+	u, _ := url.Parse(_url)
+	proxy := httputil.NewSingleHostReverseProxy(u)
+	proxy.ServeHTTP(rw, req)
 }
