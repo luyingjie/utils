@@ -14,35 +14,63 @@ import (
 	"utils/util"
 )
 
-// Send 发送请求到api框架的ws
+// Send 发送请求到api框架的ws, 这个有可能调用不通服务，可以使用sign.
 // conf 包含配置：console_key_id,console_secrect_key,console_uri,host,port
 func Send(method string, params map[string]interface{}, conf map[string]interface{}) (interface{}, error) {
 	_method := strings.ToLower(method)
-	headers := map[string]string{}
-	_params := url.Values{}
-
-	action := ""
+		action := ""
 	if _action, ok := params["action"]; ok {
 		action = _action.(string)
 		delete(params, "action")
 	}
 	if action == "" {
-		return nil, verror.New("action cannot be empty")
+		return "", "", "", verror.New("action cannot be empty")
 	}
 	if params["zone"] == "" {
-		return nil, verror.New("zone cannot be empty")
+		return "", "", "", verror.New("zone cannot be empty")
 	}
 	_params.Set("zone", params["zone"].(string))
 	if params["service"] == "" {
-		return nil, verror.New("service cannot be empty")
+		return "", "", "", verror.New("service cannot be empty")
 	}
 
 	if zone, ok := conf["zone"]; ok {
 		_params.Set("zone", zone.(string))
 	}
+	
+	urlParams, _, data, err := Signature(_method, conf["console_uri"].(string), conf["console_key_id"].(string), conf["console_secrect_key"].(string), params)
+	if err != nil {
+		return nil, err
+	}
+
+	headers := map[string]string{}
+	headers["Content-Type"] = "application/json"
+	headers["Date"] = util.TimeToString(time_stamp, "RFC 822") //time.Now().UTC().Format(http.TimeFormat)
+	headers["User-Agent"] = "QingCloud-Web-Console"
+	headers["Host"] = conf["endpoint"].(string)
+
+	var url string = fmt.Sprintf("http://%s:%s/%s", conf["endpoint"].(string), conf["port"].(string), action)
+
+	var resp interface{}
+	if _method == "get" {
+		vhttp.Get2(url+"?"+urlParams, &resp, headers)
+	} else if _method == "post" {
+		vhttp.Post2(url+"?"+urlParams, _data, &resp, headers)
+	} else if _method == "put" {
+		vhttp.Put(url+"?"+urlParams, _data, &resp, headers)
+	} else if _method == "delete" {
+		vhttp.Delete(url+"?"+urlParams, &resp, headers)
+	}
+	return resp, nil
+}
+
+func Signature(method, uri, ak, sk string, params map[string]interface{}) (string, string, string, error) {
+	_method := strings.ToLower(method)
+	_params := url.Values{}
+
 	bData, err := json.Marshal(params)
 	if err != nil {
-		return nil, verror.New("parameter parsing error")
+		return "", "", "", verror.New("parameter parsing error")
 	}
 	var _data string = ""
 	if _method == "get" || _method == "delete" {
@@ -69,7 +97,7 @@ func Send(method string, params map[string]interface{}, conf map[string]interfac
 	_params.Set("version", "1")
 	_params.Set("signature_version", "1")
 	_params.Set("signature_method", "HmacSHA256")
-	_params.Set("access_key_id", conf["access_key_id"].(string))
+	_params.Set("access_key_id", ak)
 
 	keys := []string{}
 	for key := range _params {
@@ -96,25 +124,7 @@ func Send(method string, params map[string]interface{}, conf map[string]interfac
 	}
 	urlParams := strings.Join(parts, "&")
 
-	signature := qcutil.Get_api_authorization(conf["secret_access_key"].(string), _method, "/"+action+"/", _data, urlParams)
+	signature := qcutil.Get_api_authorization(sk, _method, "/"+action+"/", _data, urlParams)
 	urlParams += "&signature=" + signature
-
-	headers["Content-Type"] = "application/json"
-	headers["Date"] = util.TimeToString(time_stamp, "RFC 822") //time.Now().UTC().Format(http.TimeFormat)
-	headers["User-Agent"] = "QingCloud-Web-Console"
-	headers["Host"] = conf["endpoint"].(string)
-
-	var url string = fmt.Sprintf("http://%s:%s/%s", conf["endpoint"].(string), conf["port"].(string), action)
-
-	var resp interface{}
-	if _method == "get" {
-		vhttp.Get2(url+"?"+urlParams, &resp, headers)
-	} else if _method == "post" {
-		vhttp.Post2(url+"?"+urlParams, _data, &resp, headers)
-	} else if _method == "put" {
-		vhttp.Put(url+"?"+urlParams, _data, &resp, headers)
-	} else if _method == "delete" {
-		vhttp.Delete(url+"?"+urlParams, &resp, headers)
-	}
-	return resp, nil
+	return urlParams, signature, _data, nil
 }
