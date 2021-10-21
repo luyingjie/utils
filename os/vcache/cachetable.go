@@ -5,6 +5,7 @@ import (
 	"sort"
 	"sync"
 	"time"
+	verror "utils/os/error"
 )
 
 type CacheTable struct {
@@ -182,7 +183,7 @@ func (table *CacheTable) Add(key interface{}, lifeSpan time.Duration, data inter
 func (table *CacheTable) deleteInternal(key interface{}) (*CacheItem, error) {
 	r, ok := table.items[key]
 	if !ok {
-		return nil, ErrKeyNotFound
+		return nil, verror.New("ErrKeyNotFound")
 	}
 
 	aboutToDeleteItem := table.aboutToDeleteItem
@@ -256,10 +257,10 @@ func (table *CacheTable) Value(key interface{}, args ...interface{}) (*CacheItem
 			return item, nil
 		}
 
-		return nil, ErrKeyNotFoundOrLoadable
+		return nil, verror.New("ErrKeyNotFoundOrLoadable")
 	}
 
-	return nil, ErrKeyNotFound
+	return nil, verror.New("ErrKeyNotFound")
 }
 
 func (table *CacheTable) Flush() {
