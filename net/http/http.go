@@ -456,6 +456,10 @@ func TLSDelete(url, data string, request *interface{}, header ...map[string]stri
 // Proxy Http的反向代理
 func Proxy(_url string, rw http.ResponseWriter, req *http.Request) {
 	u, _ := url.Parse(_url)
+	// tr := &http.Transport{
+	// 	TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	// }
 	proxy := httputil.NewSingleHostReverseProxy(u)
+	// proxy.Transport = tr
 	proxy.ServeHTTP(rw, req)
 }
