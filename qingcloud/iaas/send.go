@@ -3,7 +3,7 @@ package iaas
 import (
 	"encoding/json"
 	"fmt"
-	"net/url"
+	"reflect"
 	"sort"
 	"strings"
 	"time"
@@ -49,36 +49,27 @@ func Send(method string, params map[string]interface{}, conf map[string]interfac
 
 func Signature(method, uri, ak, sk string, params map[string]interface{}) (string, string, string, error) {
 	_method := strings.ToLower(method)
-	_params := url.Values{}
-	bData, err := json.Marshal(params)
-	if err != nil {
-		return "", "", "", verror.New("parameter parsing error")
-	}
+	// _params := url.Values{}
+	var _params map[string]interface{}
+
 	var _data string = ""
 	if _method == "get" || _method == "delete" {
-		for k, v := range params {
-			_v := ""
-			if value, ok := v.(int); ok {
-				_v = conv.String(value)
-			} else if value, ok := v.(string); ok {
-				_v = value
-			} else if value, ok := v.(bool); ok {
-				_v = conv.String(value)
-			}
-			_params.Set(k, _v)
-		}
+		_params = params
 	} else {
+		bData, err := json.Marshal(params)
+		if err != nil {
+			return "", "", "", verror.New("parameter parsing error")
+		}
 		_data = string(bData)
 	}
 
 	// time_stamp := time.Now() //time.Now().UTC().Format(time.RFC3339)
 	time_stamp := time.Now()
-	_params.Set("time_stamp", util.TimeToString(time_stamp, "ISO 8601"))                  // TimeToString(time_stamp, "ISO 8601")
-	_params.Set("expires", util.TimeToString(time_stamp.Add(10*time.Second), "ISO 8601")) // time.Now().Add(time.Hour).Format("2006-01-02T15:04:05Z")
-	// _params.Set("version", "1")
-	_params.Set("signature_version", "1")
-	_params.Set("signature_method", "HmacSHA256")
-	_params.Set("access_key_id", ak)
+	_params["time_stamp"] = util.TimeToString(time_stamp, "ISO 8601")                  // TimeToString(time_stamp, "ISO 8601")
+	_params["expires"] = util.TimeToString(time_stamp.Add(10*time.Second), "ISO 8601") // time.Now().Add(time.Hour).Format("2006-01-02T15:04:05Z")
+	_params["signature_version"] = "1"
+	_params["signature_method"] = "HmacSHA256"
+	_params["access_key_id"] = ak
 
 	keys := []string{}
 	for key := range _params {
@@ -88,23 +79,27 @@ func Signature(method, uri, ak, sk string, params map[string]interface{}) (strin
 	sort.Strings(keys)
 	parts := []string{}
 	for _, key := range keys {
-		values := _params[key]
-		if len(values) > 0 {
-			if values[0] != "" {
-				value := strings.TrimSpace(strings.Join(values, ""))
-				value = url.QueryEscape(value)
-				value = strings.Replace(value, "+", "%20", -1)
-				parts = append(parts, key+"="+value)
-			} else {
-				parts = append(parts, key+"=")
+		v := _params[key]
+		if v != nil {
+			_v := ""
+			switch reflect.TypeOf(v).String() {
+			case "string":
+				_v = qcutil.QueryEscape(v.(string))
+				parts = append(parts, key+"="+_v)
+			case "[]interface {}":
+				for i, val := range v.([]interface{}) {
+					_v = qcutil.QueryEscape(conv.String(val))
+					parts = append(parts, key+"."+conv.String(i+1)+"="+_v)
+				}
+			default:
+				_v = qcutil.QueryEscape(conv.String(v))
+				parts = append(parts, key+"="+_v)
 			}
-		} else {
-			parts = append(parts, key+"=")
 		}
 	}
 	urlParams := strings.Join(parts, "&")
-
 	signature := qcutil.Get_iaas_authorization(sk, _method, uri, urlParams)
-	urlParams += "&signature=" + signature
+	urlParams = urlParams + "&signature=" + signature
+	fmt.Println(urlParams)
 	return urlParams, signature, _data, nil
 }

@@ -40,3 +40,10 @@ func hmacSha256(data string, secret string) []byte {
 	// return hex.EncodeToString(h.Sum(nil))
 	return h.Sum(nil)
 }
+
+func QueryEscape(value string) string {
+	value = strings.TrimSpace(value)
+	value = url.QueryEscape(value)
+	value = strings.Replace(value, "+", "%20", -1)
+	return value
+}
