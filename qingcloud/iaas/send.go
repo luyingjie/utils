@@ -100,6 +100,6 @@ func Signature(method, uri, ak, sk string, params map[string]interface{}) (strin
 	urlParams := strings.Join(parts, "&")
 	signature := qcutil.Get_iaas_authorization(sk, _method, uri, urlParams)
 	urlParams = urlParams + "&signature=" + signature
-	fmt.Println(urlParams)
+
 	return urlParams, signature, _data, nil
 }
