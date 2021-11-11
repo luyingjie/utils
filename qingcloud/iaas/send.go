@@ -50,7 +50,7 @@ func Send(method string, params map[string]interface{}, conf map[string]interfac
 func Signature(method, uri, ak, sk string, params map[string]interface{}) (string, string, string, error) {
 	_method := strings.ToLower(method)
 	// _params := url.Values{}
-	var _params map[string]interface{}
+	_params := map[string]interface{}{}
 
 	var _data string = ""
 	if _method == "get" || _method == "delete" {
