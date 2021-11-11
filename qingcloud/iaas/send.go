@@ -91,6 +91,11 @@ func Signature(method, uri, ak, sk string, params map[string]interface{}) (strin
 					_v = qcutil.QueryEscape(conv.String(val))
 					parts = append(parts, key+"."+conv.String(i+1)+"="+_v)
 				}
+			case "[]string":
+				for i, val := range v.([]string) {
+					_v = qcutil.QueryEscape(val)
+					parts = append(parts, key+"."+conv.String(i+1)+"="+_v)
+				}
 			default:
 				_v = qcutil.QueryEscape(conv.String(v))
 				parts = append(parts, key+"="+_v)
