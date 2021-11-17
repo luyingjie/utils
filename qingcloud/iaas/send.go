@@ -16,9 +16,13 @@ import (
 
 // Send 发送请求到Iaas
 // conf 包含配置：console_key_id,console_secrect_key,console_uri,host,port
-func Send(method string, params map[string]interface{}, conf map[string]interface{}) (interface{}, error) {
+func Send(method string, params map[string]interface{}, conf map[string]interface{}, uriKey ...string) (interface{}, error) {
 	_method := strings.ToLower(method)
-	urlParams, _, data, err := Signature(_method, conf["console_uri"].(string), conf["console_key_id"].(string), conf["console_secrect_key"].(string), params)
+	_uriKey := conf["console_uri"].(string)
+	if len(uriKey) > 0 && uriKey[0] != "" {
+		_uriKey = conf[uriKey[0]].(string)
+	}
+	urlParams, _, data, err := Signature(_method, _uriKey, conf["console_key_id"].(string), conf["console_secrect_key"].(string), params)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +35,7 @@ func Send(method string, params map[string]interface{}, conf map[string]interfac
 		headers["Content-Length"] = string(len(data))
 	}
 
-	var url string = fmt.Sprintf("http://%s:%s%s", conf["host"].(string), conf["port"].(string), conf["console_uri"].(string))
+	var url string = fmt.Sprintf("http://%s:%s%s", conf["host"].(string), conf["port"].(string), _uriKey)
 
 	var resp interface{}
 	if _method == "get" {
