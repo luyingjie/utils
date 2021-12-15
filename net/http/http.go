@@ -453,6 +453,39 @@ func TLSDelete(url, data string, request *interface{}, header ...map[string]stri
 	return nil
 }
 
+// TLSDelete : Delete的方式获取数据
+func TLSDelete2(url string, request *interface{}, header ...map[string]string) error {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
+
+	req, err := http.NewRequest("DELETE", url, nil)
+	if err != nil {
+		return err
+	}
+
+	if len(header) > 0 && header[0] != nil {
+		for key, value := range header[0] {
+			req.Header.Add(key, value)
+		}
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	setResponse(body, request, res)
+	return nil
+}
+
 // Proxy Http的反向代理
 func Proxy(_url string, rw http.ResponseWriter, req *http.Request) {
 	u, _ := url.Parse(_url)

@@ -35,17 +35,29 @@ func Send(method string, params map[string]interface{}, conf map[string]interfac
 		headers["Content-Length"] = string(len(data))
 	}
 
-	var url string = fmt.Sprintf("http://%s:%s%s", conf["host"].(string), conf["port"].(string), _uriKey)
+	var url string = fmt.Sprintf(conf["protocol"].(string)+"://%s:%s%s", conf["host"].(string), conf["port"].(string), _uriKey)
 
 	var resp interface{}
-	if _method == "get" {
-		vhttp.Get2(url+"?"+urlParams, &resp, headers)
-	} else if _method == "post" {
-		vhttp.Post2(url+"?"+urlParams, data, &resp, headers)
-	} else if _method == "put" {
-		vhttp.Put(url+"?"+urlParams, data, &resp, headers)
-	} else if _method == "delete" {
-		vhttp.Delete(url+"?"+urlParams, &resp, headers)
+	if conf["protocol"].(string) == "https" {
+		if _method == "get" {
+			vhttp.TLSGet(url+"?"+urlParams, &resp, headers)
+		} else if _method == "post" {
+			vhttp.TLSPost(url+"?"+urlParams, data, &resp, headers)
+		} else if _method == "put" {
+			vhttp.TLSPut(url+"?"+urlParams, data, &resp, headers)
+		} else if _method == "delete" {
+			vhttp.TLSDelete2(url+"?"+urlParams, &resp, headers)
+		}
+	} else {
+		if _method == "get" {
+			vhttp.Get2(url+"?"+urlParams, &resp, headers)
+		} else if _method == "post" {
+			vhttp.Post2(url+"?"+urlParams, data, &resp, headers)
+		} else if _method == "put" {
+			vhttp.Put(url+"?"+urlParams, data, &resp, headers)
+		} else if _method == "delete" {
+			vhttp.Delete(url+"?"+urlParams, &resp, headers)
+		}
 	}
 
 	return resp, nil
