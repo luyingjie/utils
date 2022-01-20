@@ -53,10 +53,10 @@ func (s *Signer) Sign(r *http.Request, hf HmacFunc, params ...map[string]interfa
 	if q.Get("access_key_id") == "" {
 		q.Add("access_key_id", s.AccessKeyID)
 	}
-	// if q.Get("timestamp") == "" {
-	// 	t := time.Now().Add(time.Hour)
-	// 	q.Add("timestamp", t.Format("2006-01-02T15:04:05Z"))
-	// }
+	if q.Get("timestamp") == "" {
+		t := time.Now().Add(time.Hour)
+		q.Add("timestamp", t.Format("2006-01-02T15:04:05Z"))
+	}
 	if q.Get("time_stamp") == "" {
 		t := time.Now().Add(time.Hour)
 		q.Add("time_stamp", t.Format("2006-01-02T15:04:05Z")) // time.Now().UTC().Format(time.RFC3339)
