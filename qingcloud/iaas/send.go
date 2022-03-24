@@ -104,9 +104,27 @@ func Signature(method, uri, ak, sk string, params map[string]interface{}) (strin
 				parts = append(parts, key+"="+_v)
 			case "[]interface {}":
 				for i, val := range v.([]interface{}) {
-					_v = qcutil.QueryEscape(conv.String(val))
-					parts = append(parts, key+"."+conv.String(i+1)+"="+_v)
+					if reflect.TypeOf(val).String() == "map[string]interface {}" {
+						for keycar, values := range val.(map[string]interface{}) {
+							valbData, err := json.Marshal(values)
+							if err != nil {
+								return "", "", "", verror.New("parameter parsing error")
+							}
+							_v = qcutil.QueryEscape(conv.String(valbData))
+
+							partString := fmt.Sprintf("%s.%d.%s=%s", key, i+1, conv.String(keycar), _v)
+							parts = append(parts, partString)
+						}
+					} else {
+						_v = qcutil.QueryEscape(conv.String(val))
+
+						parts = append(parts, key+"."+conv.String(i+1)+"="+_v)
+					}
 				}
+			case "[]map[string]interface{}":
+				// iam create fix
+				_v = qcutil.QueryEscape(conv.String(v))
+				parts = append(parts, key+"="+_v)
 			case "[]string":
 				for i, val := range v.([]string) {
 					_v = qcutil.QueryEscape(val)
