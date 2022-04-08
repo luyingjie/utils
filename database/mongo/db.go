@@ -272,3 +272,21 @@ func (db *DB) Count(C string, Query *M) (int, error) {
 
 	return c.Find(Query).Count()
 }
+
+// Select : 聚合查询  Query []M
+func (db *DB) Pipe(C string, Query []bson.M, ResultModel interface{}, Limit, Skip int) error {
+	if C == "" || Query == nil || ResultModel == nil {
+		return errors.New("确少必要的参数")
+	}
+
+	c := db.db.C(C)
+	defer func() {
+		if db.isClose {
+			db.session.Close()
+		}
+	}()
+
+	query := c.Pipe(Query)
+	err := query.All(ResultModel)
+	return err
+}
