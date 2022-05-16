@@ -19,28 +19,33 @@ func Check(request *http.Request, access_key_id, signature, time_stamp string, d
 		return "", verror.New("request out of date")
 	}
 
-	if data != nil && *data != nil {
-		params := map[string]interface{}{
-			"action":        "DescribeAccessKeys",
-			"access_keys.n": access_key_id,
-		}
-
-		_resp, err := iaas.Send("GET", params, apiConfig)
-		if err != nil {
-			return "", err
-		}
-
-		resp_data := _resp.(map[string]interface{})
-		if resp_data["ret_code"].(float64) == 0 && resp_data["total_count"].(float64) == 1 {
-			_data := resp_data["access_key_set"].([]interface{})[0].(map[string]interface{})
-			if _data["status"].(string) != "active" {
-				return "", verror.New("user unavailable")
-			}
-			*data = _data
-		} else {
-			return "", verror.New("access_key_id error")
-		}
+	// 这里发现空就造成流程走不下去的问题，这里的判断有问题，目测是没有意义的，先去掉，留存一下逻辑。 Luke 2022.5.16
+	// if data != nil && *data != nil {
+	params := map[string]interface{}{
+		"action":        "DescribeAccessKeys",
+		"access_keys.n": access_key_id,
 	}
+
+	_resp, err := iaas.Send("GET", params, apiConfig)
+	if err != nil {
+		return "", err
+	}
+
+	if _resp == nil {
+		return "", nil
+	}
+
+	resp_data := _resp.(map[string]interface{})
+	if resp_data["ret_code"].(float64) == 0 && resp_data["total_count"].(float64) == 1 {
+		_data := resp_data["access_key_set"].([]interface{})[0].(map[string]interface{})
+		if _data["status"].(string) != "active" {
+			return "", verror.New("user unavailable")
+		}
+		*data = _data
+	} else {
+		return "", verror.New("access_key_id error")
+	}
+	// }
 
 	var req http.Request
 	req.Method = request.Method
