@@ -8,6 +8,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"strings"
+	qcutil "utils/qingcloud"
 )
 
 func setResponse(body []byte, request *interface{}, resp *http.Response) {
@@ -22,6 +23,18 @@ func setResponse(body []byte, request *interface{}, resp *http.Response) {
 }
 
 var ContextType string = "application/json;charset=utf-8"
+
+func ToForm(params map[string]interface{}, urlencoded bool) string {
+	parts := []string{}
+	for k, v := range params {
+		_v := v.(string)
+		if urlencoded {
+			_v = qcutil.QueryEscape(_v)
+		}
+		parts = append(parts, k+"="+_v)
+	}
+	return strings.Join(parts, "&")
+}
 
 // PostToMap : Post提交数据，参数是map，返回interface{}
 func PostToMap(url string, data map[string]interface{}, request *interface{}) error {

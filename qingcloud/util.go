@@ -34,6 +34,13 @@ func Get_api_authorization(secret_access_key, method, uri, data, params string) 
 	return signature
 }
 
+func Get_boss2_authorization(secret_access_key, method, uri, params string) string {
+	string_to_sign := fmt.Sprintf("%s\n%s\n%s", method, uri, params)
+	h := hmacSha256(string_to_sign, secret_access_key)
+	signature := base64.StdEncoding.EncodeToString(h)
+	return signature
+}
+
 func hmacSha256(data string, secret string) []byte {
 	h := hmac.New(sha256.New, []byte(secret))
 	h.Write([]byte(data))

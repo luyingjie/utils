@@ -105,8 +105,23 @@ func Signature(method, uri, ak, sk string, params map[string]interface{}) (strin
 			case "[]interface {}":
 				for i, val := range v.([]interface{}) {
 					if reflect.TypeOf(val).String() == "map[string]interface {}" {
-						for keycar, values := range val.(map[string]interface{}) {
-							valbData, err := json.Marshal(values)
+						val_keys := []string{}
+						valins, _ := val.(map[string]interface{})
+						for val_key := range valins {
+							val_keys = append(val_keys, val_key)
+						}
+						sort.Strings(val_keys)
+						for _, keycar := range val_keys {
+							var valbData interface{}
+							var err error
+							values := valins[keycar]
+							switch reflect.TypeOf(values).Kind() {
+							case reflect.String:
+								valbData = values
+							default:
+								valbData, err = json.Marshal(values)
+							}
+							//
 							if err != nil {
 								return "", "", "", verror.New("parameter parsing error")
 							}
