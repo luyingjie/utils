@@ -15,10 +15,22 @@ var conf map[string]interface{} = map[string]interface{}{
 	"zone":                "testing1a",
 }
 
+// var params map[string]interface{} = map[string]interface{}{
+// 	"action": "Boss2DescribeBots",
+// 	"zone":   "testing1a",
+// 	"limit":  1,
+// }
+
 var params map[string]interface{} = map[string]interface{}{
-	"action": "Boss2DescribeBots",
-	"zone":   "testing1a",
-	"limit":  1,
+	"action":   "DescribeInstancesWithMonitors",
+	"limit":    20,
+	"offset":   0,
+	"reverse":  1,
+	"sort_key": "create_time",
+	"status":   [6]string{"running", "pending", "suspended", "stopped", "rescuing", "terminated"},
+	"verbose":  1,
+	"zone":     "testing1a",
+	"owner":    "admin",
 }
 
 func TestCheck(t *testing.T) {

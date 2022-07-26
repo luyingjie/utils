@@ -32,7 +32,7 @@ func Send(method string, params map[string]interface{}, conf map[string]interfac
 		headers["Content-Type"] = "'application/x-www-form-urlencoded'"
 		headers["Accept"] = "text/plain"
 		headers["Connection"] = "Keep-Alive"
-		headers["Content-Length"] = string(len(data))
+		headers["Content-Length"] = conv.String(len(data))
 	}
 
 	var url string = fmt.Sprintf(conf["protocol"].(string)+"://%s:%s%s", conf["host"].(string), conf["port"].(string), _uriKey)
@@ -88,14 +88,26 @@ func Signature(method, uri, ak, sk string, params map[string]interface{}) (strin
 	_params["access_key_id"] = ak
 
 	keys := []string{}
-	for key := range _params {
-		keys = append(keys, key)
+	stringArr := map[string]interface{}{}
+	for key, val := range _params {
+		// 单独处理iass的数组参数拼接的问题
+		if reflect.TypeOf(val).String() == "[]string" {
+			delete(_params, key)
+			for i, _val := range val.([]string) {
+				keys = append(keys, key+"."+conv.String(i+1))
+				stringArr[key+"."+conv.String(i+1)] = qcutil.QueryEscape(_val)
+			}
+		} else {
+			keys = append(keys, key)
+		}
 	}
+	_params = util.MapMergeCopy(_params, stringArr)
 
 	sort.Strings(keys)
 	parts := []string{}
 	for _, key := range keys {
 		v := _params[key]
+
 		if v != nil {
 			_v := ""
 			switch reflect.TypeOf(v).String() {
@@ -140,11 +152,6 @@ func Signature(method, uri, ak, sk string, params map[string]interface{}) (strin
 				// iam create fix
 				_v = qcutil.QueryEscape(conv.String(v))
 				parts = append(parts, key+"="+_v)
-			case "[]string":
-				for i, val := range v.([]string) {
-					_v = qcutil.QueryEscape(val)
-					parts = append(parts, key+"."+conv.String(i+1)+"="+_v)
-				}
 			default:
 				_v = qcutil.QueryEscape(conv.String(v))
 				parts = append(parts, key+"="+_v)

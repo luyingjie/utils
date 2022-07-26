@@ -1,6 +1,7 @@
 package util
 
 import (
+	"sort"
 	iutil "utils/internal/util"
 )
 
@@ -73,4 +74,21 @@ func MapOmitEmpty(data map[string]interface{}) {
 			delete(data, k)
 		}
 	}
+}
+
+func MapSort(data map[string]interface{}, sortFunc func(value interface{}) interface{}) map[string]interface{} {
+	keys := []string{}
+	for key := range data {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	_data := map[string]interface{}{}
+	for _, key := range keys {
+		if sortFunc != nil {
+			_data[key] = sortFunc(data[key])
+		} else {
+			_data[key] = data[key]
+		}
+	}
+	return _data
 }
