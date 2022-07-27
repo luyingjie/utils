@@ -101,7 +101,7 @@ func Signature(method, uri, ak, sk string, params map[string]interface{}) (strin
 			keys = append(keys, key)
 		}
 	}
-	_params = util.MapMergeCopy(_params, stringArr)
+	util.MapMerge(_params, stringArr)
 
 	sort.Strings(keys)
 	parts := []string{}
