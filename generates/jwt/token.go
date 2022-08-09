@@ -61,7 +61,7 @@ func CheckToken(tokenss string, key string, timeunix ...int64) (UserModel, error
 
 	// 判断时效
 	_timeUnix := DEFAULT_Time_Unix
-	if len(timeunix) > 0 && timeunix[0] != 0 {
+	if len(timeunix) > 0 {
 		_timeUnix = timeunix[0]
 	}
 	if _timeUnix != 0 {
