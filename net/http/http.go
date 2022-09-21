@@ -500,12 +500,15 @@ func TLSDelete2(url string, request *interface{}, header ...map[string]string) e
 }
 
 // Proxy Http的反向代理
-func Proxy(_url string, rw http.ResponseWriter, req *http.Request) {
+func Proxy(_url string, rw http.ResponseWriter, req *http.Request, respFunc func(*http.Response) error, errFunc func(http.ResponseWriter, *http.Request, error)) {
 	u, _ := url.Parse(_url)
 	// tr := &http.Transport{
 	// 	TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	// }
 	proxy := httputil.NewSingleHostReverseProxy(u)
 	// proxy.Transport = tr
+	proxy.ModifyResponse = respFunc
+	proxy.ErrorHandler = errFunc
+
 	proxy.ServeHTTP(rw, req)
 }
