@@ -507,8 +507,12 @@ func Proxy(_url string, rw http.ResponseWriter, req *http.Request, respFunc func
 	// }
 	proxy := httputil.NewSingleHostReverseProxy(u)
 	// proxy.Transport = tr
-	proxy.ModifyResponse = respFunc
-	proxy.ErrorHandler = errFunc
+	if respFunc != nil {
+		proxy.ModifyResponse = respFunc
+	}
+	if errFunc != nil {
+		proxy.ErrorHandler = errFunc
+	}
 
 	proxy.ServeHTTP(rw, req)
 }
