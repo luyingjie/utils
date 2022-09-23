@@ -499,20 +499,60 @@ func TLSDelete2(url string, request *interface{}, header ...map[string]string) e
 	return nil
 }
 
-// Proxy Http的反向代理
-func Proxy(_url string, rw http.ResponseWriter, req *http.Request, respFunc func(*http.Response) error, errFunc func(http.ResponseWriter, *http.Request, error)) {
+// Proxy Http的反向代理, 使用基础包的ReverseProxy。
+func Proxy(_url string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response) error, errFunc func(http.ResponseWriter, *http.Request, error)) {
 	u, _ := url.Parse(_url)
 	// tr := &http.Transport{
 	// 	TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	// }
 	proxy := httputil.NewSingleHostReverseProxy(u)
 	// proxy.Transport = tr
-	if respFunc != nil {
-		proxy.ModifyResponse = respFunc
+	if resFunc != nil {
+		proxy.ModifyResponse = resFunc
 	}
 	if errFunc != nil {
 		proxy.ErrorHandler = errFunc
 	}
 
 	proxy.ServeHTTP(rw, req)
+}
+
+// Proxy2 Http的反向代理， 使用http包自定义逻辑。
+func Proxy2(url string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response) error, errFunc func(http.ResponseWriter, *http.Request, error)) {
+	_req, err := http.NewRequest(req.Method, url+req.RequestURI, nil)
+	if err != nil && errFunc != nil {
+		errFunc(rw, req, err)
+	}
+
+	_req.Header = req.Header
+	_req.Body = req.Body
+	// 这里可以考虑是否直接用传进来的req作为请求参数， 还需要测试还支撑。
+	res, err := http.DefaultClient.Do(_req)
+	if err != nil && errFunc != nil {
+		errFunc(rw, req, err)
+	}
+
+	if resFunc != nil {
+		err := resFunc(res)
+		if err != nil && errFunc != nil {
+			errFunc(rw, req, err)
+		}
+	} else {
+		for key, value := range res.Header {
+			for _, v := range value {
+				rw.Header().Add(key, v)
+			}
+		}
+		// c.Writer.Header().Add("Test", "0")
+		rw.WriteHeader(res.StatusCode)
+		// io.Copy(c.Writer, res.Body)
+		// res.Body.Close()
+		// c.Writer.WriteHeaderNow()
+		defer res.Body.Close()
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil && errFunc != nil {
+			errFunc(rw, req, err)
+		}
+		rw.Write(body)
+	}
 }
