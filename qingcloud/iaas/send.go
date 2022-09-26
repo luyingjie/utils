@@ -94,8 +94,8 @@ func Signature(method, uri, ak, sk string, params map[string]interface{}) (strin
 		if reflect.TypeOf(val).String() == "[]string" {
 			delete(_params, key)
 			for i, _val := range val.([]string) {
-				keys = append(keys, key+"."+conv.String(i+1))
-				stringArr[key+"."+conv.String(i+1)] = qcutil.QueryEscape(_val)
+				keys = append(keys, key+"."+conv.String(i))
+				stringArr[key+"."+conv.String(i)] = _val
 			}
 		} else {
 			keys = append(keys, key)
