@@ -6,6 +6,7 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/hex"
+	"fmt"
 	"hash"
 	"io"
 	"io/ioutil"
@@ -47,6 +48,13 @@ func MD5(data []byte) string {
 	_md5 := md5.New()
 	_md5.Write(data)
 	return hex.EncodeToString(_md5.Sum([]byte("")))
+}
+
+func GetMd5(str string) string {
+	data := []byte(str)
+	has := md5.Sum(data)
+	md5str := fmt.Sprintf("%x", has)
+	return md5str
 }
 
 func FileMD5(file *os.File) string {
