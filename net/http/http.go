@@ -556,3 +556,46 @@ func Proxy2(url string, rw http.ResponseWriter, req *http.Request, resFunc func(
 		rw.Write(body)
 	}
 }
+
+func TLSProxy(url string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response) error, errFunc func(http.ResponseWriter, *http.Request, error)) {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
+	_req, err := http.NewRequest(req.Method, url+req.RequestURI, nil)
+	if err != nil && errFunc != nil {
+		errFunc(rw, req, err)
+	}
+
+	_req.Header = req.Header
+	_req.Body = req.Body
+	// 这里可以考虑是否直接用传进来的req作为请求参数， 还需要测试还支撑。
+	res, err := client.Do(_req)
+	if err != nil && errFunc != nil {
+		errFunc(rw, req, err)
+	}
+
+	if resFunc != nil {
+		err := resFunc(res)
+		if err != nil && errFunc != nil {
+			errFunc(rw, req, err)
+		}
+	} else {
+		for key, value := range res.Header {
+			for _, v := range value {
+				rw.Header().Add(key, v)
+			}
+		}
+		// c.Writer.Header().Add("Test", "0")
+		rw.WriteHeader(res.StatusCode)
+		// io.Copy(c.Writer, res.Body)
+		// res.Body.Close()
+		// c.Writer.WriteHeaderNow()
+		defer res.Body.Close()
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil && errFunc != nil {
+			errFunc(rw, req, err)
+		}
+		rw.Write(body)
+	}
+}
