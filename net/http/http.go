@@ -518,12 +518,13 @@ func Proxy(_url string, rw http.ResponseWriter, req *http.Request, resFunc func(
 }
 
 // Proxy2 Http的反向代理， 使用http包自定义逻辑。
-func Proxy2(url string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response) error, errFunc func(http.ResponseWriter, *http.Request, error)) {
-	_req, err := http.NewRequest(req.Method, url+req.RequestURI, nil)
+func Proxy2(_url string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response) error, errFunc func(http.ResponseWriter, *http.Request, error)) {
+	_req, err := http.NewRequest(req.Method, _url+req.RequestURI, nil)
 	if err != nil && errFunc != nil {
 		errFunc(rw, req, err)
 	}
-
+	// u, _ := url.Parse(_url)
+	// _req.URL = u
 	_req.Header = req.Header
 	_req.Body = req.Body
 	// 这里可以考虑是否直接用传进来的req作为请求参数， 还需要测试还支撑。
@@ -557,16 +558,17 @@ func Proxy2(url string, rw http.ResponseWriter, req *http.Request, resFunc func(
 	}
 }
 
-func TLSProxy(url string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response) error, errFunc func(http.ResponseWriter, *http.Request, error)) {
+func TLSProxy(_url string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response) error, errFunc func(http.ResponseWriter, *http.Request, error)) {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: tr}
-	_req, err := http.NewRequest(req.Method, url+req.RequestURI, nil)
+	_req, err := http.NewRequest(req.Method, _url+req.RequestURI, nil)
 	if err != nil && errFunc != nil {
 		errFunc(rw, req, err)
 	}
-
+	// u, _ := url.Parse(_url)
+	// _req.URL = u
 	_req.Header = req.Header
 	_req.Body = req.Body
 	// 这里可以考虑是否直接用传进来的req作为请求参数， 还需要测试还支撑。

@@ -44,4 +44,12 @@
     数据校验
 
     fsnotify中的异常处理还有问题。
+
+
+### net/proxy问题
+
+ - proxy代理consoel和boss的api请求的时候有错误，console表现在签名错误，替换成proxy2是ok的。
+ - proxy2代理前端资源烨都正常，但是处理302的时候收到是200 ok。
+ - proxy代理云管是ok的，都正常，但是使用自己处理返回值的时候有问题，这里应该不是这麽处理的。
+ - proxy代理console这些前端资源的时候烨有问题。
     
