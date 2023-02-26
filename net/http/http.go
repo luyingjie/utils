@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/http/cookiejar"
 	"net/http/httputil"
 	"net/url"
 	"strings"
@@ -517,14 +518,14 @@ func Proxy(_url string, rw http.ResponseWriter, req *http.Request, resFunc func(
 	proxy.ServeHTTP(rw, req)
 }
 
+// 请尽量使用proxy3, 因为项目使用，所以保存了该方法。不会在更新。大部分场景可用，有前端代理，特别是登录和重定向处理要小心使用。
 // Proxy2 Http的反向代理， 使用http包自定义逻辑。
 func Proxy2(_url string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response) error, errFunc func(http.ResponseWriter, *http.Request, error)) {
 	_req, err := http.NewRequest(req.Method, _url+req.RequestURI, nil)
 	if err != nil && errFunc != nil {
 		errFunc(rw, req, err)
 	}
-	// u, _ := url.Parse(_url)
-	// _req.URL = u
+
 	_req.Header = req.Header
 	_req.Body = req.Body
 	// 这里可以考虑是否直接用传进来的req作为请求参数， 还需要测试还支撑。
@@ -558,7 +559,7 @@ func Proxy2(_url string, rw http.ResponseWriter, req *http.Request, resFunc func
 	}
 }
 
-func TLSProxy(_url string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response) error, errFunc func(http.ResponseWriter, *http.Request, error)) {
+func TLSProxy2(_url string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response) error, errFunc func(http.ResponseWriter, *http.Request, error)) {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -567,8 +568,7 @@ func TLSProxy(_url string, rw http.ResponseWriter, req *http.Request, resFunc fu
 	if err != nil && errFunc != nil {
 		errFunc(rw, req, err)
 	}
-	// u, _ := url.Parse(_url)
-	// _req.URL = u
+
 	_req.Header = req.Header
 	_req.Body = req.Body
 	// 这里可以考虑是否直接用传进来的req作为请求参数， 还需要测试还支撑。
@@ -600,4 +600,67 @@ func TLSProxy(_url string, rw http.ResponseWriter, req *http.Request, resFunc fu
 		}
 		rw.Write(body)
 	}
+}
+
+// proxy2的改进，当时项目用到proxy2， 而且优化了参数模式,所以保持proxy2方法。
+func Proxy3(_url string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response), errFunc func(http.ResponseWriter, *http.Request, error)) {
+	jar, err := cookiejar.New(nil)
+	if err != nil && errFunc != nil {
+		errFunc(rw, req, err)
+	}
+	client := &http.Client{Jar: jar}
+	_req, err := http.NewRequest(req.Method, _url+req.RequestURI, nil)
+	if err != nil && errFunc != nil {
+		errFunc(rw, req, err)
+	}
+
+	// u, _ := url.Parse(_url)
+	// _req.URL = u
+	_req.Header = req.Header
+	_req.Body = req.Body
+	// 这里可以考虑是否直接用传进来的req作为请求参数， 还需要测试还支撑。
+	res, err := client.Do(_req)
+	if err != nil && errFunc != nil {
+		errFunc(rw, req, err)
+	}
+
+	// 处理cookiejar
+	for _, v := range jar.Cookies(_req.URL) { //res.Request.URL
+		http.SetCookie(rw, v)
+	}
+
+	// 处理重定向
+	// if res.Request.Response != nil && res.Request.Response.Request.Method == "POST" && (res.Request.Response.StatusCode == 301 || res.Request.Response.StatusCode == 302) {
+	// 	// Proxy2(_url+res.Request.URL.Path, rw, res.Request, nil, nil)
+	// 	// 这个方案不行，因为body的流已经关闭了。
+	// 	// rw.WriteHeader(200)
+	// 	// defer res.Body.Close()
+	// 	// body, err := ioutil.ReadAll(res.Request.Response.Body)
+	// 	// if err != nil && errFunc != nil {
+	// 	// 	errFunc(rw, req, err)
+	// 	// }
+	// 	// rw.Write(body)
+	// 	return
+	// }
+
+	if resFunc != nil {
+		resFunc(res)
+	}
+
+	for key, value := range res.Header {
+		for _, v := range value {
+			rw.Header().Add(key, v)
+		}
+	}
+	// c.Writer.Header().Add("Test", "0")
+	rw.WriteHeader(res.StatusCode)
+	// io.Copy(c.Writer, res.Body)
+	// res.Body.Close()
+	// c.Writer.WriteHeaderNow()
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil && errFunc != nil {
+		errFunc(rw, req, err)
+	}
+	rw.Write(body)
 }
