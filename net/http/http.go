@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"net/http/cookiejar"
 	"net/http/httputil"
 	"net/url"
 	"strings"
@@ -544,66 +543,6 @@ func Proxy2(host string, rw http.ResponseWriter, req *http.Request, resFunc func
 	if err != nil && errFunc != nil {
 		errFunc(rw, req, err)
 	}
-
-	if resFunc != nil {
-		resFunc(res)
-	}
-
-	for key, value := range res.Header {
-		for _, v := range value {
-			rw.Header().Add(key, v)
-		}
-	}
-	// c.Writer.Header().Add("Test", "0")
-	rw.WriteHeader(res.StatusCode)
-	// io.Copy(c.Writer, res.Body)
-	// res.Body.Close()
-	// c.Writer.WriteHeaderNow()
-	defer res.Body.Close()
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil && errFunc != nil {
-		errFunc(rw, req, err)
-	}
-	rw.Write(body)
-}
-
-func ProxyRedirect(host string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response), errFunc func(http.ResponseWriter, *http.Request, error)) {
-	jar, err := cookiejar.New(nil)
-	if err != nil && errFunc != nil {
-		errFunc(rw, req, err)
-	}
-	client := &http.Client{Jar: jar}
-	outreq, err := http.NewRequest(req.Method, host+req.RequestURI, nil)
-	if err != nil && errFunc != nil {
-		errFunc(rw, req, err)
-	}
-
-	outreq.Header = req.Header
-	outreq.Body = req.Body
-
-	res, err := client.Do(outreq)
-	if err != nil && errFunc != nil {
-		errFunc(rw, req, err)
-	}
-
-	// 处理cookiejar
-	for _, v := range jar.Cookies(outreq.URL) { //res.Request.URL
-		http.SetCookie(rw, v)
-	}
-
-	// 处理重定向, 适配禁用重定向的场景。未实现。理论上是不需要的，因为主动会请求重定向后的页面。
-	// if res.Request.Response != nil && res.Request.Response.Request.Method == "POST" && (res.Request.Response.StatusCode == 301 || res.Request.Response.StatusCode == 302) {
-	// 	// Proxy2(_url+res.Request.URL.Path, rw, res.Request, nil, nil)
-	// 	// 这个方案不行，因为body的流已经关闭了。
-	// 	// rw.WriteHeader(200)
-	// 	// defer res.Body.Close()
-	// 	// body, err := ioutil.ReadAll(res.Request.Response.Body)
-	// 	// if err != nil && errFunc != nil {
-	// 	// 	errFunc(rw, req, err)
-	// 	// }
-	// 	// rw.Write(body)
-	// 	return
-	// }
 
 	if resFunc != nil {
 		resFunc(res)
