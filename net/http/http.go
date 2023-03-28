@@ -3,6 +3,7 @@ package http
 import (
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
@@ -500,16 +501,29 @@ func TLSDelete2(url string, request *interface{}, header ...map[string]string) e
 	return nil
 }
 
-// Proxy Http的反向代理, 使用基础包的ReverseProxy。
-func Proxy(_url string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response) error, errFunc func(http.ResponseWriter, *http.Request, error)) {
+// ReverseProxy Http的反向代理, 使用基础包的ReverseProxy。
+func ReverseProxy(_url string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response), errFunc func(http.ResponseWriter, *http.Request, error)) {
 	u, _ := url.Parse(_url)
-	// tr := &http.Transport{
-	// 	TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	// }
 	proxy := httputil.NewSingleHostReverseProxy(u)
-	// proxy.Transport = tr
+
 	if resFunc != nil {
-		proxy.ModifyResponse = resFunc
+		proxy.ModifyResponse = func(res *http.Response) error {
+			resFunc(res)
+			for key, value := range res.Header {
+				for _, v := range value {
+					rw.Header().Add(key, v)
+				}
+			}
+			rw.WriteHeader(res.StatusCode)
+
+			defer res.Body.Close()
+			body, err := ioutil.ReadAll(res.Body)
+			if err != nil {
+				return err
+			}
+			rw.Write(body)
+			return nil
+		}
 	}
 	if errFunc != nil {
 		proxy.ErrorHandler = errFunc
@@ -518,8 +532,8 @@ func Proxy(_url string, rw http.ResponseWriter, req *http.Request, resFunc func(
 	proxy.ServeHTTP(rw, req)
 }
 
-// Proxy2 Http的反向代理， 使用http包自定义逻辑。
-func Proxy2(host string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response), errFunc func(http.ResponseWriter, *http.Request, error), isRedirect ...bool) {
+// Proxy Http的反向代理， 使用http包自定义逻辑。
+func Proxy(host string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response), errFunc func(http.ResponseWriter, *http.Request, error)) {
 	outreq, err := http.NewRequest(req.Method, host+req.RequestURI, nil)
 	if err != nil && errFunc != nil {
 		errFunc(rw, req, err)
@@ -529,15 +543,9 @@ func Proxy2(host string, rw http.ResponseWriter, req *http.Request, resFunc func
 	outreq.Body = req.Body
 
 	client := http.DefaultClient
-	_isRedirect := false
-	if len(isRedirect) > 0 {
-		_isRedirect = isRedirect[0]
-	}
 
-	if !_isRedirect {
-		client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
-		}
+	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		return http.ErrUseLastResponse
 	}
 
 	res, err := client.Do(outreq)
@@ -567,7 +575,46 @@ func Proxy2(host string, rw http.ResponseWriter, req *http.Request, resFunc func
 	rw.Write(body)
 }
 
+// ProxyRedirect Http的反向代理， 使用http包自定义逻辑。
 func ProxyRedirect(host string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response), errFunc func(http.ResponseWriter, *http.Request, error)) {
+	outreq, err := http.NewRequest(req.Method, host+req.RequestURI, nil)
+	if err != nil && errFunc != nil {
+		errFunc(rw, req, err)
+	}
+
+	outreq.Header = req.Header
+	outreq.Body = req.Body
+
+	client := http.DefaultClient
+
+	res, err := client.Do(outreq)
+	if err != nil && errFunc != nil {
+		errFunc(rw, req, err)
+	}
+
+	if resFunc != nil {
+		resFunc(res)
+	}
+
+	for key, value := range res.Header {
+		for _, v := range value {
+			rw.Header().Add(key, v)
+		}
+	}
+	// c.Writer.Header().Add("Test", "0")
+	rw.WriteHeader(res.StatusCode)
+	// io.Copy(c.Writer, res.Body)
+	// res.Body.Close()
+	// c.Writer.WriteHeaderNow()
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil && errFunc != nil {
+		errFunc(rw, req, err)
+	}
+	rw.Write(body)
+}
+
+func ProxyCookieRedirect(host string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response), errFunc func(http.ResponseWriter, *http.Request, error)) {
 	jar, err := cookiejar.New(nil)
 	if err != nil && errFunc != nil {
 		errFunc(rw, req, err)
@@ -591,19 +638,56 @@ func ProxyRedirect(host string, rw http.ResponseWriter, req *http.Request, resFu
 		http.SetCookie(rw, v)
 	}
 
-	// 处理重定向, 适配禁用重定向的场景。未实现。理论上是不需要的，因为主动会请求重定向后的页面。
-	// if res.Request.Response != nil && res.Request.Response.Request.Method == "POST" && (res.Request.Response.StatusCode == 301 || res.Request.Response.StatusCode == 302) {
-	// 	// Proxy2(_url+res.Request.URL.Path, rw, res.Request, nil, nil)
-	// 	// 这个方案不行，因为body的流已经关闭了。
-	// 	// rw.WriteHeader(200)
-	// 	// defer res.Body.Close()
-	// 	// body, err := ioutil.ReadAll(res.Request.Response.Body)
-	// 	// if err != nil && errFunc != nil {
-	// 	// 	errFunc(rw, req, err)
-	// 	// }
-	// 	// rw.Write(body)
-	// 	return
-	// }
+	if resFunc != nil {
+		resFunc(res)
+	}
+
+	for key, value := range res.Header {
+		for _, v := range value {
+			rw.Header().Add(key, v)
+		}
+	}
+	// c.Writer.Header().Add("Test", "0")
+	rw.WriteHeader(res.StatusCode)
+	// io.Copy(c.Writer, res.Body)
+	// res.Body.Close()
+	// c.Writer.WriteHeaderNow()
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil && errFunc != nil {
+		errFunc(rw, req, err)
+	}
+	rw.Write(body)
+}
+
+// 测试用
+func ProxyTest(host string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response), errFunc func(http.ResponseWriter, *http.Request, error), isRedirect ...bool) {
+	outreq, err := http.NewRequest(req.Method, host+req.RequestURI, nil)
+	if err != nil && errFunc != nil {
+		errFunc(rw, req, err)
+	}
+
+	outreq.Header = req.Header
+	outreq.Body = req.Body
+
+	client := http.DefaultClient
+	_isRedirect := false
+	if len(isRedirect) > 0 {
+		_isRedirect = isRedirect[0]
+	}
+
+	if !_isRedirect {
+		fmt.Println("执行1")
+		client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+			fmt.Println("执行2")
+			return http.ErrUseLastResponse
+		}
+	}
+
+	res, err := client.Do(outreq)
+	if err != nil && errFunc != nil {
+		errFunc(rw, req, err)
+	}
 
 	if resFunc != nil {
 		resFunc(res)
