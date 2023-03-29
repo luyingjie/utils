@@ -661,6 +661,8 @@ func ProxyCookieRedirect(host string, rw http.ResponseWriter, req *http.Request,
 }
 
 // 测试用
+// 这里实测一个问题：isRedirect不通传参进来后日志和执行都正常，但是client.CheckRedirect这段会有干扰，可能是这个方法或者写法问题，待求证。
+// isRedirect一直是true的时候正常，先传false在传true会无效，这个是按照业务流程和表象推断的测试用例。
 func ProxyTest(host string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response), errFunc func(http.ResponseWriter, *http.Request, error), isRedirect ...bool) {
 	outreq, err := http.NewRequest(req.Method, host+req.RequestURI, nil)
 	if err != nil && errFunc != nil {
