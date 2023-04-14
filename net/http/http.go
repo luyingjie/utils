@@ -516,7 +516,8 @@ func ReverseProxy(_url string, rw http.ResponseWriter, req *http.Request, resFun
 			}
 			rw.WriteHeader(res.StatusCode)
 
-			defer res.Body.Close()
+			// 这个方法只是一部分，父方法里面还要调用，所以不能close。
+			// defer res.Body.Close()
 			body, err := ioutil.ReadAll(res.Body)
 			if err != nil {
 				return err
