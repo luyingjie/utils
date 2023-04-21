@@ -32,6 +32,13 @@ func MapDeepCopy(value interface{}) interface{} {
 		}
 
 		return newMap
+	} else if valueMap, ok := value.(map[string]string); ok {
+		newMap := make(map[string]string)
+		for k, v := range valueMap {
+			newMap[k] = v
+		}
+
+		return newMap
 	} else if valueSlice, ok := value.([]interface{}); ok {
 		newSlice := make([]interface{}, len(valueSlice))
 		for k, v := range valueSlice {
