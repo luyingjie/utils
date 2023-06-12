@@ -501,6 +501,17 @@ func TLSDelete2(url string, request *interface{}, header ...map[string]string) e
 	return nil
 }
 
+// Proxy Http的反向代理
+func ProxyOld(_url string, rw http.ResponseWriter, req *http.Request) {
+	u, _ := url.Parse(_url)
+	// tr := &http.Transport{
+	// 	TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	// }
+	proxy := httputil.NewSingleHostReverseProxy(u)
+	// proxy.Transport = tr
+	proxy.ServeHTTP(rw, req)
+}
+
 // ReverseProxy Http的反向代理, 使用基础包的ReverseProxy。
 func ReverseProxy(_url string, rw http.ResponseWriter, req *http.Request, resFunc func(*http.Response), errFunc func(http.ResponseWriter, *http.Request, error)) {
 	u, _ := url.Parse(_url)
