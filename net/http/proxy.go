@@ -13,7 +13,7 @@ import (
 	qcutil "utils/qingcloud"
 )
 
-// Proxy Http的反向代理
+// Proxy Http的反向代理。已弃用，兼容以前使用Proxy方法的逻辑保留备用。
 func ProxyOld(_url string, rw http.ResponseWriter, req *http.Request) {
 	u, _ := url.Parse(_url)
 	// tr := &http.Transport{
