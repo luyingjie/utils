@@ -11,7 +11,6 @@ func TestEncoding(t *testing.T) {
 	// bG1pWFFkVmx2ZnpmZGRoUFpralNUWGFyY3Ztam5rcWM=
 
 	// encrypted
-	// admin@staging.com Zhu88jie
 	// MTAxMTAwMDExMTExMDAwMDAxMDEwMDEwMTAxMDAxMTE=@amhDPT_nk^gQ224(-55)*,091;657581
 
 	// MTAxMTAwMDExMTExMDAwMDAxMDEwMDEwMTAxMDAxMTE=  to base64
