@@ -4,9 +4,10 @@ import (
 	"errors"
 	"reflect"
 	"time"
-	vvar "utils/container/var"
-	"utils/conv"
-	"utils/util/json"
+
+	vvar "github.com/luyingjie/utils/container/var"
+	"github.com/luyingjie/utils/conv"
+	"github.com/luyingjie/utils/util/json"
 
 	"github.com/gomodule/redigo/redis"
 )

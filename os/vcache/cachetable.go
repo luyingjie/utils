@@ -5,7 +5,8 @@ import (
 	"sort"
 	"sync"
 	"time"
-	verror "utils/os/error"
+
+	verror "github.com/luyingjie/utils/os/error"
 )
 
 type CacheTable struct {
@@ -66,7 +67,7 @@ func (table *CacheTable) SetAddedItemCallback(f func(*CacheItem)) {
 	table.addedItem = append(table.addedItem, f)
 }
 
-//AddAddedItemCallback 添加一个新的回调到addedItem队列
+// AddAddedItemCallback 添加一个新的回调到addedItem队列
 func (table *CacheTable) AddAddedItemCallback(f func(*CacheItem)) {
 	table.Lock()
 	defer table.Unlock()

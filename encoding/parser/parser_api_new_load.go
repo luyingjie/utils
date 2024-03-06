@@ -1,7 +1,7 @@
 package parser
 
 import (
-	vjson "utils/encoding/json"
+	vjson "github.com/luyingjie/utils/encoding/json"
 )
 
 // New creates a Parser object with any variable type of <data>, but <data> should be a map, struct or

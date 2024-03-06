@@ -2,7 +2,8 @@ package cfg
 
 import (
 	"fmt"
-	vmap "utils/container/map"
+
+	vmap "github.com/luyingjie/utils/container/map"
 )
 
 const (

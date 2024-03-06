@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	verror "utils/os/error"
+	verror "github.com/luyingjie/utils/os/error"
 
 	"github.com/yunify/qingcloud-sdk-go/config"
 	"github.com/yunify/qingcloud-sdk-go/request"

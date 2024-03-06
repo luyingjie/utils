@@ -7,11 +7,11 @@ import (
 	"strings"
 	"time"
 
-	"utils/text/str"
+	"github.com/luyingjie/utils/text/str"
 
-	"utils/conv"
+	"github.com/luyingjie/utils/conv"
 
-	vtype "utils/container/type"
+	vtype "github.com/luyingjie/utils/container/type"
 )
 
 var (

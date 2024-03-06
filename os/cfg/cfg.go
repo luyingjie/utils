@@ -5,17 +5,18 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"utils/text/str"
 
-	"utils/container/array"
-	vmap "utils/container/map"
-	"utils/encoding/json"
-	verror "utils/os/error"
-	vfile "utils/os/file"
-	"utils/os/fsnotify"
-	"utils/os/res"
-	"utils/os/spath"
-	"utils/util/cmdenv"
+	"github.com/luyingjie/utils/text/str"
+
+	"github.com/luyingjie/utils/container/array"
+	vmap "github.com/luyingjie/utils/container/map"
+	"github.com/luyingjie/utils/encoding/json"
+	verror "github.com/luyingjie/utils/os/error"
+	vfile "github.com/luyingjie/utils/os/file"
+	"github.com/luyingjie/utils/os/fsnotify"
+	"github.com/luyingjie/utils/os/res"
+	"github.com/luyingjie/utils/os/spath"
+	"github.com/luyingjie/utils/util/cmdenv"
 )
 
 const (

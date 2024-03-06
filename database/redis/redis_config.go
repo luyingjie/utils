@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	verror "utils/os/error"
+	verror "github.com/luyingjie/utils/os/error"
 
-	vmap "utils/container/map"
-	"utils/conv"
-	"utils/text/regex"
+	vmap "github.com/luyingjie/utils/container/map"
+	"github.com/luyingjie/utils/conv"
+	"github.com/luyingjie/utils/text/regex"
 )
 
 const (

@@ -5,18 +5,18 @@ import (
 	"sync"
 	"time"
 
-	vtype "utils/container/type"
-	vvar "utils/container/var"
+	vtype "github.com/luyingjie/utils/container/type"
+	vvar "github.com/luyingjie/utils/container/var"
 
-	vtime "utils/os/time"
+	vtime "github.com/luyingjie/utils/os/time"
 
-	"utils/os/timer"
+	"github.com/luyingjie/utils/os/timer"
 
-	"utils/container/list"
+	"github.com/luyingjie/utils/container/list"
 
-	"utils/container/set"
+	"github.com/luyingjie/utils/container/set"
 
-	"utils/conv"
+	"github.com/luyingjie/utils/conv"
 )
 
 type memCache struct {

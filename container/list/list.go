@@ -3,11 +3,12 @@ package list
 import (
 	"bytes"
 	"container/list"
-	"utils/util/json"
 
-	"utils/conv"
+	"github.com/luyingjie/utils/util/json"
 
-	"utils/util/rwmutex"
+	"github.com/luyingjie/utils/conv"
+
+	"github.com/luyingjie/utils/util/rwmutex"
 )
 
 type (

@@ -1,8 +1,8 @@
 package console
 
 import (
-	"utils/encoding/base64"
-	"utils/text/str"
+	"github.com/luyingjie/utils/encoding/base64"
+	"github.com/luyingjie/utils/text/str"
 )
 
 func LoginDecode(encrypted, eid string) string {

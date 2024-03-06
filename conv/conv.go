@@ -7,11 +7,11 @@ import (
 	"strings"
 	"time"
 
-	"utils/util/json"
+	"github.com/luyingjie/utils/util/json"
 
-	vtime "utils/os/time"
+	vtime "github.com/luyingjie/utils/os/time"
 
-	"utils/encoding/binary"
+	"github.com/luyingjie/utils/encoding/binary"
 )
 
 var (

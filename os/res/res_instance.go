@@ -1,6 +1,6 @@
 package res
 
-import vmap "utils/container/map"
+import vmap "github.com/luyingjie/utils/container/map"
 
 const (
 	// Default group name for instance usage.

@@ -6,11 +6,11 @@ import (
 	"regexp"
 	"strings"
 
-	verror "utils/os/error"
+	verror "github.com/luyingjie/utils/os/error"
 
-	iutil "utils/internal/util"
-	"utils/util/empty"
-	"utils/util/structs"
+	iutil "github.com/luyingjie/utils/internal/util"
+	"github.com/luyingjie/utils/util/empty"
+	"github.com/luyingjie/utils/util/structs"
 )
 
 var (

@@ -3,8 +3,8 @@ package tcp
 import (
 	"time"
 
-	"utils/container/map"
-	"utils/container/pool"
+	vmap "github.com/luyingjie/utils/container/map"
+	vpool "github.com/luyingjie/utils/container/pool"
 )
 
 // PoolConn is a connection with pool feature for TCP.
@@ -12,7 +12,7 @@ import (
 // it is just a TCP connection object.
 type PoolConn struct {
 	*Conn              // Underlying connection object.
-	pool   *pool.Pool // Connection pool, which is not a really connection pool, but a connection reusable pool.
+	pool   *vpool.Pool // Connection pool, which is not a really connection pool, but a connection reusable pool.
 	status int         // Status of current connection, which is used to mark this connection usable or not.
 }
 
@@ -25,14 +25,14 @@ const (
 
 var (
 	// addressPoolMap is a mapping for address to its pool object.
-	addressPoolMap = map.NewStrAnyMap(true)
+	addressPoolMap = vmap.NewStrAnyMap(true)
 )
 
 // NewPoolConn creates and returns a connection with pool feature.
 func NewPoolConn(addr string, timeout ...time.Duration) (*PoolConn, error) {
 	v := addressPoolMap.GetOrSetFuncLock(addr, func() interface{} {
-		var pool *pool.Pool
-		pool = pool.New(DEFAULT_POOL_EXPIRE, func() (interface{}, error) {
+		var pool *vpool.Pool
+		pool = vpool.New(DEFAULT_POOL_EXPIRE, func() (interface{}, error) {
 			if conn, err := NewConn(addr, timeout...); err == nil {
 				return &PoolConn{conn, pool, CONN_STATUS_ACTIVE}, nil
 			} else {
@@ -41,7 +41,7 @@ func NewPoolConn(addr string, timeout ...time.Duration) (*PoolConn, error) {
 		})
 		return pool
 	})
-	if v, err := v.(*pool.Pool).Get(); err == nil {
+	if v, err := v.(*vpool.Pool).Get(); err == nil {
 		return v.(*PoolConn), nil
 	} else {
 		return nil, err

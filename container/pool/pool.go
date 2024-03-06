@@ -5,10 +5,10 @@ import (
 	"errors"
 	"time"
 
-	"utils/container/list"
-	vtype "utils/container/type"
-	vtime "utils/os/time"
-	"utils/os/timer"
+	"github.com/luyingjie/utils/container/list"
+	vtype "github.com/luyingjie/utils/container/type"
+	vtime "github.com/luyingjie/utils/os/time"
+	"github.com/luyingjie/utils/os/timer"
 )
 
 // Pool is an Object-Reusable Pool.

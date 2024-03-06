@@ -3,10 +3,11 @@ package conv
 import (
 	"reflect"
 	"strings"
-	iutil "utils/internal/util"
-	verror "utils/os/error"
-	"utils/util/empty"
-	"utils/util/json"
+
+	iutil "github.com/luyingjie/utils/internal/util"
+	verror "github.com/luyingjie/utils/os/error"
+	"github.com/luyingjie/utils/util/empty"
+	"github.com/luyingjie/utils/util/json"
 )
 
 func Map(value interface{}, tags ...string) map[string]interface{} {

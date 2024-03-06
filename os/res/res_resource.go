@@ -7,10 +7,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"utils/os/time"
+	"github.com/luyingjie/utils/os/time"
 
-	"utils/container/tree"
-	"utils/os/file"
+	"github.com/luyingjie/utils/container/tree"
+	"github.com/luyingjie/utils/os/file"
 )
 
 type Resource struct {

@@ -1,7 +1,7 @@
 package conv
 
 import (
-	"utils/util/json"
+	"github.com/luyingjie/utils/util/json"
 )
 
 func SliceMap(i interface{}) []map[string]interface{} {

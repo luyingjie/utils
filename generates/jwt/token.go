@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	"utils/conv"
-	verror "utils/os/error"
+
+	"github.com/luyingjie/utils/conv"
+	verror "github.com/luyingjie/utils/os/error"
 
 	"github.com/dgrijalva/jwt-go"
 )

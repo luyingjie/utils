@@ -2,7 +2,8 @@ package util
 
 import (
 	"sort"
-	iutil "utils/internal/util"
+
+	iutil "github.com/luyingjie/utils/internal/util"
 )
 
 func MapCopy(data map[string]interface{}) (copy map[string]interface{}) {

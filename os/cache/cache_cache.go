@@ -5,7 +5,7 @@ import (
 	"time"
 	"unsafe"
 
-	"utils/os/timer"
+	"github.com/luyingjie/utils/os/timer"
 )
 
 type Cache struct {

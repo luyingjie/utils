@@ -3,7 +3,7 @@ package file
 import (
 	"strings"
 
-	"utils/container/array"
+	"github.com/luyingjie/utils/container/array"
 )
 
 func fileSortFunc(path1, path2 string) int {

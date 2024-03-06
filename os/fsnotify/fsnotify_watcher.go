@@ -3,9 +3,10 @@ package fsnotify
 import (
 	"errors"
 	"fmt"
-	verror "utils/os/error"
 
-	mylist "utils/container/list"
+	verror "github.com/luyingjie/utils/os/error"
+
+	mylist "github.com/luyingjie/utils/container/list"
 )
 
 func (w *Watcher) Add(path string, callbackFunc func(event *Event), recursive ...bool) (callback *Callback, err error) {

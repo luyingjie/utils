@@ -3,11 +3,11 @@ package cache
 import (
 	"time"
 
-	"utils/container/list"
-	vmap "utils/container/map"
-	vtype "utils/container/type"
+	"github.com/luyingjie/utils/container/list"
+	vmap "github.com/luyingjie/utils/container/map"
+	vtype "github.com/luyingjie/utils/container/type"
 
-	"utils/os/timer"
+	"github.com/luyingjie/utils/os/timer"
 )
 
 type memCacheLru struct {

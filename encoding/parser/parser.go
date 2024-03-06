@@ -2,7 +2,7 @@
 package parser
 
 import (
-	vjson "utils/encoding/json"
+	vjson "github.com/luyingjie/utils/encoding/json"
 )
 
 // Parser is actually alias of json.Json.

@@ -2,9 +2,10 @@ package vtype
 
 import (
 	"sync/atomic"
-	"utils/util/json"
 
-	"utils/conv"
+	"github.com/luyingjie/utils/util/json"
+
+	"github.com/luyingjie/utils/conv"
 )
 
 type Interface struct {

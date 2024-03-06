@@ -4,10 +4,10 @@ import (
 	"errors"
 	"time"
 
-	"utils/encoding/json"
+	"github.com/luyingjie/utils/encoding/json"
 
-	vvar "utils/container/var"
-	vtime "utils/os/time"
+	vvar "github.com/luyingjie/utils/container/var"
+	vtime "github.com/luyingjie/utils/os/time"
 )
 
 // Set sets value with specified <pattern>.

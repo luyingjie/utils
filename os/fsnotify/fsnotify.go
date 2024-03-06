@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"time"
 
-	"utils/container/set"
+	"github.com/luyingjie/utils/container/set"
 
-	"utils/os/cache"
+	"github.com/luyingjie/utils/os/cache"
 
-	"utils/container/list"
-	vmap "utils/container/map"
+	"github.com/luyingjie/utils/container/list"
+	vmap "github.com/luyingjie/utils/container/map"
 
-	"utils/container/queue"
+	"github.com/luyingjie/utils/container/queue"
 
-	vtype "utils/container/type"
+	vtype "github.com/luyingjie/utils/container/type"
 
 	gitFsnotify "github.com/fsnotify/fsnotify"
 )

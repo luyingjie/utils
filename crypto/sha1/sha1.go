@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	"utils/conv"
+	"github.com/luyingjie/utils/conv"
 )
 
 // Encrypt encrypts any type of variable using SHA1 algorithms.

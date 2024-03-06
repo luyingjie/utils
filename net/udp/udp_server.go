@@ -4,9 +4,9 @@ import (
 	"errors"
 	"net"
 
-	vmap "utils/container/map"
-	"utils/conv"
-	verror "utils/os/error"
+	vmap "github.com/luyingjie/utils/container/map"
+	"github.com/luyingjie/utils/conv"
+	verror "github.com/luyingjie/utils/os/error"
 )
 
 const (

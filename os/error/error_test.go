@@ -2,7 +2,8 @@ package error
 
 import (
 	"testing"
-	"utils/os/log"
+
+	"github.com/luyingjie/utils/os/log"
 )
 
 func TestLog(t *testing.T) {

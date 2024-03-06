@@ -10,12 +10,13 @@ import (
 	"os"
 	"strconv"
 	"time"
-	vtype "utils/container/type"
-	"utils/net/ipv4"
 
-	"utils/conv"
-	"utils/encoding/hash"
-	"utils/generates/rand"
+	vtype "github.com/luyingjie/utils/container/type"
+	"github.com/luyingjie/utils/net/ipv4"
+
+	"github.com/luyingjie/utils/conv"
+	"github.com/luyingjie/utils/encoding/hash"
+	"github.com/luyingjie/utils/generates/rand"
 )
 
 var (
@@ -63,9 +64,9 @@ func init() {
 // 2. CustomData: Data(7/14) + TimestampNano(12) + Sequence(3) + RandomString(3/10)
 //
 // Note that：
-// 1. The returned length is fixed to 32 bytes for performance purpose.
-// 2. The custom parameter <data> composed should have unique attribute in your
-//    business situation.
+//  1. The returned length is fixed to 32 bytes for performance purpose.
+//  2. The custom parameter <data> composed should have unique attribute in your
+//     business situation.
 func S(data ...[]byte) string {
 	var (
 		b       = make([]byte, 32)

@@ -5,9 +5,9 @@ import (
 	"runtime"
 	"time"
 
-	vtype "utils/container/type"
-	"utils/conv"
-	"utils/os/timer"
+	vtype "github.com/luyingjie/utils/container/type"
+	"github.com/luyingjie/utils/conv"
+	"github.com/luyingjie/utils/os/timer"
 )
 
 // Timed task entry.

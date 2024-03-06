@@ -1,7 +1,7 @@
 package vvar
 
 import (
-	"utils/conv"
+	"github.com/luyingjie/utils/conv"
 )
 
 func (v *Var) Struct(pointer interface{}, mapping ...map[string]string) error {

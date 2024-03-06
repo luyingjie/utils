@@ -3,9 +3,9 @@ package conv
 import (
 	"time"
 
-	iutil "utils/internal/util"
+	iutil "github.com/luyingjie/utils/internal/util"
 
-	mtime "utils/os/time"
+	mtime "github.com/luyingjie/utils/os/time"
 )
 
 func Time(i interface{}, format ...string) time.Time {

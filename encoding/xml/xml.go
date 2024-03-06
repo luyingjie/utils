@@ -3,9 +3,9 @@ package xml
 import (
 	"strings"
 
-	"utils/text/regex"
+	"github.com/luyingjie/utils/text/regex"
 
-	"utils/encoding/charset"
+	"github.com/luyingjie/utils/encoding/charset"
 
 	"github.com/clbanning/mxj"
 )

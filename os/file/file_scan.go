@@ -4,7 +4,8 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
-	"utils/text/str"
+
+	"github.com/luyingjie/utils/text/str"
 )
 
 func ScanDir(path string, pattern string, recursive ...bool) ([]string, error) {

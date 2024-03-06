@@ -5,7 +5,7 @@ import (
 	"math"
 	"time"
 
-	"utils/util/cmdenv"
+	"github.com/luyingjie/utils/util/cmdenv"
 )
 
 const (

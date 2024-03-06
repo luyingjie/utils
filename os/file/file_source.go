@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"strings"
 
-	"utils/text/regex"
+	"github.com/luyingjie/utils/text/regex"
 )
 
 var (

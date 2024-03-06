@@ -10,10 +10,10 @@ import (
 	"strings"
 	"time"
 
-	iutil "utils/internal/util"
-	baseError "utils/os/error/base"
+	iutil "github.com/luyingjie/utils/internal/util"
+	baseError "github.com/luyingjie/utils/os/error/base"
 
-	"utils/text/regex"
+	"github.com/luyingjie/utils/text/regex"
 )
 
 const (

@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"time"
 
-	"utils/os/log"
+	"github.com/luyingjie/utils/os/log"
 
-	"utils/os/error/base"
+	"github.com/luyingjie/utils/os/error/base"
 )
 
 var _log *log.Logger

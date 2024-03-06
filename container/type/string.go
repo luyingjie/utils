@@ -3,7 +3,8 @@ package vtype
 import (
 	"bytes"
 	"sync/atomic"
-	"utils/conv"
+
+	"github.com/luyingjie/utils/conv"
 )
 
 type String struct {

@@ -4,7 +4,8 @@ package base64
 import (
 	"encoding/base64"
 	"io/ioutil"
-	"utils/conv"
+
+	"github.com/luyingjie/utils/conv"
 )
 
 // Encode encodes bytes with BASE64 algorithm.

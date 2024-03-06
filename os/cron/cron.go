@@ -5,7 +5,7 @@ import (
 	"math"
 	"time"
 
-	"utils/os/timer"
+	"github.com/luyingjie/utils/os/timer"
 )
 
 const (

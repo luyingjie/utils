@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"utils/container/array"
+	"github.com/luyingjie/utils/container/array"
 )
 
 func Search(name string, prioritySearchPaths ...string) (realPath string, err error) {

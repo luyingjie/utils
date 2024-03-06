@@ -6,8 +6,9 @@ import (
 	"os"
 	"strings"
 	"time"
-	"utils/os/file"
-	"utils/util/fileinfo"
+
+	"github.com/luyingjie/utils/os/file"
+	"github.com/luyingjie/utils/util/fileinfo"
 )
 
 // ZipPathWriter compresses <paths> to <writer> using zip compressing algorithm.

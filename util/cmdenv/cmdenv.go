@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	vvar "utils/container/var"
+	vvar "github.com/luyingjie/utils/container/var"
 )
 
 var (

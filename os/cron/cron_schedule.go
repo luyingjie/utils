@@ -6,9 +6,10 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	vtime "utils/os/time"
 
-	"utils/text/regex"
+	vtime "github.com/luyingjie/utils/os/time"
+
+	"github.com/luyingjie/utils/text/regex"
 )
 
 // cronSchedule is the schedule for cron job.

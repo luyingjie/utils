@@ -4,7 +4,8 @@ import (
 	"bytes"
 	"encoding/base64"
 	"sync/atomic"
-	"utils/conv"
+
+	"github.com/luyingjie/utils/conv"
 )
 
 type Bytes struct {

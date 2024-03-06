@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"time"
 
-	"utils/container/array"
-	vmap "utils/container/map"
-	vtype "utils/container/type"
-	"utils/os/timer"
+	"github.com/luyingjie/utils/container/array"
+	vmap "github.com/luyingjie/utils/container/map"
+	vtype "github.com/luyingjie/utils/container/type"
+	"github.com/luyingjie/utils/os/timer"
 )
 
 type Cron struct {

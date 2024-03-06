@@ -1,16 +1,12 @@
 package http
 
 import (
-	"crypto/tls"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
 	"net/http/httputil"
 	"net/url"
-	"strings"
-	qcutil "utils/qingcloud"
 )
 
 // Proxy Http的反向代理。已弃用，兼容以前使用Proxy方法的逻辑保留备用。

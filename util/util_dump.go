@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"os"
 	"reflect"
-	"utils/conv"
-	"utils/util/json"
+
+	"github.com/luyingjie/utils/conv"
+	"github.com/luyingjie/utils/util/json"
 )
 
 // Dump prints variables <i...> to stdout with more manually readable.

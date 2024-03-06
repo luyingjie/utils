@@ -5,9 +5,9 @@ import (
 	"runtime"
 	"strings"
 
-	"utils/os/file"
-	"utils/os/fsnotify"
-	"utils/text/str"
+	"github.com/luyingjie/utils/os/file"
+	"github.com/luyingjie/utils/os/fsnotify"
+	"github.com/luyingjie/utils/text/str"
 )
 
 // updateCacheByPath adds all files under <path> recursively.

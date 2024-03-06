@@ -1,7 +1,7 @@
 package cfg
 
 import (
-	"utils/util/cmdenv"
+	"github.com/luyingjie/utils/util/cmdenv"
 )
 
 const (

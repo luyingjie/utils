@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	vmap "utils/container/map"
-	vvar "utils/container/var"
+	vmap "github.com/luyingjie/utils/container/map"
+	vvar "github.com/luyingjie/utils/container/var"
 
 	"github.com/gomodule/redigo/redis"
 )

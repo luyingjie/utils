@@ -4,7 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"sync"
-	verror "utils/os/error"
+
+	verror "github.com/luyingjie/utils/os/error"
 )
 
 // ConnManager 连接管理模块

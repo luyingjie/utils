@@ -2,13 +2,14 @@ package tree
 
 import (
 	"fmt"
-	vvar "utils/container/var"
-	"utils/util/json"
 
-	"utils/conv"
-	"utils/util"
+	vvar "github.com/luyingjie/utils/container/var"
+	"github.com/luyingjie/utils/util/json"
 
-	"utils/util/rwmutex"
+	"github.com/luyingjie/utils/conv"
+	"github.com/luyingjie/utils/util"
+
+	"github.com/luyingjie/utils/util/rwmutex"
 )
 
 type color bool

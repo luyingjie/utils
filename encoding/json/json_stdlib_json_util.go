@@ -2,9 +2,10 @@ package json
 
 import (
 	"bytes"
-	"utils/util/json"
 
-	"utils/conv"
+	"github.com/luyingjie/utils/util/json"
+
+	"github.com/luyingjie/utils/conv"
 )
 
 func Valid(data interface{}) bool {

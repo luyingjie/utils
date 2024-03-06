@@ -3,14 +3,11 @@ package http
 import (
 	"crypto/tls"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/http/cookiejar"
-	"net/http/httputil"
-	"net/url"
 	"strings"
-	qcutil "utils/qingcloud"
+
+	qcutil "github.com/luyingjie/utils/qingcloud"
 )
 
 func setResponse(body []byte, request *interface{}, resp *http.Response) {

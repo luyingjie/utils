@@ -1,7 +1,7 @@
 package file
 
 import (
-	"utils/text/str"
+	"github.com/luyingjie/utils/text/str"
 )
 
 func ReplaceFile(search, replace, path string) error {

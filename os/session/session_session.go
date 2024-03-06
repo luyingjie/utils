@@ -5,11 +5,12 @@ import (
 	"fmt"
 
 	"time"
-	vmap "utils/container/map"
-	vvar "utils/container/var"
-	"utils/conv"
-	verror "utils/os/error"
-	vtime "utils/os/time"
+
+	vmap "github.com/luyingjie/utils/container/map"
+	vvar "github.com/luyingjie/utils/container/var"
+	"github.com/luyingjie/utils/conv"
+	verror "github.com/luyingjie/utils/os/error"
+	vtime "github.com/luyingjie/utils/os/time"
 )
 
 // Session struct for storing single session data,

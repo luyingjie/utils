@@ -5,19 +5,20 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
-	"utils/conv"
-	"utils/encoding/base64"
-	"utils/encoding/compress"
-	"utils/text/str"
 
-	"utils/os/file"
+	"github.com/luyingjie/utils/conv"
+	"github.com/luyingjie/utils/encoding/base64"
+	"github.com/luyingjie/utils/encoding/compress"
+	"github.com/luyingjie/utils/text/str"
+
+	"github.com/luyingjie/utils/os/file"
 )
 
 const (
 	PACKAGE_TEMPLATE = `
 	package %s
 
-	import "utils/os/res"
+	import "github.com/luyingjie/utils/os/res"
 
 	func init() {
 		if err := res.Add("%s"); err != nil {

@@ -2,7 +2,7 @@ package toml
 
 import (
 	"bytes"
-	// "utils/util/json"
+	// "github.com/luyingjie/utils/util/json"
 	json2 "encoding/json"
 
 	"github.com/BurntSushi/toml"

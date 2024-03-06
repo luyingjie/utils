@@ -1,6 +1,6 @@
 package redis
 
-import vmap "utils/container/map"
+import vmap "github.com/luyingjie/utils/container/map"
 
 var (
 	// Instance map

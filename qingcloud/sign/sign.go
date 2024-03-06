@@ -9,7 +9,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
-	"utils/conv"
+
+	"github.com/luyingjie/utils/conv"
 )
 
 func SignRequest(r *http.Request, keyid string, secret string, params ...map[string]interface{}) error {

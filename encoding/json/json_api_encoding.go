@@ -1,12 +1,12 @@
 package json
 
 import (
-	"utils/conv"
-	"utils/encoding/ini"
-	"utils/encoding/toml"
-	"utils/encoding/xml"
-	"utils/encoding/yaml"
-	"utils/util/json"
+	"github.com/luyingjie/utils/conv"
+	"github.com/luyingjie/utils/encoding/ini"
+	"github.com/luyingjie/utils/encoding/toml"
+	"github.com/luyingjie/utils/encoding/xml"
+	"github.com/luyingjie/utils/encoding/yaml"
+	"github.com/luyingjie/utils/util/json"
 )
 
 // ========================================================================

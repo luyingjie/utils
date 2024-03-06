@@ -2,7 +2,8 @@ package session
 
 import (
 	"time"
-	vmap "utils/container/map"
+
+	vmap "github.com/luyingjie/utils/container/map"
 )
 
 // StorageMemory implements the Session Storage interface with memory.

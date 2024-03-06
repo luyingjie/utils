@@ -5,7 +5,8 @@ import (
 	// . "encoding/json"
 	"strings"
 	"time"
-	verror "utils/os/error"
+
+	verror "github.com/luyingjie/utils/os/error"
 
 	// "fmt"
 
@@ -15,7 +16,7 @@ import (
 	"gopkg.in/olivere/elastic.v3"
 )
 
-//连接ES
+// 连接ES
 func connect(esUrl, esIndex string) (*elastic.Client, error) {
 	client, err := elastic.NewClient(
 		elastic.SetURL(esUrl),
@@ -42,7 +43,7 @@ func connect(esUrl, esIndex string) (*elastic.Client, error) {
 	return client, nil
 }
 
-//保存
+// 保存
 func Save(esUrl, esIndex, esType string, data map[string]interface{}) error {
 	client, err := connect(esUrl, esIndex)
 	if err != nil {
@@ -62,8 +63,8 @@ func Save(esUrl, esIndex, esType string, data map[string]interface{}) error {
 	return nil
 }
 
-//uuid在什么地方生成需要研究。1.全局生成，贯穿整个Task。2.局部生成，返回传参。
-//将整个库往其他库移动的保存情况要去掉模型中的id。
+// uuid在什么地方生成需要研究。1.全局生成，贯穿整个Task。2.局部生成，返回传参。
+// 将整个库往其他库移动的保存情况要去掉模型中的id。
 func SaveById(esUrl, esIndex, esType, id string, data map[string]interface{}) (string, error) {
 	// var id UUID = uuid.Rand()
 	// fmt.Println(id.Hex())
@@ -97,7 +98,7 @@ func SaveById(esUrl, esIndex, esType, id string, data map[string]interface{}) (s
 	return id, nil
 }
 
-//按Id查询
+// 按Id查询
 func SearchById(esUrl, esIndex, esType, id string) (*elastic.GetResult, error) {
 	client, err := connect(esUrl, esIndex)
 	if err != nil {
@@ -130,8 +131,8 @@ func SearchById(esUrl, esIndex, esType, id string) (*elastic.GetResult, error) {
 // 	return bq
 // }
 
-//查询
-//操作符目前只支持All指定，不支持单独逐个指定，数据结构保持扩展支持。
+// 查询
+// 操作符目前只支持All指定，不支持单独逐个指定，数据结构保持扩展支持。
 func Search(esUrl, esIndex, esType string, searchModel *RequestESModel) (*elastic.SearchResult, error) { //*elastic.SearchHits {
 	client, err := connect(esUrl, esIndex)
 	if err != nil {
@@ -288,7 +289,7 @@ func Search(esUrl, esIndex, esType string, searchModel *RequestESModel) (*elasti
 	return searchResult, nil
 }
 
-//按Id删除,补全查询删除。
+// 按Id删除,补全查询删除。
 func DeleteById(esUrl, esIndex, esType, id string) error {
 	client, err := connect(esUrl, esIndex)
 	if err != nil {
@@ -416,7 +417,7 @@ func Delete(esUrl, esIndex, esType string, searchModel *RequestESModel) error {
 	return nil
 }
 
-//按Id修改,这里其实支持直接插入map[string]interface{},可以和前面的Save方法合并。分开是可以寻求其他修改文档的方法。
+// 按Id修改,这里其实支持直接插入map[string]interface{},可以和前面的Save方法合并。分开是可以寻求其他修改文档的方法。
 func UpdateById(esUrl, esIndex, esType, id string, data map[string]interface{}) error {
 	client, err := connect(esUrl, esIndex)
 	if err != nil {

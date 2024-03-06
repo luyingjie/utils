@@ -4,10 +4,11 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-	"utils/conv"
-	"utils/util/rwmutex"
 
-	"utils/text/str"
+	"github.com/luyingjie/utils/conv"
+	"github.com/luyingjie/utils/util/rwmutex"
+
+	"github.com/luyingjie/utils/text/str"
 )
 
 const (

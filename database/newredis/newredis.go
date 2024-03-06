@@ -1,13 +1,13 @@
 package newredis
 
-
 import (
-"errors"
-"utils/util"
-"fmt"
-goredis "github.com/go-redis/redis/v7"
-"sync"
-"time"
+	"errors"
+	"fmt"
+	"sync"
+	"time"
+
+	goredis "github.com/go-redis/redis/v7"
+	"github.com/luyingjie/utils/util"
 )
 
 var redisMap map[string]*Redis

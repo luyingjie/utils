@@ -4,7 +4,8 @@ package env
 import (
 	"os"
 	"strings"
-	vvar "utils/container/var"
+
+	vvar "github.com/luyingjie/utils/container/var"
 )
 
 // All returns a copy of strings representing the environment,

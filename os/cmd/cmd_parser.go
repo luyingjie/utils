@@ -4,15 +4,16 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"utils/util/json"
 
-	"utils/text/str"
+	"github.com/luyingjie/utils/util/json"
+
+	"github.com/luyingjie/utils/text/str"
 
 	"errors"
 
-	vvar "utils/container/var"
+	vvar "github.com/luyingjie/utils/container/var"
 
-	"utils/text/regex"
+	"github.com/luyingjie/utils/text/regex"
 )
 
 // Parser for arguments.

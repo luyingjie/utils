@@ -8,11 +8,11 @@ import (
 	"strings"
 	"time"
 
-	"utils/conv"
-	vhttp "utils/net/http"
-	verror "utils/os/error"
-	qcutil "utils/qingcloud"
-	"utils/util"
+	"github.com/luyingjie/utils/conv"
+	vhttp "github.com/luyingjie/utils/net/http"
+	verror "github.com/luyingjie/utils/os/error"
+	qcutil "github.com/luyingjie/utils/qingcloud"
+	"github.com/luyingjie/utils/util"
 )
 
 // Send 发送请求到boss2

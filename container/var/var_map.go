@@ -1,6 +1,6 @@
 package vvar
 
-import "utils/conv"
+import "github.com/luyingjie/utils/conv"
 
 func (v *Var) Map(tags ...string) map[string]interface{} {
 	return conv.Map(v.Val(), tags...)

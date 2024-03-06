@@ -3,7 +3,8 @@ package util
 import (
 	"bytes"
 	"encoding/gob"
-	"utils/util/empty"
+
+	"github.com/luyingjie/utils/util/empty"
 )
 
 func Throw(exception interface{}) {

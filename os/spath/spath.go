@@ -13,10 +13,10 @@ import (
 	"sort"
 	"strings"
 
-	"utils/container/array"
-	vmap "utils/container/map"
-	"utils/os/file"
-	"utils/text/str"
+	"github.com/luyingjie/utils/container/array"
+	vmap "github.com/luyingjie/utils/container/map"
+	"github.com/luyingjie/utils/os/file"
+	"github.com/luyingjie/utils/text/str"
 )
 
 // SPath manages the path searching feature.

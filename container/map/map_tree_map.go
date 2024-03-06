@@ -1,7 +1,7 @@
 package vmap
 
 import (
-	"utils/container/tree"
+	"github.com/luyingjie/utils/container/tree"
 )
 
 type TreeMap = tree.RedBlackTree

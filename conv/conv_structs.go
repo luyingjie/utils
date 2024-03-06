@@ -2,7 +2,8 @@ package conv
 
 import (
 	"reflect"
-	verror "utils/os/error"
+
+	verror "github.com/luyingjie/utils/os/error"
 )
 
 func Structs(params interface{}, pointer interface{}, mapping ...map[string]string) (err error) {

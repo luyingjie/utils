@@ -2,7 +2,8 @@ package conv
 
 import (
 	"reflect"
-	iutil "utils/internal/util"
+
+	iutil "github.com/luyingjie/utils/internal/util"
 )
 
 func SliceAny(i interface{}) []interface{} {

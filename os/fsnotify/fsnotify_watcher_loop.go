@@ -1,8 +1,8 @@
 package fsnotify
 
 import (
-	"utils/container/list"
-	"utils/os/error"
+	"github.com/luyingjie/utils/container/list"
+	"github.com/luyingjie/utils/os/error"
 )
 
 func (w *Watcher) startWatchLoop() {

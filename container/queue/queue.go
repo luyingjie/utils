@@ -3,9 +3,9 @@ package queue
 import (
 	"math"
 
-	"utils/container/type"
+	vtype "github.com/luyingjie/utils/container/type"
 
-	"utils/container/list"
+	"github.com/luyingjie/utils/container/list"
 )
 
 type Queue struct {

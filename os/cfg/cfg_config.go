@@ -1,7 +1,7 @@
 package cfg
 
 import (
-	vmap "utils/container/map"
+	vmap "github.com/luyingjie/utils/container/map"
 )
 
 var (

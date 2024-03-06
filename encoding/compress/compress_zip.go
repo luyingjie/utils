@@ -8,8 +8,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"utils/os/file"
-	"utils/text/str"
+
+	"github.com/luyingjie/utils/os/file"
+	"github.com/luyingjie/utils/text/str"
 )
 
 // ZipPath compresses <paths> to <dest> using zip compressing algorithm.

@@ -17,7 +17,7 @@ func init() {
 	configuration.SecretAccessKey = "Zi9zBZ8rLdyj1N68Fgjkul80NVurKQ7x8WkE32VD"
 	configuration.Protocol = "http"
 	configuration.Host = "36.110.217.162"
-	configuration.Port = "7777"
+	configuration.Port = 7777
 
 	configuration.URI = "/iaas"
 

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"utils/container/list"
-	vtype "utils/container/type"
+	"github.com/luyingjie/utils/container/list"
+	vtype "github.com/luyingjie/utils/container/type"
 )
 
 type Timer struct {

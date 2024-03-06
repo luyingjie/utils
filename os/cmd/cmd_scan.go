@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"utils/text/str"
+	"github.com/luyingjie/utils/text/str"
 )
 
 // Scan prints <info> to stdout, reads and returns user input, which stops by '\n'.

@@ -3,7 +3,8 @@ package vtype
 import (
 	"strconv"
 	"sync/atomic"
-	"utils/conv"
+
+	"github.com/luyingjie/utils/conv"
 )
 
 type Uint64 struct {

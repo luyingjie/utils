@@ -6,20 +6,20 @@ import (
 	"fmt"
 	"reflect"
 
-	"utils/util/json"
+	"github.com/luyingjie/utils/util/json"
 
-	"utils/util/rwmutex"
+	"github.com/luyingjie/utils/util/rwmutex"
 
-	"utils/text/regex"
+	"github.com/luyingjie/utils/text/regex"
 
-	"utils/conv"
+	"github.com/luyingjie/utils/conv"
 
-	"utils/os/file"
+	"github.com/luyingjie/utils/os/file"
 
-	"utils/encoding/ini"
-	"utils/encoding/toml"
-	"utils/encoding/xml"
-	"utils/encoding/yaml"
+	"github.com/luyingjie/utils/encoding/ini"
+	"github.com/luyingjie/utils/encoding/toml"
+	"github.com/luyingjie/utils/encoding/xml"
+	"github.com/luyingjie/utils/encoding/yaml"
 )
 
 func New(data interface{}, safe ...bool) *Json {

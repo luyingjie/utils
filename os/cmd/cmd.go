@@ -4,9 +4,9 @@ package cmd
 import (
 	"os"
 
-	vvar "utils/container/var"
+	vvar "github.com/luyingjie/utils/container/var"
 
-	"utils/text/regex"
+	"github.com/luyingjie/utils/text/regex"
 )
 
 var (

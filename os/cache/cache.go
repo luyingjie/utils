@@ -2,7 +2,8 @@ package cache
 
 import (
 	"time"
-	vvar "utils/container/var"
+
+	vvar "github.com/luyingjie/utils/container/var"
 )
 
 var defaultCache = New()

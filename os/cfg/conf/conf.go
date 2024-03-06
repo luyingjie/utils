@@ -3,7 +3,8 @@ package conf
 import (
 	"encoding/json"
 	"io/ioutil"
-	file "utils/util"
+
+	file "github.com/luyingjie/utils/util"
 
 	"gopkg.in/yaml.v2"
 )
@@ -57,7 +58,7 @@ func GetYaml(fileName, key string) (interface{}, error) {
 	return m[key], err
 }
 
-//读取用户的配置文件
+// 读取用户的配置文件
 func Reload(ConfFilePath string, mod interface{}) {
 	if confFileExists := file.PathExists(ConfFilePath); confFileExists != true {
 		return

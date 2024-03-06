@@ -1,15 +1,15 @@
 package vmap
 
 import (
-	"utils/util/json"
+	"github.com/luyingjie/utils/util/json"
 
-	"utils/util/empty"
+	"github.com/luyingjie/utils/util/empty"
 
-	"utils/conv"
+	"github.com/luyingjie/utils/conv"
 
-	"utils/container/list"
-	vvar "utils/container/var"
-	"utils/util/rwmutex"
+	"github.com/luyingjie/utils/container/list"
+	vvar "github.com/luyingjie/utils/container/var"
+	"github.com/luyingjie/utils/util/rwmutex"
 )
 
 type ListMap struct {

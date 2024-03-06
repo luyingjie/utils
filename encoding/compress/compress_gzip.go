@@ -4,7 +4,8 @@ import (
 	"bytes"
 	"compress/gzip"
 	"io"
-	"utils/os/file"
+
+	"github.com/luyingjie/utils/os/file"
 )
 
 // Gzip compresses <data> using gzip algorithm.

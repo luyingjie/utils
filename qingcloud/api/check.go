@@ -4,9 +4,10 @@ import (
 	"net/http"
 	"net/url"
 	"time"
-	verror "utils/os/error"
-	"utils/qingcloud/iaas"
-	"utils/qingcloud/sign"
+
+	verror "github.com/luyingjie/utils/os/error"
+	"github.com/luyingjie/utils/qingcloud/iaas"
+	"github.com/luyingjie/utils/qingcloud/sign"
 )
 
 func Check(request *http.Request, access_key_id, signature, time_stamp string, data *map[string]interface{}, apiConfig map[string]interface{}) (string, error) {

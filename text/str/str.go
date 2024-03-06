@@ -9,11 +9,11 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	iutil "utils/internal/util"
+	iutil "github.com/luyingjie/utils/internal/util"
 
-	"utils/conv"
+	"github.com/luyingjie/utils/conv"
 
-	"utils/generates/rand"
+	"github.com/luyingjie/utils/generates/rand"
 )
 
 func Replace(origin, search, replace string, count ...int) string {

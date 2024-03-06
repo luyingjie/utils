@@ -2,12 +2,13 @@ package vvar
 
 import (
 	"time"
-	vtype "utils/container/type"
-	"utils/util/empty"
-	"utils/util/json"
 
-	"utils/conv"
-	vtime "utils/os/time"
+	vtype "github.com/luyingjie/utils/container/type"
+	"github.com/luyingjie/utils/util/empty"
+	"github.com/luyingjie/utils/util/json"
+
+	"github.com/luyingjie/utils/conv"
+	vtime "github.com/luyingjie/utils/os/time"
 )
 
 type Var struct {

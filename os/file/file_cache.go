@@ -3,11 +3,11 @@ package file
 import (
 	"time"
 
-	"utils/util/cmdenv"
+	"github.com/luyingjie/utils/util/cmdenv"
 
-	"utils/os/cache"
+	"github.com/luyingjie/utils/os/cache"
 
-	"utils/os/fsnotify"
+	"github.com/luyingjie/utils/os/fsnotify"
 )
 
 const (

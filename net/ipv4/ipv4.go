@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"net"
 	"strconv"
-	"utils/text/regex"
+
+	"github.com/luyingjie/utils/text/regex"
 )
 
 // Ip2long converts ip address to an uint32 integer.

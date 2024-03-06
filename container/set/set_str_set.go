@@ -3,12 +3,13 @@ package set
 import (
 	"bytes"
 	"strings"
-	"utils/util/json"
 
-	"utils/util/rwmutex"
+	"github.com/luyingjie/utils/util/json"
 
-	"utils/conv"
-	"utils/text/str"
+	"github.com/luyingjie/utils/util/rwmutex"
+
+	"github.com/luyingjie/utils/conv"
+	"github.com/luyingjie/utils/text/str"
 )
 
 type StrSet struct {
