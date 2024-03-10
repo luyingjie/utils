@@ -20,13 +20,22 @@ type WebSocket struct {
 	*websocket.Conn
 }
 
-func NewWebSocket(path string, key string, w http.ResponseWriter, r *http.Request, handler WebSocketHandler) *WebSocket {
+func NewWebSocket(path string, key string, w http.ResponseWriter, r *http.Request, handler WebSocketHandler, upgrader ...websocket.Upgrader) *WebSocket {
+	var upg websocket.Upgrader
+	if len(upgrader) > 0 {
+		upg = upgrader[0]
+	} else {
+		upg = websocket.Upgrader{}
+	}
+	upg.CheckOrigin = func(r *http.Request) bool {
+		return true
+	}
 	return &WebSocket{
 		key:      key,
 		Path:     path,
 		w:        w,
 		r:        r,
-		Upgrader: &websocket.Upgrader{},
+		Upgrader: &upg,
 		Handler:  handler,
 	}
 }
