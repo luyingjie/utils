@@ -22,6 +22,7 @@ type WebSocket struct {
 
 func NewWebSocket(path string, key string, w http.ResponseWriter, r *http.Request, handler WebSocketHandler, checkOrigin ...bool) *WebSocket {
 	var upg websocket.Upgrader
+	// 设置 checkOrigin 是否允许跨域请求。默认不开启， true时候开启。
 	if len(checkOrigin) > 0 && checkOrigin[0] {
 		upg = websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool {
