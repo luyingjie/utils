@@ -1,5 +1,5 @@
 // Package grpool implements a goroutine reusable pool.
-package rpool
+package respool
 
 import (
 	"errors"
