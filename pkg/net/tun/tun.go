@@ -6,8 +6,6 @@ import (
 	"runtime"
 	"time"
 
-	log "vsdn/pkg/logs"
-
 	"github.com/songgao/water"
 )
 
@@ -27,7 +25,7 @@ func NewInterface() (*Interface, error) {
 
 		ifce, err := water.New(ifconfig)
 		if err != nil {
-			log.Error("new interface %s fail: %v", ifconfig.Name, err)
+			return nil, fmt.Errorf("new interface %s fail: %v", ifconfig.Name, err)
 			time.Sleep(time.Second * 1)
 			continue
 		}

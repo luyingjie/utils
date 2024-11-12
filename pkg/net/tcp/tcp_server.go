@@ -6,9 +6,8 @@ import (
 	"net"
 	"sync"
 
-	vmap "github.com/luyingjie/utils/container/map"
-	"github.com/luyingjie/utils/conv"
-	verror "github.com/luyingjie/utils/os/error"
+	"github.com/luyingjie/utils/pkg/container/vmap"
+	"github.com/luyingjie/utils/pkg/conv"
 )
 
 const (
@@ -64,12 +63,12 @@ func NewServerTLS(address string, tlsConfig *tls.Config, handler func(*Conn), na
 
 // NewServerKeyCrt creates and returns a new TCP server with TLS support.
 // The parameter <name> is optional, which is used to specify the instance name of the server.
-func NewServerKeyCrt(address, crtFile, keyFile string, handler func(*Conn), name ...string) *Server {
+func NewServerKeyCrt(address, crtFile, keyFile string, handler func(*Conn), name ...string) (*Server, error) {
 	s := NewServer(address, handler, name...)
 	if err := s.SetTLSKeyCrt(crtFile, keyFile); err != nil {
-		verror.Try(5000, 3, err)
+		return nil, err
 	}
-	return s
+	return s, nil
 }
 
 // SetAddress sets the listening address for server.
@@ -111,7 +110,6 @@ func (s *Server) Close() error {
 func (s *Server) Run() (err error) {
 	if s.handler == nil {
 		err = errors.New("start running failed: socket handler not defined")
-		verror.Try(5000, 3, err)
 		return
 	}
 	if s.tlsConfig != nil {
@@ -120,21 +118,18 @@ func (s *Server) Run() (err error) {
 		s.listen, err = tls.Listen("tcp", s.address, s.tlsConfig)
 		s.mu.Unlock()
 		if err != nil {
-			verror.Try(5000, 3, err)
 			return
 		}
 	} else {
 		// Normal Server
 		addr, err := net.ResolveTCPAddr("tcp", s.address)
 		if err != nil {
-			verror.Try(5000, 3, err)
 			return err
 		}
 		s.mu.Lock()
 		s.listen, err = net.ListenTCP("tcp", addr)
 		s.mu.Unlock()
 		if err != nil {
-			verror.Try(5000, 3, err)
 			return err
 		}
 	}

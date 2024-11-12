@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	vmap "github.com/luyingjie/utils/container/map"
-	"github.com/luyingjie/utils/database/redis"
-	verror "github.com/luyingjie/utils/os/error"
+	"github.com/luyingjie/utils/pkg/container/vmap"
+	"github.com/luyingjie/utils/pkg/storage/redis"
 	"github.com/luyingjie/utils/util/json"
 
-	"github.com/luyingjie/utils/os/timer"
+	"github.com/luyingjie/utils/pkg/time/timer"
 )
 
 // StorageRedis implements the Session Storage interface with redis.
@@ -49,7 +48,7 @@ func NewStorageRedis(redis *redis.Redis, prefix ...string) *StorageRedis {
 				break
 			} else {
 				if err = s.doUpdateTTL(id, ttlSeconds); err != nil {
-					verror.Try(5000, 3, err)
+					fmt.Printf("StorageRedis.doUpdateTTL failed: %v", err)
 				}
 			}
 		}

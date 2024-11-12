@@ -3,23 +3,22 @@ package session
 import (
 	"fmt"
 
-	vmap "github.com/luyingjie/utils/container/map"
+	"github.com/luyingjie/utils/pkg/container/vmap"
 
 	"os"
 	"time"
 
 	"github.com/luyingjie/utils/util/json"
 
-	"github.com/luyingjie/utils/crypto/aes"
+	"github.com/luyingjie/utils/pkg/crypto/aes"
 
-	"github.com/luyingjie/utils/container/set"
-	"github.com/luyingjie/utils/encoding/binary"
-	verror "github.com/luyingjie/utils/os/error"
-	"github.com/luyingjie/utils/os/timer"
+	"github.com/luyingjie/utils/pkg/container/vset"
+	"github.com/luyingjie/utils/pkg/encoding/binary"
+	"github.com/luyingjie/utils/pkg/time/timer"
 
-	vtime "github.com/luyingjie/utils/os/time"
+	"github.com/luyingjie/utils/pkg/container/vtime"
 
-	"github.com/luyingjie/utils/os/file"
+	"github.com/luyingjie/utils/pkg/file/file"
 )
 
 // StorageFile implements the Session Storage interface with file system.
@@ -27,7 +26,7 @@ type StorageFile struct {
 	path          string
 	cryptoKey     []byte
 	cryptoEnabled bool
-	updatingIdSet *set.StrSet
+	updatingIdSet *vset.StrSet
 }
 
 var (
@@ -58,11 +57,11 @@ func NewStorageFile(path ...string) *StorageFile {
 		path:          storagePath,
 		cryptoKey:     DefaultStorageFileCryptoKey,
 		cryptoEnabled: DefaultStorageFileCryptoEnabled,
-		updatingIdSet: set.NewStrSet(true),
+		updatingIdSet: vset.NewStrSet(true),
 	}
 	// Batch updates the TTL for session ids timely.
 	timer.AddSingleton(DefaultStorageFileLoopInterval, func() {
-		//fmt.Print("StorageFile.timer start")
+		fmt.Print("StorageFile.timer start")
 		var id string
 		var err error
 		for {
@@ -70,10 +69,10 @@ func NewStorageFile(path ...string) *StorageFile {
 				break
 			}
 			if err = s.doUpdateTTL(id); err != nil {
-				verror.Try(5000, 3, err)
+				fmt.Printf("StorageFile.doUpdateTTL failed: %v", err)
 			}
 		}
-		//fmt.Print("StorageFile.timer end")
+		fmt.Print("StorageFile.timer end")
 	})
 	return s
 }

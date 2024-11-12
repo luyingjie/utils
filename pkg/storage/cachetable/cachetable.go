@@ -1,12 +1,11 @@
 package cachetable
 
 import (
+	"fmt"
 	"log"
 	"sort"
 	"sync"
 	"time"
-
-	verror "github.com/luyingjie/utils/os/error"
 )
 
 type CacheTable struct {
@@ -184,7 +183,7 @@ func (table *CacheTable) Add(key interface{}, lifeSpan time.Duration, data inter
 func (table *CacheTable) deleteInternal(key interface{}) (*CacheItem, error) {
 	r, ok := table.items[key]
 	if !ok {
-		return nil, verror.New("ErrKeyNotFound")
+		return nil, fmt.Errorf("ErrKeyNotFound")
 	}
 
 	aboutToDeleteItem := table.aboutToDeleteItem
@@ -258,10 +257,10 @@ func (table *CacheTable) Value(key interface{}, args ...interface{}) (*CacheItem
 			return item, nil
 		}
 
-		return nil, verror.New("ErrKeyNotFoundOrLoadable")
+		return nil, fmt.Errorf("ErrKeyNotFoundOrLoadable")
 	}
 
-	return nil, verror.New("ErrKeyNotFound")
+	return nil, fmt.Errorf("ErrKeyNotFound")
 }
 
 func (table *CacheTable) Flush() {

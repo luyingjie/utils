@@ -1,14 +1,12 @@
-package conf
+package util
 
 import (
 	"encoding/json"
 	"io/ioutil"
-
-	file "github.com/luyingjie/utils/util"
 )
 
 func ReloadJson(ConfFilePath string, mod interface{}) {
-	if confFileExists := file.PathExists(ConfFilePath); confFileExists != true {
+	if confFileExists := PathExists(ConfFilePath); confFileExists != true {
 		return
 	}
 

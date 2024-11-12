@@ -6,11 +6,10 @@ import (
 
 	"time"
 
-	vmap "github.com/luyingjie/utils/container/map"
-	vvar "github.com/luyingjie/utils/container/var"
-	"github.com/luyingjie/utils/conv"
-	verror "github.com/luyingjie/utils/os/error"
-	vtime "github.com/luyingjie/utils/os/time"
+	"github.com/luyingjie/utils/pkg/container/vmap"
+	"github.com/luyingjie/utils/pkg/container/vtime"
+	"github.com/luyingjie/utils/pkg/container/vvar"
+	"github.com/luyingjie/utils/pkg/conv"
 )
 
 // Session struct for storing single session data,
@@ -29,9 +28,9 @@ type Session struct {
 
 // init does the lazy initialization for session.
 // It here initializes real session if necessary.
-func (s *Session) init() {
+func (s *Session) init() error {
 	if s.start {
-		return
+		return nil
 	}
 	if s.id != "" {
 		var err error
@@ -43,8 +42,7 @@ func (s *Session) init() {
 		// Retrieve stored session data from storage.
 		if s.manager.storage != nil {
 			if s.data, err = s.manager.storage.GetSession(s.id, s.manager.ttl, s.data); err != nil {
-				// verror.Try("session restoring failed for id '%s': %v", s.id, err)
-				verror.Try(5000, 3, err)
+				return fmt.Errorf("session restoring failed for id '%s': %v", s.id, err)
 			}
 		}
 		// If it's an invalid or expired session id,
@@ -69,6 +67,7 @@ func (s *Session) init() {
 		s.data = vmap.NewStrAnyMap(true)
 	}
 	s.start = true
+	return nil
 }
 
 // Close closes current session and updates its ttl in the session manager.

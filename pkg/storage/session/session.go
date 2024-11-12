@@ -4,7 +4,7 @@ package session
 import (
 	"errors"
 
-	"github.com/luyingjie/utils/generates/uid"
+	"github.com/luyingjie/utils/pkg/generates/uid"
 )
 
 var (

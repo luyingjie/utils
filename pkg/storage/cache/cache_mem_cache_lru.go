@@ -3,18 +3,18 @@ package cache
 import (
 	"time"
 
-	"github.com/luyingjie/utils/container/list"
-	vmap "github.com/luyingjie/utils/container/map"
-	vtype "github.com/luyingjie/utils/container/type"
+	"github.com/luyingjie/utils/pkg/container/vlist"
+	"github.com/luyingjie/utils/pkg/container/vmap"
+	"github.com/luyingjie/utils/pkg/container/vtype"
 
-	"github.com/luyingjie/utils/os/timer"
+	"github.com/luyingjie/utils/pkg/time/timer"
 )
 
 type memCacheLru struct {
 	cache   *memCache
 	data    *vmap.Map
-	list    *list.List
-	rawList *list.List
+	list    *vlist.List
+	rawList *vlist.List
 	closed  *vtype.Bool
 }
 
@@ -22,8 +22,8 @@ func newMemCacheLru(cache *memCache) *memCacheLru {
 	lru := &memCacheLru{
 		cache:   cache,
 		data:    vmap.New(true),
-		list:    list.New(true),
-		rawList: list.New(true),
+		list:    vlist.New(true),
+		rawList: vlist.New(true),
 		closed:  vtype.NewBool(),
 	}
 	timer.AddSingleton(time.Second, lru.SyncAndClear)
@@ -37,7 +37,7 @@ func (lru *memCacheLru) Close() {
 func (lru *memCacheLru) Remove(key interface{}) {
 	if v := lru.data.Get(key); v != nil {
 		lru.data.Remove(key)
-		lru.list.Remove(v.(*list.Element))
+		lru.list.Remove(v.(*vlist.Element))
 	}
 }
 
@@ -65,7 +65,7 @@ func (lru *memCacheLru) SyncAndClear() {
 	for {
 		if v := lru.rawList.PopFront(); v != nil {
 			if v := lru.data.Get(v); v != nil {
-				lru.list.Remove(v.(*list.Element))
+				lru.list.Remove(v.(*vlist.Element))
 			}
 			lru.data.Set(v, lru.list.PushFront(v))
 		} else {

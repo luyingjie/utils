@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/luyingjie/utils/container/list"
-	vtype "github.com/luyingjie/utils/container/type"
+	"github.com/luyingjie/utils/pkg/container/vlist"
+	"github.com/luyingjie/utils/pkg/container/vtype"
 )
 
 type Timer struct {
@@ -19,7 +19,7 @@ type Timer struct {
 type wheel struct {
 	timer      *Timer
 	level      int
-	slots      []*list.List
+	slots      []*vlist.List
 	number     int64
 	ticks      *vtype.Int64
 	totalMs    int64
@@ -63,7 +63,7 @@ func (t *Timer) newWheel(level int, slot int, interval time.Duration) *wheel {
 	w := &wheel{
 		timer:      t,
 		level:      level,
-		slots:      make([]*list.List, slot),
+		slots:      make([]*vlist.List, slot),
 		number:     int64(slot),
 		ticks:      vtype.NewInt64(),
 		totalMs:    int64(slot) * interval.Nanoseconds() / 1e6,
@@ -71,7 +71,7 @@ func (t *Timer) newWheel(level int, slot int, interval time.Duration) *wheel {
 		intervalMs: interval.Nanoseconds() / 1e6,
 	}
 	for i := int64(0); i < w.number; i++ {
-		w.slots[i] = list.New(true)
+		w.slots[i] = vlist.New(true)
 	}
 	return w
 }

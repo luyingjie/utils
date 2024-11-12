@@ -6,7 +6,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/luyingjie/utils/os/file"
+	"github.com/luyingjie/utils/pkg/file/file"
 )
 
 const (

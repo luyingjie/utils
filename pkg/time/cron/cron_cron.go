@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/luyingjie/utils/container/array"
-	vmap "github.com/luyingjie/utils/container/map"
-	vtype "github.com/luyingjie/utils/container/type"
-	"github.com/luyingjie/utils/os/timer"
+	"github.com/luyingjie/utils/pkg/container/varray"
+	"github.com/luyingjie/utils/pkg/container/vmap"
+	"github.com/luyingjie/utils/pkg/container/vtype"
+	"github.com/luyingjie/utils/pkg/time/timer"
 )
 
 type Cron struct {
@@ -191,7 +191,7 @@ func (c *Cron) Size() int {
 
 // Entries return all timed tasks as slice(order by registered time asc).
 func (c *Cron) Entries() []*Entry {
-	array := array.NewSortedArraySize(c.entries.Size(), func(v1, v2 interface{}) int {
+	array := varray.NewSortedArraySize(c.entries.Size(), func(v1, v2 interface{}) int {
 		entry1 := v1.(*Entry)
 		entry2 := v2.(*Entry)
 		if entry1.Time.Nanosecond() > entry2.Time.Nanosecond() {

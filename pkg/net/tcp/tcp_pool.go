@@ -3,8 +3,8 @@ package tcp
 import (
 	"time"
 
-	vmap "github.com/luyingjie/utils/container/map"
-	vpool "github.com/luyingjie/utils/container/pool"
+	"github.com/luyingjie/utils/pkg/container/vmap"
+	"github.com/luyingjie/utils/pkg/container/vpool"
 )
 
 // PoolConn is a connection with pool feature for TCP.

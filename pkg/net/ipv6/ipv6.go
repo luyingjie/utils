@@ -1,7 +1,7 @@
 // Package gipv4 provides useful API for IPv6 address handling.
 package ipv6
 
-import "github.com/luyingjie/utils/text/regex"
+import "github.com/luyingjie/utils/pkg/text/regex"
 
 // Validate checks whether given <ip> a valid IPv6 address.
 func Validate(ip string) bool {

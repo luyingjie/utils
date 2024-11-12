@@ -11,12 +11,12 @@ import (
 	"strconv"
 	"time"
 
-	vtype "github.com/luyingjie/utils/container/type"
-	"github.com/luyingjie/utils/net/ipv4"
+	"github.com/luyingjie/utils/pkg/container/vtype"
+	"github.com/luyingjie/utils/pkg/net/ipv4"
 
-	"github.com/luyingjie/utils/conv"
-	"github.com/luyingjie/utils/encoding/hash"
-	"github.com/luyingjie/utils/generates/rand"
+	"github.com/luyingjie/utils/pkg/conv"
+	"github.com/luyingjie/utils/pkg/encoding/hash"
+	"github.com/luyingjie/utils/pkg/generates/rand"
 )
 
 var (

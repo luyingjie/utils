@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	vtime "github.com/luyingjie/utils/os/time"
+	"github.com/luyingjie/utils/pkg/container/vtime"
 
-	"github.com/luyingjie/utils/text/regex"
+	"github.com/luyingjie/utils/pkg/text/regex"
 )
 
 // cronSchedule is the schedule for cron job.

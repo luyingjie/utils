@@ -5,18 +5,18 @@ import (
 	"sync"
 	"time"
 
-	vtype "github.com/luyingjie/utils/container/type"
-	vvar "github.com/luyingjie/utils/container/var"
+	"github.com/luyingjie/utils/pkg/container/vtype"
+	"github.com/luyingjie/utils/pkg/container/vvar"
 
-	vtime "github.com/luyingjie/utils/os/time"
+	"github.com/luyingjie/utils/pkg/container/vtime"
 
-	"github.com/luyingjie/utils/os/timer"
+	"github.com/luyingjie/utils/pkg/time/timer"
 
-	"github.com/luyingjie/utils/container/list"
+	"github.com/luyingjie/utils/pkg/container/vlist"
 
-	"github.com/luyingjie/utils/container/set"
+	"github.com/luyingjie/utils/pkg/container/vset"
 
-	"github.com/luyingjie/utils/conv"
+	"github.com/luyingjie/utils/pkg/conv"
 )
 
 type memCache struct {
@@ -32,13 +32,13 @@ type memCache struct {
 
 	expireTimes map[interface{}]int64
 
-	expireSets map[int64]*set.Set
+	expireSets map[int64]*vset.Set
 
 	lru *memCacheLru
 
-	lruGetList *list.List
+	lruGetList *vlist.List
 
-	eventList *list.List
+	eventList *vlist.List
 
 	closed *vtype.Bool
 }
@@ -59,11 +59,11 @@ const (
 
 func newMemCache(lruCap ...int) *memCache {
 	c := &memCache{
-		lruGetList:  list.New(true),
+		lruGetList:  vlist.New(true),
 		data:        make(map[interface{}]memCacheItem),
 		expireTimes: make(map[interface{}]int64),
-		expireSets:  make(map[int64]*set.Set),
-		eventList:   list.New(true),
+		expireSets:  make(map[int64]*vset.Set),
+		eventList:   vlist.New(true),
 		closed:      vtype.NewBool(),
 	}
 	if len(lruCap) > 0 {
@@ -157,16 +157,16 @@ func (c *memCache) makeExpireKey(expire int64) int64 {
 	return int64(math.Ceil(float64(expire/1000)+1) * 1000)
 }
 
-func (c *memCache) getExpireSet(expire int64) (expireSet *set.Set) {
+func (c *memCache) getExpireSet(expire int64) (expireSet *vset.Set) {
 	c.expireSetMu.RLock()
 	expireSet, _ = c.expireSets[expire]
 	c.expireSetMu.RUnlock()
 	return
 }
 
-func (c *memCache) getOrNewExpireSet(expire int64) (expireSet *set.Set) {
+func (c *memCache) getOrNewExpireSet(expire int64) (expireSet *vset.Set) {
 	if expireSet = c.getExpireSet(expire); expireSet == nil {
-		expireSet = set.New(true)
+		expireSet = vset.New(true)
 		c.expireSetMu.Lock()
 		if es, ok := c.expireSets[expire]; ok {
 			expireSet = es
@@ -370,7 +370,7 @@ func (c *memCache) syncEventAndClearExpired() {
 		}
 	}
 	var (
-		expireSet *set.Set
+		expireSet *vset.Set
 		ek        = c.makeExpireKey(vtime.TimestampMilli())
 		eks       = []int64{ek - 1000, ek - 2000, ek - 3000, ek - 4000, ek - 5000}
 	)

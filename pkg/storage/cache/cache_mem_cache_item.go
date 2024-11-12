@@ -1,6 +1,6 @@
 package cache
 
-import vtime "github.com/luyingjie/utils/os/time"
+import "github.com/luyingjie/utils/pkg/container/vtime"
 
 func (item *memCacheItem) IsExpired() bool {
 	if item.e >= vtime.TimestampMilli() {

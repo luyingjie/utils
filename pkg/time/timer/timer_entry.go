@@ -3,7 +3,7 @@ package timer
 import (
 	"time"
 
-	vtype "github.com/luyingjie/utils/container/type"
+	"github.com/luyingjie/utils/pkg/container/vtype"
 )
 
 type Entry struct {

@@ -3,7 +3,7 @@ package timer
 import (
 	"time"
 
-	"github.com/luyingjie/utils/container/list"
+	"github.com/luyingjie/utils/pkg/container/vlist"
 )
 
 func (w *wheel) start() {
@@ -32,7 +32,7 @@ func (w *wheel) proceed() {
 	l := w.slots[int(n%w.number)]
 	length := l.Len()
 	if length > 0 {
-		go func(l *list.List, nowTicks int64) {
+		go func(l *vlist.List, nowTicks int64) {
 			entry := (*Entry)(nil)
 			nowMs := time.Now().UnixNano() / 1e6
 			for i := length; i > 0; i-- {

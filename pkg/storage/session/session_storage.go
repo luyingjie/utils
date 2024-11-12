@@ -3,7 +3,7 @@ package session
 import (
 	"time"
 
-	vmap "github.com/luyingjie/utils/container/map"
+	"github.com/luyingjie/utils/pkg/container/vmap"
 )
 
 // Storage is the interface definition for session storage.

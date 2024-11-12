@@ -5,15 +5,15 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/luyingjie/utils/container/list"
-	vtype "github.com/luyingjie/utils/container/type"
+	"github.com/luyingjie/utils/pkg/container/vlist"
+	"github.com/luyingjie/utils/pkg/container/vtype"
 )
 
 // Goroutine Pool
 type Pool struct {
 	limit  int         // Max goroutine count limit.
 	count  *vtype.Int  // Current running goroutine count.
-	list   *list.List  // Job list for asynchronous job adding purpose.
+	list   *vlist.List // Job list for asynchronous job adding purpose.
 	closed *vtype.Bool // Is pool closed or not.
 }
 
@@ -27,7 +27,7 @@ func New(limit ...int) *Pool {
 	p := &Pool{
 		limit:  -1,
 		count:  vtype.NewInt(),
-		list:   list.New(true),
+		list:   vlist.New(true),
 		closed: vtype.NewBool(),
 	}
 	if len(limit) > 0 && limit[0] > 0 {

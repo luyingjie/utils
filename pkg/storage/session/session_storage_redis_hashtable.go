@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	vmap "github.com/luyingjie/utils/container/map"
-	"github.com/luyingjie/utils/database/redis"
+	"github.com/luyingjie/utils/pkg/container/vmap"
+	"github.com/luyingjie/utils/pkg/storage/redis"
 
-	"github.com/luyingjie/utils/conv"
+	"github.com/luyingjie/utils/pkg/conv"
 )
 
 // StorageRedisHashTable implements the Session Storage interface with redis hash table.

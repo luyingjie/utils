@@ -6,7 +6,7 @@ import (
 	"os"
 	"reflect"
 
-	"github.com/luyingjie/utils/conv"
+	"github.com/luyingjie/utils/pkg/conv"
 	"github.com/luyingjie/utils/util/json"
 )
 

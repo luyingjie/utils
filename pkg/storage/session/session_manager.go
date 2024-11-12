@@ -3,9 +3,9 @@ package session
 import (
 	"time"
 
-	vmap "github.com/luyingjie/utils/container/map"
+	"github.com/luyingjie/utils/pkg/container/vmap"
 
-	"github.com/luyingjie/utils/os/cache"
+	"github.com/luyingjie/utils/pkg/storage/cache"
 )
 
 // Manager for sessions.
