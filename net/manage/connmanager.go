@@ -4,8 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"sync"
-
-	verror "github.com/luyingjie/utils/os/error"
 )
 
 // ConnManager 连接管理模块
@@ -64,7 +62,7 @@ func (connMgr *ConnManager) Len() int {
 }
 
 // ClearConn 清除并停止所有连接
-func (connMgr *ConnManager) ClearConn() {
+func (connMgr *ConnManager) ClearConn() error {
 	//保护共享资源Map 加写锁
 	connMgr.connLock.Lock()
 	defer connMgr.connLock.Unlock()
@@ -74,11 +72,12 @@ func (connMgr *ConnManager) ClearConn() {
 		//停止
 		err := conn.Stop()
 		if err != nil {
-			verror.Log(2000, 3, err)
+			return err
 		}
 		//删除
 		delete(connMgr.connections, connID)
 	}
 
 	fmt.Println("Clear All Connections successfully: conn num = ", connMgr.Len())
+	return nil
 }

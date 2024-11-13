@@ -14,7 +14,7 @@ import (
 
 	"github.com/luyingjie/utils/conv"
 
-	"github.com/luyingjie/utils/os/file"
+	"github.com/luyingjie/utils/file/file"
 
 	"github.com/luyingjie/utils/encoding/ini"
 	"github.com/luyingjie/utils/encoding/toml"

@@ -5,7 +5,7 @@ import (
 	"compress/gzip"
 	"io"
 
-	"github.com/luyingjie/utils/os/file"
+	"github.com/luyingjie/utils/file/file"
 )
 
 // Gzip compresses <data> using gzip algorithm.

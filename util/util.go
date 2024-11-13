@@ -3,8 +3,6 @@ package util
 import (
 	"bytes"
 	"encoding/gob"
-
-	"github.com/luyingjie/utils/util/empty"
 )
 
 func Throw(exception interface{}) {
@@ -21,7 +19,7 @@ func TryCatch(try func(), catch ...func(exception interface{})) {
 }
 
 func IsEmpty(value interface{}) bool {
-	return empty.IsEmpty(value)
+	return IsEmpty(value)
 }
 
 // MapDeepCopy Map深克隆

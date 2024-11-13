@@ -1,16 +1,15 @@
 package conv
 
 import (
+	"fmt"
 	"reflect"
-
-	verror "github.com/luyingjie/utils/os/error"
 )
 
 func Scan(params interface{}, pointer interface{}, mapping ...map[string]string) (err error) {
 	t := reflect.TypeOf(pointer)
 	k := t.Kind()
 	if k != reflect.Ptr {
-		return verror.Newf("params should be type of pointer, but got: %v", k)
+		return fmt.Errorf("params should be type of pointer, but got: %v", k)
 	}
 	switch t.Elem().Kind() {
 	case reflect.Array, reflect.Slice:
@@ -24,7 +23,7 @@ func ScanDeep(params interface{}, pointer interface{}, mapping ...map[string]str
 	t := reflect.TypeOf(pointer)
 	k := t.Kind()
 	if k != reflect.Ptr {
-		return verror.Newf("params should be type of pointer, but got: %v", k)
+		return fmt.Errorf("params should be type of pointer, but got: %v", k)
 	}
 	switch t.Elem().Kind() {
 	case reflect.Array, reflect.Slice:

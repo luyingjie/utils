@@ -8,9 +8,9 @@ import (
 
 	"github.com/luyingjie/utils/conv"
 
-	vtime "github.com/luyingjie/utils/os/time"
+	"github.com/luyingjie/utils/container/vtime"
 
-	vvar "github.com/luyingjie/utils/container/var"
+	"github.com/luyingjie/utils/container/vvar"
 )
 
 func (j *Json) Value() interface{} {

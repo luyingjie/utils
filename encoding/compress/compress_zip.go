@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/luyingjie/utils/os/file"
+	"github.com/luyingjie/utils/file/file"
 	"github.com/luyingjie/utils/text/str"
 )
 

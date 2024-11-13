@@ -1,12 +1,12 @@
 package jwt
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/luyingjie/utils/conv"
-	verror "github.com/luyingjie/utils/os/error"
 
 	"github.com/dgrijalva/jwt-go"
 )
@@ -50,11 +50,11 @@ func CheckToken(tokenss string, key string, timeunix ...int64) (UserModel, error
 	}
 	claim, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return *_user, verror.New("无法转换令牌")
+		return *_user, fmt.Errorf("无法转换令牌")
 	}
 	//验证token，如果token被修改过则为false
 	if !token.Valid {
-		return *_user, verror.New("令牌无效")
+		return *_user, fmt.Errorf("令牌无效")
 	}
 
 	// 判断时间戳
@@ -67,11 +67,11 @@ func CheckToken(tokenss string, key string, timeunix ...int64) (UserModel, error
 	}
 	if _timeUnix != 0 {
 		if time.Now().Unix()-tu > _timeUnix {
-			return *_user, verror.New("用户认证信息失效！")
+			return *_user, fmt.Errorf("用户认证信息失效！")
 		}
 	}
 	if claim["key"].(string) == "" {
-		return *_user, verror.New("用户认证信息错误！")
+		return *_user, fmt.Errorf("用户认证信息错误！")
 	}
 
 	_user.UserKey = claim["key"].(string)

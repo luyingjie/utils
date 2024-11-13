@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"time"
 
-	vtype "github.com/luyingjie/utils/container/type"
+	"github.com/luyingjie/utils/container/vtype"
 	"github.com/luyingjie/utils/net/ipv4"
 
 	"github.com/luyingjie/utils/conv"

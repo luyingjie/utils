@@ -9,7 +9,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	iutil "github.com/luyingjie/utils/internal/util"
+	"github.com/luyingjie/utils/util"
 
 	"github.com/luyingjie/utils/conv"
 
@@ -77,7 +77,7 @@ func ReplaceIByArray(origin string, array []string) string {
 }
 
 func ReplaceByMap(origin string, replaces map[string]string) string {
-	return iutil.ReplaceByMap(origin, replaces)
+	return util.ReplaceByMap(origin, replaces)
 }
 
 func ReplaceIByMap(origin string, replaces map[string]string) string {
@@ -96,7 +96,7 @@ func ToUpper(s string) string {
 }
 
 func UcFirst(s string) string {
-	return iutil.UcFirst(s)
+	return util.UcFirst(s)
 }
 
 func LcFirst(s string) string {
@@ -114,15 +114,15 @@ func UcWords(str string) string {
 }
 
 func IsLetterLower(b byte) bool {
-	return iutil.IsLetterLower(b)
+	return util.IsLetterLower(b)
 }
 
 func IsLetterUpper(b byte) bool {
-	return iutil.IsLetterUpper(b)
+	return util.IsLetterUpper(b)
 }
 
 func IsNumeric(s string) bool {
-	return iutil.IsNumeric(s)
+	return util.IsNumeric(s)
 }
 
 func SubStr(str string, start int, length ...int) (substr string) {

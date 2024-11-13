@@ -1,11 +1,11 @@
 package conv
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 
-	iutil "github.com/luyingjie/utils/internal/util"
-	verror "github.com/luyingjie/utils/os/error"
+	"github.com/luyingjie/utils/internal/util"
 	"github.com/luyingjie/utils/util/empty"
 	"github.com/luyingjie/utils/util/json"
 )
@@ -159,7 +159,7 @@ func doMapConvert(value interface{}, recursive bool, tags ...string) map[string]
 				rvField = rv.Field(i)
 				// Only convert the public attributes.
 				fieldName := rtField.Name
-				if !iutil.IsLetterUpper(fieldName[0]) {
+				if !util.IsLetterUpper(fieldName[0]) {
 					continue
 				}
 				name = ""
@@ -289,7 +289,7 @@ func doMapToMap(params interface{}, pointer interface{}, deep bool, mapping ...m
 		paramsKind = paramsRv.Kind()
 	}
 	if paramsKind != reflect.Map {
-		return verror.New("params should be type of map")
+		return fmt.Errorf("params should be type of map")
 	}
 	// Empty params map, no need continue.
 	if paramsRv.Len() == 0 {
@@ -307,11 +307,11 @@ func doMapToMap(params interface{}, pointer interface{}, deep bool, mapping ...m
 		pointerKind = pointerRv.Kind()
 	}
 	if pointerKind != reflect.Map {
-		return verror.New("pointer should be type of *map")
+		return fmt.Errorf("pointer should be type of *map")
 	}
 	defer func() {
 		if e := recover(); e != nil {
-			err = verror.Newf("%v", e)
+			err = fmt.Errorf("%v", e)
 		}
 	}()
 	var (
@@ -380,7 +380,7 @@ func doMapToMaps(params interface{}, pointer interface{}, deep bool, mapping ...
 		paramsKind = paramsRv.Kind()
 	}
 	if paramsKind != reflect.Map {
-		return verror.New("params should be type of map")
+		return fmt.Errorf("params should be type of map")
 	}
 	if paramsRv.Len() == 0 {
 		return nil
@@ -394,12 +394,12 @@ func doMapToMaps(params interface{}, pointer interface{}, deep bool, mapping ...
 		pointerKind = pointerRv.Kind()
 	}
 	if pointerKind != reflect.Map {
-		return verror.New("pointer should be type of *map/**map")
+		return fmt.Errorf("pointer should be type of *map/**map")
 	}
 	defer func() {
 		// Catch the panic, especially the reflect operation panics.
 		if e := recover(); e != nil {
-			err = verror.Newf("%v", e)
+			err = fmt.Errorf("%v", e)
 		}
 	}()
 	var (

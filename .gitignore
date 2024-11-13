@@ -2,7 +2,6 @@
 .vscode/
 bin/
 logs/
-pkg/
 __debug_bin
 .DS_Store
 debug

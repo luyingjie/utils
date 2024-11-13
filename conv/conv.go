@@ -9,7 +9,7 @@ import (
 
 	"github.com/luyingjie/utils/util/json"
 
-	vtime "github.com/luyingjie/utils/os/time"
+	"github.com/luyingjie/utils/container/vtime"
 
 	"github.com/luyingjie/utils/encoding/binary"
 )
